@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: task-list
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_HOST:localhost}:${POSTGRES_TASK_BOARD_PORT:5432}/${POSTGRES_TASK_BOARD_DATABASE:task_board}
+    username: ${POSTGRES_TASK_BOARD_USERNAME:patryk}
+    password: ${POSTGRES_TASK_BOARD_PASSWORD:patryk123}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+    default-schema: public
