@@ -13,9 +13,12 @@ import net.patrykdobrowolski.task_board.rest.mapper.TaskBoardMapper;
 import net.patrykdobrowolski.task_board.rest.mapper.TaskDtoMapper;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.SequencedSet;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +29,7 @@ public class TaskBoardsResource {
     private final TaskBoardsService taskBoardsService;
     private final TaskBoardMapper taskBoardMapper;
     private final TaskDtoMapper taskDtoMapper;
+    private final SseTaskBoardService sseTaskBoardService;
 
     @GetMapping
     public List<TaskBoardDto> findAllBoards() {
@@ -42,6 +46,7 @@ public class TaskBoardsResource {
     public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody TaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException {
         Task task = taskDtoMapper.fromDto(taskDto);
         Task result = taskBoardsService.addTaskToBoard(boardId, task);
+        sseTaskBoardService.broadcastBoardChange(boardId);
         return taskDtoMapper.toDto(result);
     }
 
@@ -61,12 +66,20 @@ public class TaskBoardsResource {
 
     @PutMapping("{boardId}/tasks/{taskId}/status")
     public TaskDto changeStatus(@PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatus newStatus) throws ObjectNotFoundException {
-        return taskDtoMapper.toDto(taskBoardsService.changeTaskStatus(boardId, taskId, newStatus));
+        Task task = taskBoardsService.changeTaskStatus(boardId, taskId, newStatus);
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskDtoMapper.toDto(task);
     }
 
     @DeleteMapping("{boardId}/tasks/{taskId}")
     public TaskDto deleteTask(@PathVariable UUID boardId, @PathVariable UUID taskId) throws ObjectNotFoundException {
-        return taskDtoMapper.toDto(taskBoardsService.deleteTask(boardId, taskId));
+        Task task = taskBoardsService.deleteTask(boardId, taskId);
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskDtoMapper.toDto(task);
     }
 
+    @GetMapping(value = "{boardId}/sse-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter streamBoardEvents(@PathVariable UUID boardId) {
+        return sseTaskBoardService.createConnection(boardId);
+    }
 }

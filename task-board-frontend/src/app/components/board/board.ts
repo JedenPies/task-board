@@ -22,12 +22,13 @@ export class Board implements OnInit {
   inProgressTasks = signal<TaskDto[]>([]);
   doneTasks = signal<TaskDto[]>([]);
 
-  // Obsługa kosza i powiadomień
   recentlyDeletedTask = signal<TaskDto | null>(null);
   private undoTimeoutId: any = null;
 
   private taskBoardService = inject(TaskBoard);
   private fb = inject(FormBuilder);
+
+  private eventSource: EventSource | null = null;
 
   taskForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
@@ -41,6 +42,25 @@ export class Board implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadBoardData();
+    this.eventSource = new EventSource(`http://localhost:8080/api/task-boards/${this.id()}/sse-stream`)
+    this.eventSource.addEventListener("REFRESH", (event) => {
+      console.log("Refresh odebrane");
+      this.loadBoardData();
+    });
+    this.eventSource.onerror = (error) => {
+      console.error("Błąd połączenia SSE:", error);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.eventSource) {
+      this.eventSource.close();
+      console.log("Połączenie SSE zamknięte;")
+    }
+  }
+
+  private loadBoardData() {
     this.taskBoardService.getBoard(this.id()).subscribe({
       next: (boardData) => {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
