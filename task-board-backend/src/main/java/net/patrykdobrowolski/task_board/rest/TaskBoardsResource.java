@@ -64,5 +64,9 @@ public class TaskBoardsResource {
         return taskDtoMapper.toDto(taskBoardsService.changeTaskStatus(boardId, taskId, newStatus));
     }
 
+    @DeleteMapping("{boardId}/tasks/{taskId}")
+    public TaskDto deleteTask(@PathVariable UUID boardId, @PathVariable UUID taskId) throws ObjectNotFoundException {
+        return taskDtoMapper.toDto(taskBoardsService.deleteTask(boardId, taskId));
+    }
 
 }

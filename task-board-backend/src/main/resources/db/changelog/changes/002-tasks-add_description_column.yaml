@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-description-column
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: tasks
+            columns:
+              - column:
+                  name: description
+                  type: varchar(50)

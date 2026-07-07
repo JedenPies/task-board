@@ -13,6 +13,7 @@ public class Task {
     private final UUID id;
 
     private String title;
+    private String description;
 
     @Setter
     private TaskStatus status;

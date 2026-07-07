@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: modify-title-length
+      author: patryk
+      changes:
+        - modifyDataType:
+            tableName: tasks
+            columnName: title
+            newDataType: varchar(30)

@@ -15,6 +15,7 @@ public class TaskEntity {
     @Id
     private UUID id;
     private String title;
+    private String description;
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 

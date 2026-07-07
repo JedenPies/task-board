@@ -2,6 +2,7 @@ package net.patrykdobrowolski.task_board.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,5 +29,11 @@ public class TaskBoard {
 
     public Optional<Task> taskById(UUID taskId) {
         return tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst();
+    }
+
+    public Task deleteTaskById(UUID taskId) throws ObjectNotFoundException {
+        Task found = tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst().orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
+        tasks.remove(found);
+        return found;
     }
 }

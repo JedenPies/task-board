@@ -1,0 +1,316 @@
+@use "sass:color";
+
+$bg-main: #f4f5f7;
+$bg-column: #ebecf0;
+$bg-card: #ffffff;
+$text-dark: #172b4d;
+$text-muted: #5e6c84;
+$accent-blue: #0052cc;
+$accent-blue-hover: #0747a6;
+
+$cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
+
+.board-detail-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: $bg-main;
+  min-height: 100vh;
+  scrollbar-gutter: stable;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    text-align: center;
+    color: $text-dark;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .kanban-board {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 1500px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+
+    .kanban-column {
+      background-color: $bg-column;
+      border-radius: 8px;
+      width: 450px;
+      min-width: 450px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+      h3 {
+        font-size: 16px;
+        color: $text-muted;
+        margin-top: 0;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .task-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 100px;
+        overflow: visible !important;
+
+        .task-card {
+          background-color: $bg-card;
+          border-radius: 6px;
+          padding: 12px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          border-left: 4px solid color.scale($accent-blue, $lightness: 15%);
+
+          transition: box-shadow 0.15s ease;
+          will-change: transform;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+
+          .task-content {
+            flex: 1;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+          }
+
+          h4 {
+            margin: 0 0 6px 0;
+            color: $text-dark;
+            font-size: 15px;
+          }
+
+          p {
+            margin: 0;
+            color: #6b778c;
+            font-size: 13px;
+            line-height: 1.4;
+          }
+        }
+
+        .empty-label {
+          text-align: center;
+          color: #a0aec0;
+          padding: 24px;
+          font-size: 0.9rem;
+          pointer-events: none;
+          transition: opacity 0.15s ease-in-out;
+        }
+
+        &:has(.cdk-drag-placeholder) {
+          .empty-label {
+            display: none !important;
+          }
+        }
+      }
+    }
+  }
+
+  .back-container {
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .btn-back {
+    background-color: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background-color: #cbd5e1;
+      color: $text-dark;
+    }
+  }
+
+  .add-task-container {
+    background: $bg-card;
+    padding: 16px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 1400px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    form {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .form-input {
+          padding: 10px 14px;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 0.95rem;
+          outline: none;
+          transition: border-color 0.2s;
+
+          &:focus {
+            border-color: $accent-blue;
+          }
+        }
+
+        .error-msg {
+          color: #de350b;
+          font-size: 0.75rem;
+          margin-top: 4px;
+        }
+      }
+
+      .btn-submit {
+        background-color: #00875a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          background-color: #006644;
+        }
+
+        &:disabled {
+          background-color: #dfe1e6;
+          color: #a5adba;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .btn-delete {
+    background: none;
+    border: none;
+    color: #a5adba;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    transition: color 0.2s, background-color 0.2s;
+    align-self: flex-start;
+
+    &:hover {
+      color: #de350b;
+      background-color: #ffebe6;
+    }
+  }
+
+  .snackbar-undo {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #172b4d;
+    color: #ffffff;
+    padding: 14px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    z-index: 9999;
+    font-size: 0.95rem;
+    animation: slideUp 0.3s cubic-bezier(0, 0, 0.2, 1);
+
+    .btn-undo {
+      background-color: #0052cc;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background-color 0.15s;
+
+      &:hover {
+        background-color: #0747a6;
+      }
+    }
+  }
+
+  @keyframes slideUp {
+    from { bottom: -60px; opacity: 0; }
+    to { bottom: 24px; opacity: 1; }
+  }
+}
+
+.cdk-drop-list-dragging .task-card {
+  transition: $cdk-transition !important;
+}
+
+.cdk-drag-animating {
+  transition: $cdk-transition !important;
+}
+
+.cdk-drag-preview {
+  background-color: #ffffff !important;
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23) !important;
+  border-left: 4px solid #0052cc;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  h4 {
+    margin: 0 0 6px 0;
+    color: #172b4d;
+    font-size: 15px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  p {
+    margin: 0;
+    color: #6b778c;
+    font-size: 13px;
+    line-height: 1.4;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .btn-delete {
+    display: none !important;
+  }
+}
+
+.cdk-drag-placeholder {
+  background: #dfe1e6 !important;
+  border: 2px dashed #a5adba !important;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: none !important;
+
+  * {
+    visibility: hidden !important;
+  }
+}

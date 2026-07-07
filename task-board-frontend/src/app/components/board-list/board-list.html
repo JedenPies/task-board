@@ -1,0 +1,17 @@
+<div class="boards-container">
+  <h2>Moje Tablice Kanban</h2>
+
+
+  <div class="boards-grid">
+    @for (board of boards(); track board.id) {
+      <div class="board-card" [routerLink]="['/board', board.id]" style="cursor:pointer;">
+        <h3>{{ board.name }}</h3>
+        <p class="board-id">ID: {{ board.id }}</p>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <p>Nie masz jeszcze żadnych tablic.</p>
+      </div>
+    }
+  </div>
+</div>
