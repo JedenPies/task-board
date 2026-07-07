@@ -40,7 +40,7 @@ export class Board implements OnInit {
   ngOnInit(): void {
     this.loadBoardData();
     this.eventSource = new EventSource(`http://localhost:8080/api/task-boards/${this.id()}/sse-stream`)
-    this.eventSource.addEventListener("REFRESH", (event) => {
+    this.eventSource.addEventListener("REFRESH", () => {
       console.log("Refresh odebrane");
       this.loadBoardData();
     });
@@ -180,11 +180,36 @@ export class Board implements OnInit {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         const tasks = boardData.tasks ?? [];
 
-        this.todoTasks.set(tasks.filter(t => t.status === 'TODO'));
-        this.inProgressTasks.set(tasks.filter(t => t.status === 'IN_PROGRESS'));
-        this.doneTasks.set(tasks.filter(t => t.status === 'DONE'));
+        this.todoTasks.set(this.mergeTasks(this.todoTasks(), tasks.filter(t => t.status === 'TODO')));
+        this.inProgressTasks.set(this.mergeTasks(this.inProgressTasks(), tasks.filter(t => t.status === 'IN_PROGRESS')));
+        this.doneTasks.set(this.mergeTasks(this.doneTasks(), tasks.filter(t => t.status === 'DONE')));
       },
       error: (err) => console.error(err)
     });
+  }
+
+  /**
+   * Scala dane z serwera z aktualną kolumną:
+   * - istniejące zadania (dopasowane po id) zostają na swoich miejscach, a ich dane są
+   *   aktualizowane w miejscu (ta sama referencja -> stabilny `track task` w szablonie),
+   * - zadania usunięte na serwerze są pomijane,
+   * - nowe zadania trafiają na koniec, w kolejności otrzymanej z serwera.
+   */
+  private mergeTasks(current: TaskDto[], incoming: TaskDto[]): TaskDto[] {
+    const incomingById = new Map(incoming.filter(t => !!t.id).map(t => [t.id, t]));
+
+    const kept: TaskDto[] = [];
+    for (const task of current) {
+      const fresh = task.id ? incomingById.get(task.id) : undefined;
+      if (fresh) {
+        Object.assign(task, fresh);
+        kept.push(task);
+      }
+    }
+
+    const keptIds = new Set(kept.map(t => t.id));
+    const added = incoming.filter(t => !t.id || !keptIds.has(t.id));
+
+    return [...kept, ...added];
   }
 }
