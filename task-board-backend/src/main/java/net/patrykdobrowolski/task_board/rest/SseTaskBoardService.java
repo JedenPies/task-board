@@ -11,15 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SseTaskBoardService {
 
-    private final Map<UUID, List<SseEmitter>> emitters = new ConcurrentHashMap<UUID, List<SseEmitter>>();
+    private final Map<UUID, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createConnection(UUID boardId) {
 
         SseEmitter emitter = new SseEmitter(900_000L);
-        this.emitters.computeIfAbsent(boardId, k -> Collections.synchronizedList(new ArrayList<SseEmitter>())).add(emitter);
+        this.emitters.computeIfAbsent(boardId, k -> Collections.synchronizedList(new ArrayList<>())).add(emitter);
         emitter.onCompletion(() -> removeEmitter(boardId, emitter));
         emitter.onTimeout(() -> removeEmitter(boardId, emitter));
-        emitter.onError((e) -> removeEmitter(boardId, emitter));
+        emitter.onError(e -> removeEmitter(boardId, emitter));
 
         try {
             emitter.send(SseEmitter.event().name("INIT").data("Connected to board: " + boardId));
@@ -42,10 +42,10 @@ public class SseTaskBoardService {
     private boolean sendNotification(SseEmitter emitter) {
         try {
             emitter.send(SseEmitter.event().name("REFRESH").data("refresh"));
-            return true; // Sukces, połączenie jest żywe
+            return true;
         } catch (IOException e) {
             emitter.complete();
-            return false; // Błąd, emiter kwalifikuje się do usunięcia przez removeIf
+            return false;
         }
     }
 

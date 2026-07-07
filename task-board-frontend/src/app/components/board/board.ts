@@ -23,6 +23,8 @@ export class Board implements OnInit {
   doneTasks = signal<TaskDto[]>([]);
 
   recentlyDeletedTask = signal<TaskDto | null>(null);
+  isEditingName = signal<boolean>(false);
+
   private undoTimeoutId: any = null;
 
   private taskBoardService = inject(TaskBoard);
@@ -34,12 +36,6 @@ export class Board implements OnInit {
     title: ['', [Validators.required, Validators.minLength(3)]],
     description: ['']
   });
-
-  private getSignalByStatus(status: TaskStatus) {
-    if (status === 'TODO') return this.todoTasks;
-    if (status === 'IN_PROGRESS') return this.inProgressTasks;
-    return this.doneTasks;
-  }
 
   ngOnInit(): void {
     this.loadBoardData();
@@ -60,18 +56,26 @@ export class Board implements OnInit {
     }
   }
 
-  private loadBoardData() {
-    this.taskBoardService.getBoard(this.id()).subscribe({
-      next: (boardData) => {
-        this.boardName.set(boardData.name ?? 'Tablica Kanban');
-        const tasks = boardData.tasks ?? [];
+  onUpdateBoardName(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const newName = inputElement.value.trim();
+    const oldName = this.boardName();
 
-        this.todoTasks.set(tasks.filter(t => t.status === 'TODO'));
-        this.inProgressTasks.set(tasks.filter(t => t.status === 'IN_PROGRESS'));
-        this.doneTasks.set(tasks.filter(t => t.status === 'DONE'));
+    this.isEditingName.set(false);
+    if (!newName || newName === this.boardName()) {
+      return;
+    }
+    this.boardName.set(newName);
+
+    this.taskBoardService.updateBoardName(this.id(), newName).subscribe({
+      next: () => {
+        console.log("Nazwa zaktualizowana");
       },
-      error: (err) => console.error(err)
-    });
+      error: (err) => {
+        console.error("Błąd zapisu nazwy tablicy: ", err);
+        this.boardName.set(oldName);
+      }
+    })
   }
 
   onTaskDrop(event: CdkDragDrop<TaskDto[]>, targetStatus: TaskStatus): void {
@@ -162,5 +166,25 @@ export class Board implements OnInit {
         error: (err) => console.error(err)
       });
     }
+  }
+
+  private getSignalByStatus(status: TaskStatus) {
+    if (status === 'TODO') return this.todoTasks;
+    if (status === 'IN_PROGRESS') return this.inProgressTasks;
+    return this.doneTasks;
+  }
+
+  private loadBoardData() {
+    this.taskBoardService.getBoard(this.id()).subscribe({
+      next: (boardData) => {
+        this.boardName.set(boardData.name ?? 'Tablica Kanban');
+        const tasks = boardData.tasks ?? [];
+
+        this.todoTasks.set(tasks.filter(t => t.status === 'TODO'));
+        this.inProgressTasks.set(tasks.filter(t => t.status === 'IN_PROGRESS'));
+        this.doneTasks.set(tasks.filter(t => t.status === 'DONE'));
+      },
+      error: (err) => console.error(err)
+    });
   }
 }

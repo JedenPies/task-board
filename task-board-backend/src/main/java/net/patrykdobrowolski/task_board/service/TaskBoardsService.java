@@ -61,10 +61,19 @@ public class TaskBoardsService {
         return board.taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
     }
 
+    @Transactional
     public Task deleteTask(UUID boardId, UUID taskId) throws ObjectNotFoundException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
         Task task = board.deleteTaskById(taskId);
         repositoryService.save(board);
         return task;
+    }
+
+    @Transactional
+    public TaskBoard changeName(UUID boardId, String newName) throws ObjectNotFoundException {
+        TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
+        board.changeName(newName);
+        repositoryService.save(board);
+        return board;
     }
 }

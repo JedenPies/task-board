@@ -31,4 +31,9 @@ export class TaskBoard {
   deleteTask(boardId: string, taskId: string): Observable<void> {
     return this.http.delete<void>(this.apiUrl + '/' + boardId + '/tasks/' + taskId);
   }
+
+  updateBoardName(boardId: string, newName: string): Observable<void> {
+    return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', `${newName}`,
+      { headers: { 'Content-Type': 'application/json' }});
+  }
 }

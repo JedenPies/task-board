@@ -36,4 +36,9 @@ public class TaskBoard {
         tasks.remove(found);
         return found;
     }
+
+    public void changeName(String newName) {
+        this.name = newName;
+
+    }
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
-import java.util.SequencedSet;
 import java.util.UUID;
 
 @RestController
@@ -69,6 +68,13 @@ public class TaskBoardsResource {
         Task task = taskBoardsService.changeTaskStatus(boardId, taskId, newStatus);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskDtoMapper.toDto(task);
+    }
+
+    @PutMapping("{boardId}/name")
+    public TaskBoardDto changeBoardName(@PathVariable UUID boardId, @RequestBody String newName) throws ObjectNotFoundException {
+        TaskBoard result = taskBoardsService.changeName(boardId, newName);
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskBoardMapper.toDto(result);
     }
 
     @DeleteMapping("{boardId}/tasks/{taskId}")

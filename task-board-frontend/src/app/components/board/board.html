@@ -3,7 +3,20 @@
     <button routerLink="/" class="btn-back">← Powrót do tablic</button>
   </div>
 
-  <h2>{{ boardName() }}</h2>
+  <div class="board-header">
+    @if (!isEditingName()) {
+      <h1 class="board-title" (click)="isEditingName.set(true)">{{ boardName() }}</h1>
+    } @else {
+    <input
+      type="text"
+      [value]="boardName()"
+      class="board-title-input"
+      autofocus
+      (keyup.enter)="onUpdateBoardName($event)"
+      (keyup.escape)="isEditingName.set(false)"
+      (blur)="onUpdateBoardName($event)" />
+    }
+  </div>
 
   <div class="add-task-container">
     <form [formGroup]="taskForm" (ngSubmit)="onAddTask()">
