@@ -1,15 +1,9 @@
-$bg-main: #f4f5f7;
-$bg-card: #ffffff;
-$text-dark: #172b4d;
-$text-muted: #5e6c84;
-$accent-blue: #0052cc;
-$accent-blue-hover: #0747a6;
+@use "../../../variables" as *;
 
 .boards-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,7 +56,7 @@ $accent-blue-hover: #0747a6;
       font-family: 'Courier New', Courier, monospace;
       font-size: 0.8rem;
       color: $text-muted;
-      background: #f4f5f7;
+      background: $bg-main;
       padding: 4px 8px;
       border-radius: 4px;
       align-self: flex-start;

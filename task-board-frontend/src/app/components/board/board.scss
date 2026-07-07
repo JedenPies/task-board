@@ -1,18 +1,10 @@
 @use "sass:color";
-
-$bg-main: #f4f5f7;
-$bg-column: #ebecf0;
-$bg-card: #ffffff;
-$text-dark: #172b4d;
-$text-muted: #5e6c84;
-$accent-blue: #0052cc;
-$accent-blue-hover: #0747a6;
+@use "../../../variables" as *;
 
 $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
 .board-detail-container {
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: $bg-main;
   min-height: 100vh;
   scrollbar-gutter: stable;
@@ -69,8 +61,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
           border-left: 4px solid color.scale($accent-blue, $lightness: 15%);
 
-          transition: box-shadow 0.15s ease;
-          will-change: transform;
+          transition: box-shadow 0.15s ease, transform 0.15s ease;
 
           display: flex;
           justify-content: space-between;
@@ -84,6 +75,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
           &:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            will-change: transform;
           }
 
           h4 {
@@ -94,7 +86,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
           p {
             margin: 0;
-            color: #6b778c;
+            color: $text-secondary;
             font-size: 13px;
             line-height: 1.4;
           }
@@ -231,8 +223,8 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #172b4d;
-    color: #ffffff;
+    background-color: $text-dark;
+    color: $bg-card;
     padding: 14px 24px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -244,7 +236,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
     animation: slideUp 0.3s cubic-bezier(0, 0, 0.2, 1);
 
     .btn-undo {
-      background-color: #0052cc;
+      background-color: $accent-blue;
       color: white;
       border: none;
       padding: 6px 14px;
@@ -255,7 +247,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
       transition: background-color 0.15s;
 
       &:hover {
-        background-color: #0747a6;
+        background-color: $accent-blue-hover;
       }
     }
   }
@@ -275,28 +267,26 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .cdk-drag-preview {
-  background-color: #ffffff !important;
+  background-color: $bg-card !important;
   border-radius: 6px;
   padding: 12px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23) !important;
-  border-left: 4px solid #0052cc;
+  border-left: 4px solid $accent-blue;
   display: flex;
   align-items: center;
   gap: 10px;
 
   h4 {
     margin: 0 0 6px 0;
-    color: #172b4d;
+    color: $text-dark;
     font-size: 15px;
-    font-family: 'Segoe UI', sans-serif;
   }
 
   p {
     margin: 0;
-    color: #6b778c;
+    color: $text-secondary;
     font-size: 13px;
     line-height: 1.4;
-    font-family: 'Segoe UI', sans-serif;
   }
   .btn-delete {
     display: none !important;
