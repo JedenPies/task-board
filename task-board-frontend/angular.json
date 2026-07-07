@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "tasks-list-frontend": {
+    "task-board-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "tasks-list-frontend:build:production"
+              "buildTarget": "task-board-frontend:build:production"
             },
             "development": {
-              "buildTarget": "tasks-list-frontend:build:development"
+              "buildTarget": "task-board-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

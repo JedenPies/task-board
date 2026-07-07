@@ -14,7 +14,9 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Zezwalaj na wszystkie endpointy w aplikacji
-                        .allowedOrigins("http://localhost:4200") // Adres Twojego Angulara
+                        // ng serve (4200) oraz frontend z kontenera nginx (port 80 -> Origin "http://localhost").
+                        // allowedOriginPatterns zamiast allowedOrigins, bo przy allowCredentials(true) wildcard w allowedOrigins jest niedozwolony.
+                        .allowedOriginPatterns("http://localhost:4200", "http://localhost", "http://localhost:*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Wyraźnie dodajemy PUT oraz OPTIONS!
                         .allowedHeaders("*") // Akceptuj wszystkie nagłówki (Content-Type itp.)
                         .allowCredentials(true);

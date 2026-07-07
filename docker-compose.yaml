@@ -3,7 +3,7 @@ version: '3.8'
 services:
   task-board-pg:
     image: postgres:17-alpine
-    container_name: tasks-board-pg
+    container_name: task-board-pg
     environment:
       POSTGRES_USER: patryk
       POSTGRES_PASSWORD: patryk123
@@ -20,7 +20,7 @@ services:
       context: task-board-backend
       dockerfile: Dockerfile
     image: task-board-backend
-    container_name: tasks-board-backend
+    container_name: task-board-backend
     ports:
       - "8080:8080"
     environment:
@@ -34,17 +34,18 @@ services:
     depends_on:
       - task-board-pg
 
-#  task-board-frontend:
-#    build:
-#      context: task-board-frontend
-#      dockerfile: Dockerfile
-#    container_name: task-board-frontend
-#    ports:
-#      - "80:80"
-#    networks:
-#      - task-board-network
-#    depends_on:
-#      - task-board-backend
+  task-board-frontend:
+    build:
+      context: task-board-frontend
+      dockerfile: Dockerfile
+    image: task-board-frontend
+    container_name: task-board-frontend
+    ports:
+      - "80:80"
+    networks:
+      - task-board-network
+    depends_on:
+      - task-board-backend
 
 volumes:
   task-board-pg-data:
