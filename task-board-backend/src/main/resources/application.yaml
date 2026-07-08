@@ -1,6 +1,6 @@
 spring:
   application:
-    name: task-list
+    name: task-board-backend
   datasource:
     url: jdbc:postgresql://${POSTGRES_TASK_BOARD_HOST:localhost}:${POSTGRES_TASK_BOARD_PORT:5432}/${POSTGRES_TASK_BOARD_DATABASE:task_board}
     username: ${POSTGRES_TASK_BOARD_USERNAME:patryk}

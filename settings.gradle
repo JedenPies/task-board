@@ -1,2 +1,3 @@
 rootProject.name = 'task-board'
 include 'task-board-backend'
+include 'task-board-auth'

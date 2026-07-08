@@ -1,4 +1,4 @@
-package net.patrykdobrowolski.task_board;
+package net.patrykdobrowolski.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

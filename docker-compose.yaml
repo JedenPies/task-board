@@ -15,6 +15,20 @@ services:
     networks:
       - task-board-network
 
+  task-board-auth-pg:
+    image: postgres:17-alpine
+    container_name: task-board-auth-pg
+    environment:
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: auth123
+      POSTGRES_DB: task_board_auth
+    ports:
+      - "5433:5432"
+    volumes:
+      - task-board-auth-pg-data:/var/lib/postgresql/data
+    networks:
+      - task-board-network
+
   task-board-backend:
     build:
       context: task-board-backend
@@ -49,6 +63,7 @@ services:
 
 volumes:
   task-board-pg-data:
+  task-board-auth-pg-data:
 
 networks:
   task-board-network:
