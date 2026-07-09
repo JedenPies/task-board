@@ -25,6 +25,11 @@ public class UserTokenEntity {
     private String refreshToken;
     private Instant validUntil;
 
+    private Instant usedAt;
+    @Builder.Default
+    private Boolean isRevoked = false;
+    private String replacedBy;
+
     @PrePersist
     protected void generateId() {
         this.id = UUID.randomUUID();

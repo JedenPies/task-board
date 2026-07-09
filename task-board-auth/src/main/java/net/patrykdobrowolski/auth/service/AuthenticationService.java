@@ -1,13 +1,11 @@
 package net.patrykdobrowolski.auth.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.auth.db.repository.UserTokensRepositoryService;
 import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
-import net.patrykdobrowolski.auth.domain.AuthenticationRequest;
-import net.patrykdobrowolski.auth.domain.TokensPair;
-import net.patrykdobrowolski.auth.domain.User;
-import net.patrykdobrowolski.auth.domain.UserToken;
+import net.patrykdobrowolski.auth.domain.*;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,11 +33,26 @@ public class AuthenticationService {
         dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
     }
 
-    public TokensPair authenticate(AuthenticationRequest request) throws InvalidCredentialsException {
+    public TokensPair authenticate(AuthenticateWithPasswordCommand request) throws InvalidCredentialsException {
         User userFound = usersRepository.findByLogin(request.login()).orElseThrow(this::invalidCredentialsExceptionAfterEmptyHashing);
         checkPassword(userFound, request.password());
-        TokensPair tokensPair = generateTokens(userFound);
-        registerToken(userFound, tokensPair);
+        return generateAndRegisterTokens(userFound);
+    }
+
+    @Transactional
+    public TokensPair refresh(String oldToken) throws InvalidRefreshTokenException {
+        UserToken current = userTokensRepository.findByRefreshToken(oldToken).orElseThrow(InvalidRefreshTokenException::new);
+        Optional<String> replacement = current.use(clock);
+        TokensPair newTokensPair = replacement.isEmpty()
+            ? replaceWithNew(current)
+            : generateAccessToken(current.getUser(), replacement.get());
+        userTokensRepository.save(current);
+        return newTokensPair;
+    }
+
+    private @NonNull TokensPair replaceWithNew(UserToken current) {
+        TokensPair tokensPair = generateAndRegisterTokens(current.getUser());
+        current.replacedBy(tokensPair.refreshToken());
         return tokensPair;
     }
 
@@ -53,10 +67,17 @@ public class AuthenticationService {
         }
     }
 
-    private TokensPair generateTokens(User userFound) {
+    private TokensPair generateAndRegisterTokens(User userFound) {
+        String refreshToken = tokenGenerator.generateRefreshToken(userFound);
+        TokensPair tokensPair = generateAccessToken(userFound, refreshToken);
+        registerToken(userFound, tokensPair);
+        return tokensPair;
+    }
+
+    private TokensPair generateAccessToken(User userFound, String refreshToken) {
         return TokensPair.builder()
                 .accessToken(tokenGenerator.generateAccessToken(userFound))
-                .refreshToken(tokenGenerator.generateRefreshToken(userFound))
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -64,7 +85,8 @@ public class AuthenticationService {
         UserToken newToken = UserToken.builder()
                 .user(userFound)
                 .refreshToken(result.refreshToken())
-                .validUntil(Instant.now(clock).plus(30, ChronoUnit.DAYS)).build();
+                .validUntil(Instant.now(clock).plus(30, ChronoUnit.DAYS))
+                .build();
         userTokensRepository.save(newToken);
     }
 }

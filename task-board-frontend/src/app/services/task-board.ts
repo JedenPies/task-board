@@ -6,7 +6,7 @@ import {TaskBoardDto, TaskDto, TaskStatus} from '../models/board.model';
 @Service()
 export class TaskBoard {
 
-  private apiUrl = 'http://localhost:8080/api/task-boards'
+  private apiUrl = 'http://localhost:8081/api/task-boards'
   private http = inject(HttpClient)
 
   constructor() {}

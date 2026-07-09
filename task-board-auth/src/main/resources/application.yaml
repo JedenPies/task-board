@@ -13,3 +13,7 @@ spring:
   liquibase:
     enabled: true
     default-schema: public
+
+jwt:
+  secret: "ToJestMojBardzoSuperTajnyKluczKtoregoNiktNieZgadnie12345!@#$%"
+  expiration-ms: 900000

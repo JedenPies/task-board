@@ -12,4 +12,5 @@ public interface EntityMapper {
     User fromEntity(UserEntity userEntity);
     UserEntity toEntity(User user);
     UserTokenEntity toEntity(UserToken token);
+    UserToken fromEntity(UserTokenEntity userTokenEntity);
 }

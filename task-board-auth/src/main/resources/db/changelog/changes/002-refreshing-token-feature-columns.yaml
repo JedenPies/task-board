@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-new-user-tokens-columns
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: user_tokens
+            columns:
+              - column:
+                  name: used_at
+                  type: timestamp with time zone
+              - column:
+                  name: is_revoked
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: replaced_by
+                  type: varchar(255)
