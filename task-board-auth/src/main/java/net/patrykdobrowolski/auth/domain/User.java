@@ -1,12 +1,13 @@
 package net.patrykdobrowolski.auth.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.UUID;
 
 @AllArgsConstructor
-@Getter
+@Getter @Builder
 public class User {
 
     private UUID id;

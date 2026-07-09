@@ -15,14 +15,10 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String login;
     @Getter
     private String passwordEncoded;
-
-    @PrePersist
-    protected void generateId() {
-        this.id = UUID.randomUUID();
-    }
 }

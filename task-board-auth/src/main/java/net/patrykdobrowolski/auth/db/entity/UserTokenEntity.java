@@ -16,6 +16,7 @@ import java.util.UUID;
 public class UserTokenEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
@@ -29,9 +30,4 @@ public class UserTokenEntity {
     @Builder.Default
     private Boolean isRevoked = false;
     private String replacedBy;
-
-    @PrePersist
-    protected void generateId() {
-        this.id = UUID.randomUUID();
-    }
 }
