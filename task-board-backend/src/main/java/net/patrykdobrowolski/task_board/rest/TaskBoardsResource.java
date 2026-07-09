@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.task_board.domain.Task;
 import net.patrykdobrowolski.task_board.domain.TaskBoard;
 import net.patrykdobrowolski.task_board.domain.TaskStatus;
+import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardDto;
@@ -36,13 +37,13 @@ public class TaskBoardsResource {
     }
 
     @GetMapping("/{boardId}")
-    public TaskBoardDto getBoard(@PathVariable UUID boardId) throws ObjectNotFoundException {
+    public TaskBoardDto getBoard(@PathVariable UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
         return taskBoardMapper.toDto(taskBoardsService.findBoard(boardId));
     }
 
     @PostMapping("/{boardId}/tasks")
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody TaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException {
+    public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody TaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
         Task task = taskDtoMapper.fromDto(taskDto);
         Task result = taskBoardsService.addTaskToBoard(boardId, task);
         sseTaskBoardService.broadcastBoardChange(boardId);
@@ -58,27 +59,27 @@ public class TaskBoardsResource {
     }
 
     @GetMapping("{boardId}/tasks/{taskId}")
-    public TaskDto findTask(@PathVariable UUID boardId, @PathVariable UUID taskId) throws ObjectNotFoundException {
+    public TaskDto findTask(@PathVariable UUID boardId, @PathVariable UUID taskId) throws ObjectNotFoundException, AccessDeniedException {
         return taskDtoMapper.toDto(taskBoardsService.findTask(boardId, taskId));
     }
 
 
     @PutMapping("{boardId}/tasks/{taskId}/status")
-    public TaskDto changeStatus(@PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatus newStatus) throws ObjectNotFoundException {
+    public TaskDto changeStatus(@PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException {
         Task task = taskBoardsService.changeTaskStatus(boardId, taskId, newStatus);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskDtoMapper.toDto(task);
     }
 
     @PutMapping("{boardId}/name")
-    public TaskBoardDto changeBoardName(@PathVariable UUID boardId, @RequestBody String newName) throws ObjectNotFoundException {
+    public TaskBoardDto changeBoardName(@PathVariable UUID boardId, @RequestBody String newName) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard result = taskBoardsService.changeName(boardId, newName);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskBoardMapper.toDto(result);
     }
 
     @DeleteMapping("{boardId}/tasks/{taskId}")
-    public TaskDto deleteTask(@PathVariable UUID boardId, @PathVariable UUID taskId) throws ObjectNotFoundException {
+    public TaskDto deleteTask(@PathVariable UUID boardId, @PathVariable UUID taskId) throws ObjectNotFoundException, AccessDeniedException {
         Task task = taskBoardsService.deleteTask(boardId, taskId);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskDtoMapper.toDto(task);

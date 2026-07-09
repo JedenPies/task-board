@@ -2,7 +2,7 @@ spring:
   application:
     name: task-board-auth
   datasource:
-    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_AUTH_HOST:localhost}:${POSTGRES_TASK_BOARD_AUTH_PORT:5433}/${POSTGRES_TASK_BOARD_AUTH_DATABASE:task_board_auth}
+    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_AUTH_HOST:localhost}:${POSTGRES_TASK_BOARD_AUTH_PORT:5432}/${POSTGRES_TASK_BOARD_AUTH_DATABASE:task_board_auth}
     username: ${POSTGRES_TASK_BOARD_AUTH_USERNAME:auth}
     password: ${POSTGRES_TASK_BOARD_AUTH_PASSWORD:auth123}
   jpa:

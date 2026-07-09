@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-board-ownership
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: task_boards
+            columns:
+              - column:
+                  name: owner
+                  type: varchar(200)
+                  defaultValue: 'SYSTEM'
+                  constraints:
+                    nullable: false
+

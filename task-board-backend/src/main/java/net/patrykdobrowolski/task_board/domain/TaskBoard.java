@@ -2,6 +2,8 @@ package net.patrykdobrowolski.task_board.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.With;
+import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 
 import java.util.Collections;
@@ -23,6 +25,10 @@ public class TaskBoard {
        tasks.add(task);
     }
 
+    @With
+    @Getter
+    private String owner;
+
     public List<Task> getTasks() {
         return Collections.unmodifiableList(Optional.ofNullable(tasks).orElseGet(Collections::emptyList));
     }
@@ -39,6 +45,15 @@ public class TaskBoard {
 
     public void changeName(String newName) {
         this.name = newName;
+    }
 
+    public boolean isAllowedToEdit(UserContext userContext) {
+        return owner.equals(userContext.getUserName());
+    }
+
+    public void checkEditPermissions(UserContext userContext) throws AccessDeniedException {
+        if (!isAllowedToEdit(userContext)) {
+            throw new AccessDeniedException();
+        }
     }
 }

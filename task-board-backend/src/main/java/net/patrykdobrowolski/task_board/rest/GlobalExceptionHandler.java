@@ -1,5 +1,6 @@
 package net.patrykdobrowolski.task_board.rest;
 
+import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 import net.patrykdobrowolski.task_board.rest.dto.ErrorDto;
@@ -44,5 +45,11 @@ public class GlobalExceptionHandler {
                     builder.detail(ErrorDto.Detail.builder().message(detailMessage).build());
                 });
         return builder.message("Validation exception").build();
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDto onAccessDeniedException() {
+        return ErrorDto.builder().message("Access denied").build();
     }
 }

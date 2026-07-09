@@ -22,4 +22,6 @@ public class TaskBoardEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "taskBoard")
     private List<TaskEntity> tasks;
+
+    private String owner;
 }

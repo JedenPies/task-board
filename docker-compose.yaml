@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-  task-board-pg:
-    image: postgres:17-alpine
-    container_name: task-board-pg
-    environment:
-      POSTGRES_USER: patryk
-      POSTGRES_PASSWORD: patryk123
-      POSTGRES_DB: task_board
-    ports:
-      - "5432:5432"
-    volumes:
-      - task-board-pg-data:/var/lib/postgresql/data
-    networks:
-      - task-board-network
 
   task-board-auth-pg:
     image: postgres:17-alpine
@@ -23,9 +10,42 @@ services:
       POSTGRES_PASSWORD: auth123
       POSTGRES_DB: task_board_auth
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - task-board-auth-pg-data:/var/lib/postgresql/data
+    networks:
+      - task-board-network
+
+  task-board-auth:
+    build:
+      context: task-board-auth
+      dockerfile: Dockerfile
+    image: task-board-auth
+    container_name: task-board-auth
+    ports:
+      - "8080:8080"
+    environment:
+      - POSTGRES_TASK_BOARD_AUTH_HOST=task-board-auth-pg
+      - POSTGRES_TASK_BOARD_AUTH_PORT=5432
+      - POSTGRES_TASK_BOARD_AUTH_DATABASE=task_board_auth
+      - POSTGRES_TASK_BOARD_AUTH_USERNAME=auth
+      - POSTGRES_TASK_BOARD_AUTH_PASSWORD=auth123
+    networks:
+      - task-board-network
+    depends_on:
+      - task-board-auth-pg
+
+  task-board-backend-pg:
+    image: postgres:17-alpine
+    container_name: task-board-backend-pg
+    environment:
+      POSTGRES_USER: patryk
+      POSTGRES_PASSWORD: patryk123
+      POSTGRES_DB: task_board
+    ports:
+      - "5433:5432"
+    volumes:
+      - task-board-backend-pg-data:/var/lib/postgresql/data
     networks:
       - task-board-network
 
@@ -36,9 +56,9 @@ services:
     image: task-board-backend
     container_name: task-board-backend
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
-      - POSTGRES_TASK_BOARD_HOST=task-board-pg
+      - POSTGRES_TASK_BOARD_HOST=task-board-backend-pg
       - POSTGRES_TASK_BOARD_PORT=5432
       - POSTGRES_TASK_BOARD_DATABASE=task_board
       - POSTGRES_TASK_BOARD_USERNAME=patryk
@@ -46,7 +66,7 @@ services:
     networks:
       - task-board-network
     depends_on:
-      - task-board-pg
+      - task-board-backend-pg
 
   task-board-frontend:
     build:
@@ -62,7 +82,7 @@ services:
       - task-board-backend
 
 volumes:
-  task-board-pg-data:
+  task-board-backend-pg-data:
   task-board-auth-pg-data:
 
 networks:

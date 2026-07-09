@@ -17,8 +17,8 @@ public class TaskBoardsRepositoryService {
     private final TaskBoardsRepository repository;
     private final TaskBoardEntityMapper mapper;
 
-    public List<TaskBoard> findAllBoards() {
-        return repository.findAll().stream().map(mapper::fromEntity).toList();
+    public List<TaskBoard> findAllBoards(String owner) {
+        return repository.findAllByOwner(owner).stream().map(mapper::fromEntity).toList();
     }
 
     public Optional<TaskBoard> findById(UUID id) {

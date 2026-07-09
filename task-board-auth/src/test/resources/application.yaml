@@ -10,4 +10,5 @@ spring:
       ddl-auto: create-drop
 jwt:
   secret: "ToJestMojBardzoSuperTajnyKluczKtoregoNiktNieZgadnie12345!@#$%"
+  expiration-ms: 900000
 
