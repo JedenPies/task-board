@@ -55,10 +55,10 @@ class AuthenticationServiceTest {
     void shouldThrowInvalidCredentialsAndPreventTimingAttackWhenUserNotFound() {
 
         // given
-        String login = "unknown_user";
-        AuthenticateWithPasswordCommand command = new AuthenticateWithPasswordCommand(login, "password123");
+        String username = "unknown_user";
+        AuthenticateWithPasswordCommand command = new AuthenticateWithPasswordCommand(username, "password123");
 
-        when(usersRepository.findByLogin(login)).thenReturn(Optional.empty());
+        when(usersRepository.findByUsername(username)).thenReturn(Optional.empty());
         when(passwordEncoder.matches(anyString(), eq(DUMMY_HASH_VALUE))).thenReturn(false);
 
         // when
@@ -71,14 +71,14 @@ class AuthenticationServiceTest {
     @Test
     void shouldThrowInvalidCredentialsWhenPasswordIsWrong() {
         // given
-        String login = "existing_user";
+        String username = "existing_user";
         String wrongPassword = "wrongPassword";
         String encodedRealPassword = "encodedRealPassword";
-        AuthenticateWithPasswordCommand command = new AuthenticateWithPasswordCommand(login, wrongPassword);
+        AuthenticateWithPasswordCommand command = new AuthenticateWithPasswordCommand(username, wrongPassword);
 
-        User user = User.builder().login(login).passwordEncoded(encodedRealPassword).build();
+        User user = User.builder().username(username).passwordEncoded(encodedRealPassword).build();
 
-        when(usersRepository.findByLogin(login)).thenReturn(Optional.of(user));
+        when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(wrongPassword, encodedRealPassword)).thenReturn(false);
 
         // when & then
@@ -88,14 +88,14 @@ class AuthenticationServiceTest {
     @Test
     void shouldAuthenticateAndReturnTokensWhenCredentialsAreValid() throws InvalidCredentialsException {
         // given
-        String login = "existing_user";
+        String username = "existing_user";
         String correctPassword = "correctPassword";
         String encodedRealPassword = "encodedRealPassword";
-        AuthenticateWithPasswordCommand command = new AuthenticateWithPasswordCommand(login, correctPassword);
+        AuthenticateWithPasswordCommand command = new AuthenticateWithPasswordCommand(username, correctPassword);
 
-        User user = User.builder().login(login).passwordEncoded(encodedRealPassword).build();
+        User user = User.builder().username(username).passwordEncoded(encodedRealPassword).build();
 
-        when(usersRepository.findByLogin(login)).thenReturn(Optional.of(user));
+        when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(correctPassword, encodedRealPassword)).thenReturn(true);
         when(tokenGenerator.generateRefreshToken(user)).thenReturn("new-refresh-token");
         when(tokenGenerator.generateAccessToken(user)).thenReturn("new-access-token");
@@ -126,7 +126,7 @@ class AuthenticationServiceTest {
     void shouldGenerateNewTokensAndRevokeOldWhenRefreshingValidToken() throws InvalidRefreshTokenException {
         // given
         String oldToken = "valid-old-token";
-        User user = User.builder().login("test_user").build();
+        User user = User.builder().username("test_user").build();
 
         UserToken currentToken = mock(UserToken.class);
 
@@ -156,7 +156,7 @@ class AuthenticationServiceTest {
         // given
         String oldToken = "revoked-but-in-grace-period-token";
         String replacementRefreshToken = "already-generated-replacement-token";
-        User user = User.builder().login("test_user").build();
+        User user = User.builder().username("test_user").build();
 
         UserToken currentToken = mock(UserToken.class);
 

@@ -8,6 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized @Getter
 public class NewUserDto {
 
-    private final String login;
+    private final String username;
     private final String password;
 }

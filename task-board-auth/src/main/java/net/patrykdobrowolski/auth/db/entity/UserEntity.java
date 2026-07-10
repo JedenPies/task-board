@@ -18,7 +18,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String login;
+    private String username;
     @Getter
     private String passwordEncoded;
 }

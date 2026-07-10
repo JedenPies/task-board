@@ -11,6 +11,6 @@ import java.util.UUID;
 public class User {
 
     private UUID id;
-    private String login;
+    private String username;
     private String passwordEncoded;
 }

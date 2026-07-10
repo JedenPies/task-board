@@ -44,7 +44,7 @@ class AuthenticationResourceIT {
     @BeforeEach
     void setUp() {
         User user = User.builder()
-                .login(TEST_USER)
+                .username(TEST_USER)
                 .passwordEncoded(passwordEncoder.encode(TEST_PASSWORD))
                 .build();
         usersRepositoryService.save(user);
@@ -94,13 +94,13 @@ class AuthenticationResourceIT {
     void shouldRefreshTokensUsingCookie() throws Exception {
         // given - Najpierw logujemy się, żeby zdobyć validujący Refresh Token w ciasteczku
         AuthenticateCommandDto command = new AuthenticateCommandDto(TEST_USER, TEST_PASSWORD);
-        MvcResult loginResult = mockMvc.perform(post("/api/authentication")
+        MvcResult authResult = mockMvc.perform(post("/api/authentication")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(command)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Cookie refreshTokenCookie = loginResult.getResponse().getCookie("refresh_token");
+        Cookie refreshTokenCookie = authResult.getResponse().getCookie("refresh_token");
         assertThat(refreshTokenCookie).isNotNull();
 
         // when - Wywołujemy endpoint refresh przekazując pozyskane ciasteczko

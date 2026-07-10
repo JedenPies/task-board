@@ -34,7 +34,7 @@ public class AuthenticationService {
     }
 
     public TokensPair authenticate(AuthenticateWithPasswordCommand request) throws InvalidCredentialsException {
-        User userFound = usersRepository.findByLogin(request.login()).orElseThrow(this::invalidCredentialsExceptionAfterEmptyHashing);
+        User userFound = usersRepository.findByUsername(request.username()).orElseThrow(this::invalidCredentialsExceptionAfterEmptyHashing);
         checkPassword(userFound, request.password());
         return generateAndRegisterTokens(userFound);
     }

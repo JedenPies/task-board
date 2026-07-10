@@ -14,8 +14,8 @@ public class UsersRepositoryService {
     private final UsersRepository usersRepository;
     private final EntityMapper entityMapper;
 
-    public Optional<User> findByLogin(String login) {
-        return usersRepository.findByLogin(login).map(entityMapper::fromEntity);
+    public Optional<User> findByUsername(String username) {
+        return usersRepository.findByUsername(username).map(entityMapper::fromEntity);
     }
 
     public User save(User user) {
