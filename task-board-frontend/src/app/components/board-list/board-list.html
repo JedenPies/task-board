@@ -1,17 +1,54 @@
-<div class="boards-container">
-  <h2>Moje Tablice Kanban</h2>
+<section class="create-board-section">
+  <h2>Utwórz nową tablicę</h2>
+  <form (submit)="createBoard(); $event.preventDefault()">
+    <input type="text" [(ngModel)]="newBoardTitle" name="title" required placeholder="Nazwa tablicy">
+    <button type="submit">Dodaj tablicę</button>
+  </form>
+</section>
 
+<hr/>
 
-  <div class="boards-grid">
-    @for (board of boards(); track board.id) {
-      <div class="board-card" [routerLink]="['/board', board.id]" style="cursor:pointer;">
-        <h3>{{ board.name }}</h3>
-        <p class="board-id">ID: {{ board.id }}</p>
-      </div>
-    } @empty {
-      <div class="empty-state">
+@if (authService.isLoggedIn()) {
+  <section class="logged-in-section">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2>Twoje tablice</h2>
+      <button (click)="logout()">Wyloguj się</button>
+    </header>
+    <ul class="boards-list">
+      @for (board of boards(); track board.id) {
+        <li>
+          <a [routerLink]="['/board', board.id]">{{ board.name }}</a>
+        </li>
+      } @empty {
         <p>Nie masz jeszcze żadnych tablic.</p>
+      }
+    </ul>
+
+  </section>
+} @else {
+  <section class="login-section">
+    <h2>Zaloguj się, aby zobaczyć listę tablic</h2>
+
+    <form (submit)="login(); $event.preventDefault()">
+      <div style="margin-bottom: 10px;">
+        <label for="username">Login:</label>
+        <input type="text" id="username" name="username" [(ngModel)]="username" required>
       </div>
-    }
-  </div>
-</div>
+
+      <div style="margin-bottom: 10px;">
+        <label for="password">Hasło:</label>
+        <input type="password" id="password" name="password" [(ngModel)]="password" required>
+      </div>
+
+      @if (loginError()) {
+        <div style="color: red; margin-bottom: 10px;">
+          {{ loginError() }}
+        </div>
+      }
+
+      <button type="submit">Zaloguj</button>
+    </form>
+  </section>
+}
+
+

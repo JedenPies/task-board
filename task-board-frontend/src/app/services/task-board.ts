@@ -4,15 +4,19 @@ import {Observable} from 'rxjs';
 import {TaskBoardDto, TaskDto, TaskStatus} from '../models/board.model';
 
 @Service()
-export class TaskBoard {
+export class TaskBoardService {
 
   private apiUrl = 'http://localhost:8081/api/task-boards'
   private http = inject(HttpClient)
 
   constructor() {}
 
-  getBoards(): Observable<TaskBoardDto[]> {
+  findAllBoards(): Observable<TaskBoardDto[]> {
     return this.http.get<TaskBoardDto[]>(this.apiUrl);
+  }
+
+  createBoard(id: string, name: string): Observable<TaskBoardDto> {
+    return this.http.post<TaskBoardDto>(this.apiUrl, { id, name });
   }
 
   getBoard(boardId: string): Observable<TaskBoardDto> {

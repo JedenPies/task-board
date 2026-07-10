@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { TaskBoard } from '../../services/task-board';
+import { TaskBoardService } from '../../services/task-board';
 import { TaskDto, TaskStatus } from '../../models/board.model';
 
 @Component({
@@ -27,7 +27,7 @@ export class Board implements OnInit {
 
   private undoTimeoutId: any = null;
 
-  private taskBoardService = inject(TaskBoard);
+  private taskBoardService = inject(TaskBoardService);
   private fb = inject(FormBuilder);
 
   private eventSource: EventSource | null = null;
@@ -39,7 +39,7 @@ export class Board implements OnInit {
 
   ngOnInit(): void {
     this.loadBoardData();
-    this.eventSource = new EventSource(`http://localhost:8080/api/task-boards/${this.id()}/sse-stream`)
+    this.eventSource = new EventSource(`http://localhost:8081/api/task-boards/${this.id()}/sse-stream`)
     this.eventSource.addEventListener("REFRESH", () => {
       console.log("Refresh odebrane");
       this.loadBoardData();

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TaskBoard } from './task-board';
+import { TaskBoardService } from './task-board';
 
 describe('TaskBoard', () => {
-  let service: TaskBoard;
+  let service: TaskBoardService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TaskBoard);
+    service = TestBed.inject(TaskBoardService);
   });
 
   it('should be created', () => {
