@@ -1,20 +1,28 @@
-<div class="board-detail-container">
-  <div class="back-container">
-    <button routerLink="/" class="btn-back">← Powrót do tablic</button>
+
+<!-- Górny pasek ujednolicony z dashboardem -->
+<header class="navbar">
+  <div class="navbar-container">
+    <div class="logo">Mój Kanban</div>
+    <nav>
+      <a routerLink="/" class="btn-ghost">Wróć do tablic</a>
+    </nav>
   </div>
+</header>
+
+<div class="board-detail-container">
 
   <div class="board-header">
     @if (!isEditingName()) {
-      <h1 class="board-title" (click)="isEditingName.set(true)">{{ boardName() }}</h1>
+      <h2 class="board-title" (click)="isEditingName.set(true)">{{ boardName() }}</h2>
     } @else {
-    <input
-      type="text"
-      [value]="boardName()"
-      class="board-title-input"
-      autofocus
-      (keyup.enter)="onUpdateBoardName($event)"
-      (keyup.escape)="isEditingName.set(false)"
-      (blur)="onUpdateBoardName($event)" />
+      <input
+        type="text"
+        [value]="boardName()"
+        class="board-title-input"
+        autofocus
+        (keyup.enter)="onUpdateBoardName($event)"
+        (keyup.escape)="isEditingName.set(false)"
+        (blur)="onUpdateBoardName($event)" />
     }
   </div>
 
@@ -33,6 +41,7 @@
     </form>
   </div>
 
+  <!-- Obszar Drag & Drop -->
   <div class="kanban-board" cdkDropListGroup>
 
     <div class="kanban-column">

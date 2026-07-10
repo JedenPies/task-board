@@ -1,0 +1,18 @@
+<dialog #dialog class="login-dialog">
+  <form (submit)="onLogin($event)">
+    <h3>Logowanie</h3>
+    <input type="text" [(ngModel)]="username" name="username" placeholder="Login" required />
+    <input
+      type="password"
+      [(ngModel)]="password"
+      name="password"
+      placeholder="Hasło"
+      required
+    />
+
+    <div class="modal-actions">
+      <button type="button" (click)="close()">Anuluj</button>
+      <button type="submit">Zaloguj</button>
+    </div>
+  </form>
+</dialog>

@@ -1,54 +1,43 @@
-<section class="create-board-section">
-  <h2>Utwórz nową tablicę</h2>
-  <form (submit)="createBoard(); $event.preventDefault()">
-    <input type="text" [(ngModel)]="newBoardTitle" name="title" required placeholder="Nazwa tablicy">
-    <button type="submit">Dodaj tablicę</button>
-  </form>
-</section>
-
-<hr/>
-
-@if (authService.isLoggedIn()) {
-  <section class="logged-in-section">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2>Twoje tablice</h2>
-      <button (click)="logout()">Wyloguj się</button>
-    </header>
-    <ul class="boards-list">
-      @for (board of boards(); track board.id) {
-        <li>
-          <a [routerLink]="['/board', board.id]">{{ board.name }}</a>
-        </li>
-      } @empty {
-        <p>Nie masz jeszcze żadnych tablic.</p>
+<header class="navbar">
+  <div class="navbar-container">
+    <div class="logo">Mój Kanban</div>
+    <div class="nav-actions">
+      @if (authService.isLoggedIn()) {
+        <button (click)="logout()" class="btn-ghost">Wyloguj</button>
+      } @else {
+        <button (click)="loginModal.open()" class="btn-primary">Zaloguj</button>
       }
-    </ul>
+    </div>
+  </div>
+</header>
 
-  </section>
-} @else {
-  <section class="login-section">
-    <h2>Zaloguj się, aby zobaczyć listę tablic</h2>
-
-    <form (submit)="login(); $event.preventDefault()">
-      <div style="margin-bottom: 10px;">
-        <label for="username">Login:</label>
-        <input type="text" id="username" name="username" [(ngModel)]="username" required>
-      </div>
-
-      <div style="margin-bottom: 10px;">
-        <label for="password">Hasło:</label>
-        <input type="password" id="password" name="password" [(ngModel)]="password" required>
-      </div>
-
-      @if (loginError()) {
-        <div style="color: red; margin-bottom: 10px;">
-          {{ loginError() }}
-        </div>
-      }
-
-      <button type="submit">Zaloguj</button>
+<!-- Główna zawartość -->
+<main class="main-content">
+  <h2>Twoje Tablice</h2>
+  <!-- Sekcja tworzenia -->
+  <section class="board-form">
+<!--    <h2>Utwórz nową tablicę</h2>-->
+    <form (submit)="createBoard(); $event.preventDefault()" class="search-box">
+      <input type="text" [(ngModel)]="newBoardTitle" name="title" required placeholder="Nazwa nowej tablicy">
+      <button type="submit" class="btn-primary">Dodaj</button>
     </form>
   </section>
-}
 
+  <!-- Lista tablic -->
+  @if (authService.isLoggedIn()) {
+    <section class="boards-list-section">
+<!--      <h2>Twoje tablice</h2>-->
+      <ul class="boards-list">
+        @for (board of boards(); track board.id) {
+          <li>
+            <a [routerLink]="['/board', board.id]">{{ board.name }}</a>
+          </li>
+        } @empty {
+          <p>Nie masz jeszcze żadnych tablic.</p>
+        }
+      </ul>
+    </section>
+  }
+</main>
 
+<app-login-modal></app-login-modal>
