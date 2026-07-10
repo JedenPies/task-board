@@ -17,9 +17,9 @@ public class TaskDto {
     @NotNull(message = "cannot be null")
     private final UUID id;
     @NotBlank(message = "cannot be empty")
-    @Size(max = 30, message = "max length is 30")
+    @Size(max = 255, message = "max length is 255")
     private final String title;
-    @Size(max = 50, message = "max length is 50")
+    @Size(max = 2000, message = "max length is 2000")
     private final String description;
     private final TaskStatus status;
 }
