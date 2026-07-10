@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: extend-task-title-and-description-length
+      author: patryk
+      changes:
+        - modifyDataType:
+            tableName: tasks
+            columnName: title
+            newDataType: varchar(255)
+        - modifyDataType:
+            tableName: tasks
+            columnName: description
+            newDataType: varchar(2000)

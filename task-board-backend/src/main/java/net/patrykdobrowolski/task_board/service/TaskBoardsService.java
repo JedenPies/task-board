@@ -10,9 +10,9 @@ import net.patrykdobrowolski.task_board.domain.UserContext;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +24,9 @@ public class TaskBoardsService {
     private final UserContext userContext;
 
     public List<TaskBoard> findAllBoards() {
-        return repositoryService.findAllBoards(userContext.getUserName());
+        return userContext.isNotLoggedIn()
+                ? Collections.emptyList()
+                : repositoryService.findAllBoards(userContext.getUserName());
     }
 
     @Transactional
@@ -39,7 +41,6 @@ public class TaskBoardsService {
     }
 
     @Transactional
-    @Secured({})
     public TaskBoard createBoard(TaskBoard taskBoard) throws ObjectAlreadyExistsException {
         if (repositoryService.findById(taskBoard.getId()).isPresent()) {
             throw ObjectAlreadyExistsException.of("Board", taskBoard.getId());

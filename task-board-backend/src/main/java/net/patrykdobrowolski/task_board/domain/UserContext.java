@@ -4,4 +4,8 @@ public interface UserContext {
 
     String getUserName();
     void setUserName(String userName);
+
+    default boolean isNotLoggedIn() {
+        return getUserName() == null;
+    }
 }

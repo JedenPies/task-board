@@ -12,12 +12,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Builder
+@Getter
 public class TaskBoard {
 
-    @Getter
     private final UUID id;
 
-    @Getter
     private String name;
     private List<Task> tasks;
 
@@ -26,8 +25,9 @@ public class TaskBoard {
     }
 
     @With
-    @Getter
     private String owner;
+    @Builder.Default
+    private Boolean isShared = false;
 
     public List<Task> getTasks() {
         return Collections.unmodifiableList(Optional.ofNullable(tasks).orElseGet(Collections::emptyList));
@@ -48,7 +48,9 @@ public class TaskBoard {
     }
 
     public boolean isAllowedToEdit(UserContext userContext) {
-        return owner.equals(userContext.getUserName());
+        return owner == null
+                || Boolean.TRUE.equals(isShared)
+                || owner.equals(userContext.getUserName());
     }
 
     public void checkEditPermissions(UserContext userContext) throws AccessDeniedException {

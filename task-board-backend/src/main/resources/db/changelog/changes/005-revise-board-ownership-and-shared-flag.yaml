@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-ownership-model
+      author: patryk
+      changes:
+        - dropNotNullConstraint:
+            tableName: task_boards
+            columnName: owner
+        - addColumn:
+            tableName: task_boards
+            columns:
+              - column:
+                  name: is_shared
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
