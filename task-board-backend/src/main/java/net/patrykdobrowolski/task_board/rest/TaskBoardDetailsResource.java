@@ -36,7 +36,7 @@ public class TaskBoardDetailsResource {
         return taskBoardMapper.toDto(result);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public TaskBoardDto getBoard(@PathVariable UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
         return taskBoardMapper.toDto(taskBoardsService.findBoard(boardId));
     }
