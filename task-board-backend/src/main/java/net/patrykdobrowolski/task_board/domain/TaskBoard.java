@@ -2,6 +2,7 @@ package net.patrykdobrowolski.task_board.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.With;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
@@ -27,6 +28,7 @@ public class TaskBoard {
     @With
     private String owner;
     @Builder.Default
+    @Setter
     private Boolean isPublic = false;
 
     public List<Task> getTasks() {
@@ -51,6 +53,12 @@ public class TaskBoard {
         return owner == null
                 || Boolean.TRUE.equals(isPublic)
                 || owner.equals(userContext.getUserName());
+    }
+
+    public void checkPublicFlagPermission(UserContext userContext) throws AccessDeniedException {
+        if (owner == null || !owner.equals(userContext.getUserName())) {
+            throw new AccessDeniedException();
+        }
     }
 
     public void checkEditPermissions(UserContext userContext) throws AccessDeniedException {

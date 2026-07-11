@@ -89,4 +89,13 @@ public class TaskBoardsService {
         repositoryService.save(board);
         return board;
     }
+
+    @Transactional
+    public TaskBoard setPublicFlag(UUID boardId, Boolean isPublic) throws ObjectNotFoundException, AccessDeniedException {
+        TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
+        board.checkPublicFlagPermission(userContext);
+        board.setIsPublic(isPublic);
+        repositoryService.save(board);
+        return board;
+    }
 }
