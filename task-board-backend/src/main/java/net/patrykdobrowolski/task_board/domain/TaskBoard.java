@@ -27,7 +27,7 @@ public class TaskBoard {
     @With
     private String owner;
     @Builder.Default
-    private Boolean isPublic = false;
+    private Boolean isShared = false;
 
     public List<Task> getTasks() {
         return Collections.unmodifiableList(Optional.ofNullable(tasks).orElseGet(Collections::emptyList));
@@ -49,7 +49,7 @@ public class TaskBoard {
 
     public boolean isAllowedToEdit(UserContext userContext) {
         return owner == null
-                || Boolean.TRUE.equals(isPublic)
+                || Boolean.TRUE.equals(isShared)
                 || owner.equals(userContext.getUserName());
     }
 
