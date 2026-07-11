@@ -24,5 +24,6 @@ public class TaskBoardEntity {
     private List<TaskEntity> tasks;
 
     private String owner;
-    private Boolean isShared;
+    private Boolean isPublic;
+
 }

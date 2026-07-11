@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: rename-is-shared-to-public-column-name
+      author: patryk
+      changes:
+        - renameColumn:
+            tableName: task_boards
+            oldColumnName: is_shared
+            newColumnName: is_public

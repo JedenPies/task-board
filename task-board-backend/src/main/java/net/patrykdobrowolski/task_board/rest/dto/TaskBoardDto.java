@@ -18,5 +18,6 @@ public class TaskBoardDto {
     private final UUID id;
     @NotBlank(message = "cannot be blank")
     private final String name;
+    private final Boolean isPublic;
     private final List<@Valid TaskDto> tasks;
 }
