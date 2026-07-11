@@ -20,6 +20,9 @@
   max-width: 1200px; // Zwiększone z 600px na 850px – złoty środek dla dashboardów
   margin: 2rem auto;
   padding: 0 1.5rem; // Dodaliśmy ciut więcej oddechu po bokach
+  h2 {
+    margin-top: 0; /* WAŻNE: To nadal musisz dodać, żeby odległość pod navbarem była równa z widokiem tablicy */
+  }
 }
 
 /* Pola tekstowe i przyciski */
@@ -39,17 +42,19 @@
   background: #000;
   color: #fff;
   border: none;
-  padding: 0.8rem 1.5rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 0.95rem;
 }
 
 .btn-ghost {
   background: transparent;
   border: 1px solid #ccc;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 0.95rem;
 }
 
 /* Lista tablic */

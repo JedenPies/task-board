@@ -4,7 +4,12 @@
   <div class="navbar-container">
     <div class="logo">Mój Kanban</div>
     <nav>
-      <a routerLink="/" class="btn-ghost">Wróć do tablic</a>
+      @if (authService.isLoggedIn()) {
+        <button (click)="logout()" class="btn-ghost">Wyloguj</button>
+      } @else {
+        <button (click)="loginModal.open()" class="btn-primary">Zaloguj</button>
+      }
+
     </nav>
   </div>
 </header>
@@ -12,18 +17,22 @@
 <div class="board-detail-container">
 
   <div class="board-header">
-    @if (!isEditingName()) {
-      <h2 class="board-title" (click)="isEditingName.set(true)">{{ boardName() }}</h2>
-    } @else {
-      <input
-        type="text"
-        [value]="boardName()"
-        class="board-title-input"
-        autofocus
-        (keyup.enter)="onUpdateBoardName($event)"
-        (keyup.escape)="isEditingName.set(false)"
-        (blur)="onUpdateBoardName($event)" />
-    }
+
+    <h2>
+      <a routerLink="/">Strona główna</a> »
+      @if (!isEditingName()) {
+        <p class="board-title" (click)="isEditingName.set(true)">{{ boardName() }}</p>
+      } @else {
+        <input
+          type="text"
+          [value]="boardName()"
+          class="board-title-input"
+          autofocus
+          (keyup.enter)="onUpdateBoardName($event)"
+          (keyup.escape)="isEditingName.set(false)"
+          (blur)="onUpdateBoardName($event)" />
+      }
+    </h2>
   </div>
 
   <div class="add-task-container">
@@ -41,11 +50,22 @@
     </form>
   </div>
 
+
+  <div class="kanban-board-header">
+    <div class="kanban-column">
+      <h3>Do zrobienia ({{ todoTasks().length }})</h3>
+    </div>
+    <div class="kanban-column">
+      <h3>W toku ({{ inProgressTasks().length }})</h3>
+    </div>
+    <div class="kanban-column">
+      <h3>Zrobione ({{ doneTasks().length }})</h3>
+    </div>
+  </div>
   <!-- Obszar Drag & Drop -->
   <div class="kanban-board" cdkDropListGroup>
 
     <div class="kanban-column">
-      <h3>Do zrobienia ({{ todoTasks().length }})</h3>
       <div class="task-list" cdkDropList data-status="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
         @for (task of todoTasks(); track task) {
           <div class="task-card" cdkDrag>
@@ -62,7 +82,6 @@
     </div>
 
     <div class="kanban-column">
-      <h3>W toku ({{ inProgressTasks().length }})</h3>
       <div class="task-list" cdkDropList data-status="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
         @for (task of inProgressTasks(); track task) {
           <div class="task-card" cdkDrag>
@@ -79,7 +98,6 @@
     </div>
 
     <div class="kanban-column">
-      <h3>Zrobione ({{ doneTasks().length }})</h3>
       <div class="task-list" cdkDropList data-status="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
         @for (task of doneTasks(); track task) {
           <div class="task-card" cdkDrag>
@@ -104,3 +122,5 @@
     </div>
   }
 </div>
+
+<app-login-modal></app-login-modal>

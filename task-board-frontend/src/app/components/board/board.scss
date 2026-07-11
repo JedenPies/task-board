@@ -5,7 +5,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 .navbar {
   border-bottom: 1px solid #eee;
   background: #fff;
-  /* Cała reszta wylatuje do navbar-container */
 }
 
 .navbar-container {
@@ -21,37 +20,16 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   .btn-ghost {
     background: transparent;
     border: 1px solid #ccc;
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     border-radius: 6px;
     cursor: pointer;
     text-decoration: none;
     color: #333;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 
     &:hover { background: #f0f0f0; }
   }
 }
-
-///* Pasek nawigacyjny */
-//.navbar {
-//  display: flex;
-//  justify-content: space-between;
-
-  //.logo { font-weight: bold; font-size: 1.2rem; }
-
-  //.btn-ghost {
-  //  background: transparent;
-  //  border: 1px solid #ccc;
-  //  padding: 0.5rem 1rem;
-  //  border-radius: 6px;
-  //  cursor: pointer;
-  //  text-decoration: none;
-  //  color: #333;
-  //  font-size: 0.9rem;
-  //
-  //  &:hover { background: #f0f0f0; }
-  //}
-//}
 
 /* Główny kontener 850px jak w dashboardzie */
 .board-detail-container {
@@ -59,10 +37,12 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   margin: 2rem auto;    /* Zmienione na margin, żeby zachowywało się jak na liście */
   padding: 0 1.5rem;
   background-color: #fff;
-  min-height: 100vh;
+  //min-height: 100vh;
   scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
+  //height: calc(100vh - 190px);
+  //box-sizing: border-box;
 }
 
 /* Nagłówek tablicy */
@@ -87,7 +67,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
   .board-title-input {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #333;
     font-family: inherit;
@@ -137,6 +117,16 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
       }
     }
 
+    .btn-primary {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
     .btn-submit {
       background-color: #000; /* Zmienione na czarne dla spójności */
       color: white;
@@ -160,40 +150,81 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 }
 
+.kanban-board-header {
+  display: flex;
+  gap: 0.7rem;
+  //align-items: flex-start;
+  //width: 100%;
+  //flex: 1; /* Rozciąga się na całą wolną przestrzeń pod nagłówkiem */
+  overflow: hidden; /* Zapobiega powiększaniu się kontenera w dół */
+  padding-bottom: 1rem;
+
+  .kanban-column {
+    flex: 1;
+    background-color: #fff;
+    //border-right: 2px dashed #fff;
+    margin-right: 2px;
+    padding-right: 0.7rem; /* Odstęp PO LEWEJ stronie linii przerywanej */
+    padding-top: 5px;
+
+    width: 320px;
+    min-width: 320px;
+    //max-height: 100%;    /* Kolumna nie może być wyższa niż plansza */
+    //box-sizing: border-box;
+
+    &:last-child {
+      border-right: none;
+      padding-right: 0;
+    }
+    h3 {
+      font-size: 1rem;
+      color: #666;
+      margin-top: 0;
+      margin-bottom: 12px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+}
+
 /* Układ Kanban */
 .kanban-board {
   display: flex;
   gap: 0.7rem; /* Odstęp PO PRAWEJ stronie linii przerywanej */
-  align-items: flex-start;
-  width: 100%;
+  overflow: hidden;     /* Zapobiega powiększaniu się kontenera w dół */
+  padding-bottom: 1rem;
+  height: 100%;
 
   .kanban-column {
     flex: 1;
-    min-width: 0;
     background-color: #fff;
     border-right: 2px dashed #eee;
     padding-right: 0.7rem; /* Odstęp PO LEWEJ stronie linii przerywanej */
+    padding-top: 5px;
+
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    width: 320px;
+    min-width: 320px;
+    max-height: 100%;    /* Kolumna nie może być wyższa niż plansza */
+    box-sizing: border-box;
 
     &:last-child {
       border-right: none;
       padding-right: 0;
     }
 
-    h3 {
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 0;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
     .task-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      min-height: 100px;
       overflow: visible !important;
+
+      flex: 1;              /* Lista zadań wypełnia resztę kolumny */
+      min-height: 50px;
 
       /* Pojedyncza karta zadania */
       .task-card {
@@ -214,6 +245,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
         &:hover {
           border-color: #ccc;
           transform: translateY(-2px);
+          cursor: pointer;
         }
 
         .task-content {

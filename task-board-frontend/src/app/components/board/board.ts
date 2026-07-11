@@ -1,19 +1,22 @@
-import { Component, OnInit, input, signal, inject } from '@angular/core';
+import { Component, OnInit, input, signal, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskBoardService } from '../../services/task-board';
 import { TaskDto, TaskStatus } from '../../models/board.model';
+import { AuthService } from '../../services/auth';
+import { LoginModal } from '../login-modal/login-modal';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, DragDropModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, DragDropModule, LoginModal],
   templateUrl: './board.html',
-  styleUrl: './board.scss'
+  styleUrl: './board.scss',
 })
 export class Board implements OnInit {
+  @ViewChild(LoginModal) loginModal!: LoginModal;
 
   id = input.required<string>();
   boardName = signal<string>('Ładowanie...');
@@ -25,6 +28,8 @@ export class Board implements OnInit {
   recentlyDeletedTask = signal<TaskDto | null>(null);
   isEditingName = signal<boolean>(false);
 
+  authService = inject(AuthService);
+
   private undoTimeoutId: any = null;
 
   private taskBoardService = inject(TaskBoardService);
@@ -34,26 +39,36 @@ export class Board implements OnInit {
 
   taskForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3)]],
-    description: ['']
+    description: [''],
   });
 
   ngOnInit(): void {
     this.loadBoardData();
-    this.eventSource = new EventSource(`http://localhost:8081/api/task-boards/${this.id()}/sse-stream`)
-    this.eventSource.addEventListener("REFRESH", () => {
-      console.log("Refresh odebrane");
+    this.eventSource = new EventSource(
+      `http://localhost:8081/api/task-boards/${this.id()}/sse-stream`,
+    );
+    this.eventSource.addEventListener('REFRESH', () => {
+      console.log('Refresh odebrane');
       this.loadBoardData();
     });
     this.eventSource.onerror = (error) => {
-      console.error("Błąd połączenia SSE:", error);
-    }
+      console.error('Błąd połączenia SSE:', error);
+    };
   }
 
   ngOnDestroy(): void {
     if (this.eventSource) {
       this.eventSource.close();
-      console.log("Połączenie SSE zamknięte;")
+      console.log('Połączenie SSE zamknięte;');
     }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.todoTasks.set([]);
+    this.inProgressTasks.set([]);
+    this.doneTasks.set([]);
+    this.loadBoardData();
   }
 
   onUpdateBoardName(event: Event): void {
@@ -69,18 +84,20 @@ export class Board implements OnInit {
 
     this.taskBoardService.updateBoardName(this.id(), newName).subscribe({
       next: () => {
-        console.log("Nazwa zaktualizowana");
+        console.log('Nazwa zaktualizowana');
       },
       error: (err) => {
-        console.error("Błąd zapisu nazwy tablicy: ", err);
+        console.error('Błąd zapisu nazwy tablicy: ', err);
         this.boardName.set(oldName);
-      }
-    })
+      },
+    });
   }
 
   onTaskDrop(event: CdkDragDrop<TaskDto[]>, targetStatus: TaskStatus): void {
     // Pobieramy status źródłowy z atrybutu HTML
-    const sourceStatus = event.previousContainer.element.nativeElement.getAttribute('data-status') as TaskStatus;
+    const sourceStatus = event.previousContainer.element.nativeElement.getAttribute(
+      'data-status',
+    ) as TaskStatus;
 
     const sourceSignal = this.getSignalByStatus(sourceStatus);
     const targetSignal = this.getSignalByStatus(targetStatus);
@@ -110,7 +127,7 @@ export class Board implements OnInit {
             console.error('Błąd sieci, przywracam kolejność', err);
             sourceSignal.set(backupSource);
             targetSignal.set(backupTarget);
-          }
+          },
         });
       }
     }
@@ -127,7 +144,7 @@ export class Board implements OnInit {
         this.todoTasks.set([...this.todoTasks(), createdTask]);
         this.taskForm.reset();
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error(err),
     });
   }
 
@@ -138,7 +155,7 @@ export class Board implements OnInit {
     this.recentlyDeletedTask.set(task);
 
     const targetSignal = this.getSignalByStatus(task.status);
-    targetSignal.set(targetSignal().filter(t => t.id !== task.id));
+    targetSignal.set(targetSignal().filter((t) => t.id !== task.id));
 
     this.undoTimeoutId = setTimeout(() => this.executePermanentDelete(), 5000);
   }
@@ -163,7 +180,7 @@ export class Board implements OnInit {
       this.recentlyDeletedTask.set(null);
 
       this.taskBoardService.deleteTask(this.id(), task.id).subscribe({
-        error: (err) => console.error(err)
+        error: (err) => console.error(err),
       });
     }
   }
@@ -180,11 +197,26 @@ export class Board implements OnInit {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         const tasks = boardData.tasks ?? [];
 
-        this.todoTasks.set(this.mergeTasks(this.todoTasks(), tasks.filter(t => t.status === 'TODO')));
-        this.inProgressTasks.set(this.mergeTasks(this.inProgressTasks(), tasks.filter(t => t.status === 'IN_PROGRESS')));
-        this.doneTasks.set(this.mergeTasks(this.doneTasks(), tasks.filter(t => t.status === 'DONE')));
+        this.todoTasks.set(
+          this.mergeTasks(
+            this.todoTasks(),
+            tasks.filter((t) => t.status === 'TODO'),
+          ),
+        );
+        this.inProgressTasks.set(
+          this.mergeTasks(
+            this.inProgressTasks(),
+            tasks.filter((t) => t.status === 'IN_PROGRESS'),
+          ),
+        );
+        this.doneTasks.set(
+          this.mergeTasks(
+            this.doneTasks(),
+            tasks.filter((t) => t.status === 'DONE'),
+          ),
+        );
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error(err),
     });
   }
 
@@ -196,7 +228,7 @@ export class Board implements OnInit {
    * - nowe zadania trafiają na koniec, w kolejności otrzymanej z serwera.
    */
   private mergeTasks(current: TaskDto[], incoming: TaskDto[]): TaskDto[] {
-    const incomingById = new Map(incoming.filter(t => !!t.id).map(t => [t.id, t]));
+    const incomingById = new Map(incoming.filter((t) => !!t.id).map((t) => [t.id, t]));
 
     const kept: TaskDto[] = [];
     for (const task of current) {
@@ -207,8 +239,8 @@ export class Board implements OnInit {
       }
     }
 
-    const keptIds = new Set(kept.map(t => t.id));
-    const added = incoming.filter(t => !t.id || !keptIds.has(t.id));
+    const keptIds = new Set(kept.map((t) => t.id));
+    const added = incoming.filter((t) => !t.id || !keptIds.has(t.id));
 
     return [...kept, ...added];
   }
