@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 
@@ -10,7 +10,11 @@ import { AuthService } from '../../services/auth';
   styleUrls: ['./login-modal.scss'],
 })
 export class LoginModal {
+
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
+
+  loginSuccess = output<void>();
+
   username = '';
   password = '';
   authService = inject(AuthService);
@@ -28,6 +32,7 @@ export class LoginModal {
       next: () => {
         this.username = '';
         this.password = '';
+        this.loginSuccess.emit();
         this.close();
       },
       error: () => alert('Błąd logowania'),

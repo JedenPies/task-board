@@ -28,6 +28,8 @@ export class Board implements OnInit {
   recentlyDeletedTask = signal<TaskDto | null>(null);
   isEditingName = signal<boolean>(false);
 
+  accessDenied = signal<boolean>(false);
+
   authService = inject(AuthService);
 
   private undoTimeoutId: any = null;
@@ -191,7 +193,7 @@ export class Board implements OnInit {
     return this.doneTasks;
   }
 
-  private loadBoardData() {
+  loadBoardData() {
     this.taskBoardService.getBoard(this.id()).subscribe({
       next: (boardData) => {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
@@ -216,7 +218,17 @@ export class Board implements OnInit {
           ),
         );
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        console.error(err);
+        if (err.status === 403 || err.status === 401) {
+          this.accessDenied.set(true);
+          this.boardName.set('Brak dostępu');
+        } else {
+          this.boardName.set('Błąd ładowania tablicy');
+        }
+
+      }
+
     });
   }
 
