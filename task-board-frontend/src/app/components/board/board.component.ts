@@ -125,6 +125,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   onTaskDrop(event: CdkDragDrop<TaskDto[]>, targetStatus: TaskStatus): void {
     const sourceStatus = event.previousContainer.id as TaskStatus;
 
+    // 1. Optymistyczna aktualizacja UI
     if (event.previousContainer === event.container) {
       const arr = [...event.container.data];
       moveItemInArray(arr, event.previousIndex, event.currentIndex);
@@ -134,21 +135,30 @@ export class BoardComponent implements OnInit, OnDestroy {
       const targetArr = [...event.container.data];
       const task = sourceArr[event.previousIndex];
 
-      if (task) task.status = targetStatus;
-
       transferArrayItem(sourceArr, targetArr, event.previousIndex, event.currentIndex);
 
       this.getSignalByStatus(sourceStatus).set(sourceArr);
       this.getSignalByStatus(targetStatus).set(targetArr);
+    }
 
-      if (task?.id) {
-        this.taskBoardService.changeTaskStatus(this.id(), task.id, targetStatus).subscribe({
+    // 2. Wyznaczenie followingTaskId
+    const targetTasks = this.getSignalByStatus(targetStatus)();
+    const movedTask = targetTasks[event.currentIndex];
+
+    // Znajdź zadanie, które będzie bezpośrednio po naszym (jeśli istnieje)
+    const nextTask = targetTasks[event.currentIndex + 1];
+    const followingTaskId = nextTask ? nextTask.id : null;
+
+    // 3. Wysłanie requestu
+    if (movedTask?.id) {
+      this.taskBoardService
+        .updateTaskPosition(this.id(), movedTask.id, targetStatus, followingTaskId)
+        .subscribe({
           error: (err) => {
-            console.error('Błąd sieci, przywracam stan z serwera', err);
-            this.loadBoardData(); // Rollback do stanu z serwera
+            console.error('Błąd zmiany pozycji:', err);
+            this.loadBoardData(); // Rollback przy błędzie
           },
         });
-      }
     }
   }
 

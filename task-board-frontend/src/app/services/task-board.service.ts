@@ -5,9 +5,8 @@ import {TaskBoardDto, TaskDto, TaskStatus} from '../models/board.model';
 
 @Service()
 export class TaskBoardService {
-
-  private apiUrl = 'http://localhost:8081/api/task-boards'
-  private http = inject(HttpClient)
+  private apiUrl = 'http://localhost:8081/api/task-boards';
+  private http = inject(HttpClient);
 
   constructor() {}
 
@@ -28,8 +27,11 @@ export class TaskBoardService {
   }
 
   changeTaskStatus(boardId: string, taskId: string, newStatus: TaskStatus): Observable<TaskDto> {
-    return this.http.put<TaskDto>(this.apiUrl + '/' + boardId + '/tasks/' + taskId + '/status', `"${newStatus}"`,
-      { headers: { 'Content-Type': 'application/json' }});
+    return this.http.put<TaskDto>(
+      this.apiUrl + '/' + boardId + '/tasks/' + taskId + '/status',
+      `"${newStatus}"`,
+      { headers: { 'Content-Type': 'application/json' } },
+    );
   }
 
   deleteTask(boardId: string, taskId: string): Observable<void> {
@@ -37,12 +39,22 @@ export class TaskBoardService {
   }
 
   updateBoardName(boardId: string, newName: string): Observable<void> {
-    return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', `${newName}`,
-      { headers: { 'Content-Type': 'application/json' }});
+    return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', `${newName}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   updateBoardPublicity(boardId: string, isPublic: boolean): Observable<void> {
-    return this.http.put<void>(this.apiUrl + '/' + boardId + '/public', `${isPublic}`,
-      { headers: { 'Content-Type': 'application/json' }});
+    return this.http.put<void>(this.apiUrl + '/' + boardId + '/public', `${isPublic}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  updateTaskPosition(boardId: string, taskId: string, status: TaskStatus, followingTaskId: string | null): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/${boardId}/tasks/${taskId}/position`,
+      { status, followingTaskId },
+      { headers: { 'Content-Type': 'application/json' } },
+    );
   }
 }

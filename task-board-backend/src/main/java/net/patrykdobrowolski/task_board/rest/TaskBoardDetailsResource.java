@@ -5,8 +5,9 @@ import net.patrykdobrowolski.task_board.domain.TaskBoard;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.CannotMoveTaskException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
+import net.patrykdobrowolski.task_board.rest.dto.ChangeVisibilityCommandDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardDto;
-import net.patrykdobrowolski.task_board.rest.dto.TaskStatusAndPositionDto;
+import net.patrykdobrowolski.task_board.rest.dto.MoveTaskCommandDto;
 import net.patrykdobrowolski.task_board.rest.mapper.TaskBoardMapper;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
 import org.springframework.http.MediaType;
@@ -32,11 +33,20 @@ public class TaskBoardDetailsResource {
     }
 
     @PutMapping("/public")
+    @Deprecated
     public TaskBoardDto setPublicFlag(@PathVariable UUID boardId, @RequestBody Boolean isPublic) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard result = taskBoardsService.setPublicFlag(boardId, isPublic);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskBoardMapper.toDto(result);
     }
+
+    @PostMapping("/change-visibility-requests")
+    public TaskBoardDto changeVisibilityRequest(@PathVariable UUID boardId, @RequestBody ChangeVisibilityCommandDto command) throws ObjectNotFoundException, AccessDeniedException {
+        TaskBoard result = taskBoardsService.setPublicFlag(boardId, command.getIsPublic());
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskBoardMapper.toDto(result);
+    }
+
 
     @GetMapping
     public TaskBoardDto getBoard(@PathVariable UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
@@ -44,8 +54,17 @@ public class TaskBoardDetailsResource {
     }
 
     @PutMapping("/tasks/{taskId}/position")
+    @Deprecated
     public TaskBoardDto moveTask(
-            @PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatusAndPositionDto positionDto) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
+            @PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody MoveTaskCommandDto positionDto) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
+        TaskBoard board = taskBoardsService.moveTask(boardId, taskId, positionDto.getFollowingTaskId(), positionDto.getStatus());
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskBoardMapper.toDto(board);
+    }
+
+    @PostMapping("/tasks/{taskId}/task-move-requests")
+    public TaskBoardDto moveTaskRequest(
+            @PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody MoveTaskCommandDto positionDto) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
         TaskBoard board = taskBoardsService.moveTask(boardId, taskId, positionDto.getFollowingTaskId(), positionDto.getStatus());
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskBoardMapper.toDto(board);

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Builder @Jacksonized
-public class TaskStatusAndPositionDto {
+public class MoveTaskCommandDto {
 
     private final TaskStatus status;
     private final UUID followingTaskId;
