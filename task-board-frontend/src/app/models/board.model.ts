@@ -1,6 +1,7 @@
 export interface TaskBoardDto {
   id: string;
   name: string;
+  is_public: boolean;
   tasks: TaskDto[];
 }
 

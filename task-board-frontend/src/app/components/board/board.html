@@ -21,6 +21,13 @@
       <a routerLink="/">Strona główna</a> »
       @if (!isEditingName()) {
         <p class="board-title" (click)="!accessDenied() && isEditingName.set(true)">{{ boardName() }}</p>
+        @if (board(); as b) {
+          @if (b.is_public) {
+            <span class="public-badge" (click)="goPublicModal.open()">Go private</span>
+          } @else {
+            <span  class="public-badge" (click)="goPublicModal.open()">Go public</span>
+          }
+        }
       } @else {
         <input
           type="text"
@@ -132,3 +139,4 @@
 </div>
 
 <app-login-modal (loginSuccess)="loadBoardData(); accessDenied.set(false)"></app-login-modal>
+<app-go-public-modal></app-go-public-modal>

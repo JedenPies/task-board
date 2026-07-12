@@ -277,6 +277,8 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
 /* Przycisk usuwania */
 .btn-delete {
+  width: 12px;
+  height: 20px;
   background: none;
   border: none;
   color: #ccc;
@@ -317,6 +319,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   box-sizing: border-box;
 
   .task-content {
+    padding-right: 12px;
     flex: 1;
     h4 { margin: 0 0 6px 0; color: #333; font-size: 0.95rem; }
     p { margin: 0; color: #666; font-size: 0.85rem; line-height: 1.4; }
@@ -388,4 +391,15 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.95rem;
+}
+
+.public-badge {
+  vertical-align: middle;
+  font-size: 10px;
+  color: #833;
+  border: 1px solid #833;
+  background-color: #faa;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }

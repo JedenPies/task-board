@@ -4,7 +4,6 @@
   border-radius: 12px; // Trochę łagodniejsze zaokrąglenie
   width: 320px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1); // Delikatny cień dodaje "głębi" popupowi
-  border: none; // Usuwamy domyślną ramkę dialogu
 
   &::backdrop {
     background: rgba(0, 0, 0, 0.3); // Jaśniejsze przyciemnienie tła

@@ -4,22 +4,33 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskBoardService } from '../../services/task-board';
-import { TaskDto, TaskStatus } from '../../models/board.model';
+import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
 import { AuthService } from '../../services/auth';
 import { LoginModal } from '../login-modal/login-modal';
+import { GoPublicModal } from '../go-public-modal/go-public-modal';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, DragDropModule, LoginModal],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    DragDropModule,
+    LoginModal,
+    GoPublicModal,
+  ],
   templateUrl: './board.html',
   styleUrl: './board.scss',
 })
 export class Board implements OnInit {
   @ViewChild(LoginModal) loginModal!: LoginModal;
+  @ViewChild(GoPublicModal) goPublicModal!: GoPublicModal;
 
   id = input.required<string>();
   boardName = signal<string>('Ładowanie...');
+
+  board = signal<TaskBoardDto | null>(null);
 
   todoTasks = signal<TaskDto[]>([]);
   inProgressTasks = signal<TaskDto[]>([]);
@@ -197,6 +208,7 @@ export class Board implements OnInit {
     this.taskBoardService.getBoard(this.id()).subscribe({
       next: (boardData) => {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
+        this.board.set(boardData);
         const tasks = boardData.tasks ?? [];
 
         this.todoTasks.set(
@@ -223,12 +235,12 @@ export class Board implements OnInit {
         if (err.status === 403 || err.status === 401) {
           this.accessDenied.set(true);
           this.boardName.set('Brak dostępu');
+          this.board.set(null);
         } else {
           this.boardName.set('Błąd ładowania tablicy');
+          this.board.set(null);
         }
-
-      }
-
+      },
     });
   }
 
