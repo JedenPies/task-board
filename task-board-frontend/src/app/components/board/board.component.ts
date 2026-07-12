@@ -1,8 +1,13 @@
-import { Component, OnInit, input, signal, inject, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, input, signal, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  DragDropModule,
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 import { TaskBoardService } from '../../services/task-board.service';
 import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
 import { AuthService } from '../../services/auth.service';
@@ -23,14 +28,12 @@ import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.c
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
 })
-export class BoardComponent implements OnInit {
-
+export class BoardComponent implements OnInit, OnDestroy {
   @ViewChild(LoginModalComponent) loginModal!: LoginModalComponent;
   @ViewChild(PublicFlagModalComponent) goPublicModal!: PublicFlagModalComponent;
 
   id = input.required<string>();
   boardName = signal<string>('Ładowanie...');
-
   board = signal<TaskBoardDto | null>(null);
 
   todoTasks = signal<TaskDto[]>([]);
@@ -38,17 +41,14 @@ export class BoardComponent implements OnInit {
   doneTasks = signal<TaskDto[]>([]);
 
   recentlyDeletedTask = signal<TaskDto | null>(null);
-
   isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
 
   authService = inject(AuthService);
-
-  private undoTimeoutId: any = null;
-
   private taskBoardService = inject(TaskBoardService);
   private fb = inject(FormBuilder);
 
+  private undoTimeoutId: any = null;
   private eventSource: EventSource | null = null;
 
   taskForm = this.fb.group({
@@ -61,27 +61,47 @@ export class BoardComponent implements OnInit {
     this.eventSource = new EventSource(
       `http://localhost:8081/api/task-boards/${this.id()}/sse-stream`,
     );
-    this.eventSource.addEventListener('REFRESH', () => {
-      this.loadBoardData();
-    });
-    this.eventSource.onerror = (error) => {
-      console.error('Błąd połączenia SSE:', error);
-    };
+
+    this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());
+    this.eventSource.onerror = (error) => console.error('Błąd połączenia SSE:', error);
   }
 
   ngOnDestroy(): void {
     if (this.eventSource) {
       this.eventSource.close();
-      console.log('Połączenie SSE zamknięte;');
     }
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
     this.todoTasks.set([]);
     this.inProgressTasks.set([]);
     this.doneTasks.set([]);
     this.loadBoardData();
+  }
+
+  loadBoardData(): void {
+    this.taskBoardService.getBoard(this.id()).subscribe({
+      next: (boardData) => {
+        this.boardName.set(boardData.name ?? 'Tablica Kanban');
+        this.board.set(boardData);
+
+        const tasks = boardData.tasks ?? [];
+        this.todoTasks.set(tasks.filter((t) => t.status === 'TODO'));
+        this.inProgressTasks.set(tasks.filter((t) => t.status === 'IN_PROGRESS'));
+        this.doneTasks.set(tasks.filter((t) => t.status === 'DONE'));
+      },
+      error: (err) => {
+        console.error(err);
+        this.board.set(null);
+        if (err.status === 403 || err.status === 401) {
+          this.accessDenied.set(true);
+          this.boardName.set('Brak dostępu');
+        } else {
+          this.boardName.set('Błąd ładowania tablicy');
+        }
+      },
+    });
   }
 
   onUpdateBoardName(event: Event): void {
@@ -90,15 +110,11 @@ export class BoardComponent implements OnInit {
     const oldName = this.boardName();
 
     this.isEditingName.set(false);
-    if (!newName || newName === this.boardName()) {
-      return;
-    }
+    if (!newName || newName === oldName) return;
+
     this.boardName.set(newName);
 
     this.taskBoardService.updateBoardName(this.id(), newName).subscribe({
-      next: () => {
-        console.log('Nazwa zaktualizowana');
-      },
       error: (err) => {
         console.error('Błąd zapisu nazwy tablicy: ', err);
         this.boardName.set(oldName);
@@ -107,39 +123,29 @@ export class BoardComponent implements OnInit {
   }
 
   onTaskDrop(event: CdkDragDrop<TaskDto[]>, targetStatus: TaskStatus): void {
-    // Pobieramy status źródłowy z atrybutu HTML
-    const sourceStatus = event.previousContainer.element.nativeElement.getAttribute(
-      'data-status',
-    ) as TaskStatus;
-
-    const sourceSignal = this.getSignalByStatus(sourceStatus);
-    const targetSignal = this.getSignalByStatus(targetStatus);
-
-    const sourceArray = [...sourceSignal()];
-    const targetArray = [...targetSignal()];
-
-    const backupSource = [...sourceSignal()];
-    const backupTarget = [...targetSignal()];
+    const sourceStatus = event.previousContainer.id as TaskStatus;
 
     if (event.previousContainer === event.container) {
-      moveItemInArray(sourceArray, event.previousIndex, event.currentIndex);
-      sourceSignal.set(sourceArray);
+      const arr = [...event.container.data];
+      moveItemInArray(arr, event.previousIndex, event.currentIndex);
+      this.getSignalByStatus(targetStatus).set(arr);
     } else {
-      const task = sourceArray[event.previousIndex];
-      if (task) {
-        task.status = targetStatus;
-      }
+      const sourceArr = [...event.previousContainer.data];
+      const targetArr = [...event.container.data];
+      const task = sourceArr[event.previousIndex];
 
-      transferArrayItem(sourceArray, targetArray, event.previousIndex, event.currentIndex);
-      sourceSignal.set(sourceArray);
-      targetSignal.set(targetArray);
+      if (task) task.status = targetStatus;
 
-      if (task && task.id) {
+      transferArrayItem(sourceArr, targetArr, event.previousIndex, event.currentIndex);
+
+      this.getSignalByStatus(sourceStatus).set(sourceArr);
+      this.getSignalByStatus(targetStatus).set(targetArr);
+
+      if (task?.id) {
         this.taskBoardService.changeTaskStatus(this.id(), task.id, targetStatus).subscribe({
           error: (err) => {
-            console.error('Błąd sieci, przywracam kolejność', err);
-            sourceSignal.set(backupSource);
-            targetSignal.set(backupTarget);
+            console.error('Błąd sieci, przywracam stan z serwera', err);
+            this.loadBoardData(); // Rollback do stanu z serwera
           },
         });
       }
@@ -148,13 +154,16 @@ export class BoardComponent implements OnInit {
 
   onAddTask(): void {
     if (this.taskForm.invalid) return;
-    const newTask = this.taskForm.value as TaskDto;
-    newTask.id = crypto.randomUUID();
-    newTask.status = 'TODO';
+
+    const newTask = {
+      ...this.taskForm.value,
+      id: crypto.randomUUID(),
+      status: 'TODO',
+    } as TaskDto;
 
     this.taskBoardService.addNewTask(this.id(), newTask).subscribe({
       next: (createdTask) => {
-        this.todoTasks.set([...this.todoTasks(), createdTask]);
+        this.todoTasks.update((tasks) => [...tasks, createdTask]);
         this.taskForm.reset();
       },
       error: (err) => console.error(err),
@@ -168,26 +177,25 @@ export class BoardComponent implements OnInit {
     this.recentlyDeletedTask.set(task);
 
     const targetSignal = this.getSignalByStatus(task.status);
-    targetSignal.set(targetSignal().filter((t) => t.id !== task.id));
+    targetSignal.update((tasks) => tasks.filter((t) => t.id !== task.id));
 
     this.undoTimeoutId = setTimeout(() => this.executePermanentDelete(), 5000);
   }
 
   onUndoDelete(): void {
     const task = this.recentlyDeletedTask();
-    if (task && task.status) {
+    if (task?.status) {
       clearTimeout(this.undoTimeoutId);
       this.undoTimeoutId = null;
 
-      const targetSignal = this.getSignalByStatus(task.status);
-      targetSignal.set([...targetSignal(), task]);
+      this.getSignalByStatus(task.status).update((tasks) => [...tasks, task]);
       this.recentlyDeletedTask.set(null);
     }
   }
 
   private executePermanentDelete(): void {
     const task = this.recentlyDeletedTask();
-    if (task && task.id) {
+    if (task?.id) {
       clearTimeout(this.undoTimeoutId);
       this.undoTimeoutId = null;
       this.recentlyDeletedTask.set(null);
@@ -202,62 +210,5 @@ export class BoardComponent implements OnInit {
     if (status === 'TODO') return this.todoTasks;
     if (status === 'IN_PROGRESS') return this.inProgressTasks;
     return this.doneTasks;
-  }
-
-  loadBoardData() {
-    this.taskBoardService.getBoard(this.id()).subscribe({
-      next: (boardData) => {
-        this.boardName.set(boardData.name ?? 'Tablica Kanban');
-        this.board.set(boardData);
-        const tasks = boardData.tasks ?? [];
-
-        this.todoTasks.set(
-          this.mergeTasks(
-            this.todoTasks(),
-            tasks.filter((t) => t.status === 'TODO'),
-          ),
-        );
-        this.inProgressTasks.set(
-          this.mergeTasks(
-            this.inProgressTasks(),
-            tasks.filter((t) => t.status === 'IN_PROGRESS'),
-          ),
-        );
-        this.doneTasks.set(
-          this.mergeTasks(
-            this.doneTasks(),
-            tasks.filter((t) => t.status === 'DONE'),
-          ),
-        );
-      },
-      error: (err) => {
-        console.error(err);
-        if (err.status === 403 || err.status === 401) {
-          this.accessDenied.set(true);
-          this.boardName.set('Brak dostępu');
-          this.board.set(null);
-        } else {
-          this.boardName.set('Błąd ładowania tablicy');
-          this.board.set(null);
-        }
-      },
-    });
-  }
-
-  private mergeTasks(current: TaskDto[], incoming: TaskDto[]): TaskDto[] {
-    const incomingById = new Map(incoming.filter((t) => !!t.id).map((t) => [t.id, t]));
-    const kept: TaskDto[] = [];
-    for (const task of current) {
-      const fresh = task.id ? incomingById.get(task.id) : undefined;
-      if (fresh) {
-        Object.assign(task, fresh);
-        kept.push(task);
-      }
-    }
-
-    const keptIds = new Set(kept.map((t) => t.id));
-    const added = incoming.filter((t) => !t.id || !keptIds.has(t.id));
-
-    return [...kept, ...added];
   }
 }

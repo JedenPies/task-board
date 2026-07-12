@@ -1,5 +1,3 @@
-
-<!-- Górny pasek ujednolicony z dashboardem -->
 <header class="navbar">
   <div class="navbar-container">
     <div class="logo">Mój Kanban</div>
@@ -9,24 +7,24 @@
       } @else {
         <button (click)="loginModal.open()" class="btn-primary">Zaloguj</button>
       }
-
     </nav>
   </div>
 </header>
 
 <div class="board-detail-container">
-
   <div class="board-header">
     <h2>
       <a routerLink="/">Strona główna</a> »
       @if (!isEditingName()) {
         <p class="board-title" (click)="!accessDenied() && isEditingName.set(true)">{{ boardName() }}</p>
         @if (board(); as b) {
-          @if (b.is_public) {
-            <span class="public-badge board-public" (click)="goPublicModal.open()">Public</span>
-          } @else {
-            <span  class="public-badge board-private" (click)="goPublicModal.open()">Private</span>
-          }
+          <span
+            class="public-badge"
+            [class.board-public]="b.is_public"
+            [class.board-private]="!b.is_public"
+            (click)="goPublicModal.open()">
+            {{ b.is_public ? 'Public' : 'Private' }}
+          </span>
         }
       } @else {
         <input
@@ -63,25 +61,16 @@
     </div>
 
     <div class="kanban-board-header">
-      <div class="kanban-column">
-        <h3>Do zrobienia ({{ todoTasks().length }})</h3>
-      </div>
-      <div class="kanban-column">
-        <h3>W toku ({{ inProgressTasks().length }})</h3>
-      </div>
-      <div class="kanban-column">
-        <h3>Zrobione ({{ doneTasks().length }})</h3>
-      </div>
+      <div class="kanban-column"><h3>Do zrobienia ({{ todoTasks().length }})</h3></div>
+      <div class="kanban-column"><h3>W toku ({{ inProgressTasks().length }})</h3></div>
+      <div class="kanban-column"><h3>Zrobione ({{ doneTasks().length }})</h3></div>
     </div>
 
     <div class="kanban-board" cdkDropListGroup>
-    </div>
-    <!-- Obszar Drag & Drop -->
-    <div class="kanban-board" cdkDropListGroup>
 
       <div class="kanban-column">
-        <div class="task-list" cdkDropList data-status="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
-          @for (task of todoTasks(); track task) {
+        <div class="task-list" cdkDropList id="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
+          @for (task of todoTasks(); track task.id) {
             <div class="task-card" cdkDrag>
               <div class="task-content">
                 <h4>{{ task.title }}</h4>
@@ -96,8 +85,8 @@
       </div>
 
       <div class="kanban-column">
-        <div class="task-list" cdkDropList data-status="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
-          @for (task of inProgressTasks(); track task) {
+        <div class="task-list" cdkDropList id="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
+          @for (task of inProgressTasks(); track task.id) {
             <div class="task-card" cdkDrag>
               <div class="task-content">
                 <h4>{{ task.title }}</h4>
@@ -112,8 +101,8 @@
       </div>
 
       <div class="kanban-column">
-        <div class="task-list" cdkDropList data-status="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
-          @for (task of doneTasks(); track task) {
+        <div class="task-list" cdkDropList id="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
+          @for (task of doneTasks(); track task.id) {
             <div class="task-card" cdkDrag>
               <div class="task-content">
                 <h4>{{ task.title }}</h4>
