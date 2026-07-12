@@ -10,6 +10,7 @@ import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsExce
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 import net.patrykdobrowolski.task_board.rest.dto.NewTaskDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskDto;
+import net.patrykdobrowolski.task_board.rest.dto.UpdateTaskCommandDto;
 import net.patrykdobrowolski.task_board.rest.mapper.TaskDtoMapper;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,13 @@ public class TasksResource {
         Task result = taskBoardsService.addTaskToBoard(boardId, task);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskDtoMapper.toDto(result);
+    }
+
+    @PostMapping("/{taskId}/update-task-requests")
+    public TaskDto editTask(@PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody UpdateTaskCommandDto updateTaskCommandDto) throws ObjectNotFoundException, AccessDeniedException {
+        Task task = taskBoardsService.editTask(boardId, taskId, taskDtoMapper.fromDto(updateTaskCommandDto));
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskDtoMapper.toDto(task);
     }
 
     @GetMapping("/{taskId}")

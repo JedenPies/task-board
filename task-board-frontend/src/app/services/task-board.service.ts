@@ -1,7 +1,7 @@
 import {inject, Service} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {TaskBoardDto, TaskDto, TaskStatus} from '../models/board.model';
+import {TaskBoardDto, TaskDto, TaskStatus, UpdateTaskCommandDto } from '../models/board.model';
 
 @Service()
 export class TaskBoardService {
@@ -55,6 +55,13 @@ export class TaskBoardService {
       `${this.apiUrl}/${boardId}/tasks/${taskId}/position`,
       { status, followingTaskId },
       { headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  updateTaskDetails(boardId: string, taskId: string, command: UpdateTaskCommandDto) {
+    return this.http.post<TaskDto>(
+      `${this.apiUrl}/${boardId}/tasks/${taskId}/update-task-requests`,
+      command
     );
   }
 }

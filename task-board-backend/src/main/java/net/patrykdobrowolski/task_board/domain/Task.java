@@ -19,4 +19,9 @@ public class Task {
     private TaskStatus status;
     @Setter
     private Long position;
+
+    public void update(UpdateTaskCommand command) {
+        this.title = command.getNewTitle();
+        this.description = command.getNewDescription();
+    }
 }

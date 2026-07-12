@@ -71,6 +71,11 @@ public class TaskBoard {
         return taskToMove;
     }
 
+    public Task editTask(UUID taskId, UpdateTaskCommand updateTaskCommand) throws ObjectNotFoundException {
+        Task task = taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
+        task.update(updateTaskCommand);
+        return task;
+    }
     public List<Task> getTasks() {
         return Collections.unmodifiableList(Optional.ofNullable(tasks).orElseGet(Collections::emptyList));
     }
@@ -110,4 +115,5 @@ public class TaskBoard {
             throw new AccessDeniedException();
         }
     }
+
 }

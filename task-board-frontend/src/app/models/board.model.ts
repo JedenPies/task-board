@@ -12,4 +12,9 @@ export interface TaskDto {
   status: TaskStatus;
 }
 
+export interface UpdateTaskCommandDto {
+  newTitle: string;
+  newDescription: string;
+}
+
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';

@@ -1,0 +1,31 @@
+<dialog #dialog class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edytuj zadanie</h3>
+      <button class="close-btn" (click)="close()" type="button">&times;</button>
+    </div>
+
+    @if (currentTask()) {
+      <form [formGroup]="taskForm" (ngSubmit)="save()">
+
+        <div class="form-group">
+          <label for="title">Tytuł zadania *</label>
+          <input id="title" type="text" formControlName="title" placeholder="Wpisz nazwę zadania..." />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Opis zadania</label>
+          <textarea id="description" rows="5" formControlName="description" placeholder="Dodaj szerszy opis..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" (click)="close()">Anuluj</button>
+          <button type="submit" class="btn-primary" [disabled]="taskForm.invalid || isSaving()">
+            {{ isSaving() ? 'Zapisywanie...' : 'Zapisz' }}
+          </button>
+        </div>
+
+      </form>
+    }
+  </div>
+</dialog>

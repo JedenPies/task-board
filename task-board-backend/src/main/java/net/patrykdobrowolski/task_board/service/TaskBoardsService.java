@@ -3,10 +3,7 @@ package net.patrykdobrowolski.task_board.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.task_board.db.TaskBoardsRepositoryService;
-import net.patrykdobrowolski.task_board.domain.Task;
-import net.patrykdobrowolski.task_board.domain.TaskBoard;
-import net.patrykdobrowolski.task_board.domain.TaskStatus;
-import net.patrykdobrowolski.task_board.domain.UserContext;
+import net.patrykdobrowolski.task_board.domain.*;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.CannotMoveTaskException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
@@ -104,5 +101,13 @@ public class TaskBoardsService {
         board.moveTask(taskId, newStatus, followingTaskId);
         repositoryService.save(board);
         return board;
+    }
+
+    public Task editTask(UUID boardId, UUID taskId, UpdateTaskCommand updateTaskCommand) throws ObjectNotFoundException, AccessDeniedException {
+        TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
+        board.checkEditPermissions(userContext);
+        Task edited = board.editTask(taskId, updateTaskCommand);
+        repositoryService.save(board);
+        return edited;
     }
 }

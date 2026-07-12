@@ -13,6 +13,7 @@ import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
 import { AuthService } from '../../services/auth.service';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.component';
+import { TaskDetailsModalComponent } from '../task-details-modal/task-details-modal.component';
 
 @Component({
   selector: 'app-board',
@@ -24,6 +25,7 @@ import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.c
     DragDropModule,
     LoginModalComponent,
     PublicFlagModalComponent,
+    TaskDetailsModalComponent
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
@@ -133,7 +135,6 @@ export class BoardComponent implements OnInit, OnDestroy {
     } else {
       const sourceArr = [...event.previousContainer.data];
       const targetArr = [...event.container.data];
-      const task = sourceArr[event.previousIndex];
 
       transferArrayItem(sourceArr, targetArr, event.previousIndex, event.currentIndex);
 
