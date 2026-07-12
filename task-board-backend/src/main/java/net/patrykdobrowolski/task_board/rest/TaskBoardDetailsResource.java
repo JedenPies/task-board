@@ -43,7 +43,7 @@ public class TaskBoardDetailsResource {
         return taskBoardMapper.toDto(taskBoardsService.findBoard(boardId));
     }
 
-    @PatchMapping("/tasks/{taskId}/position")
+    @PutMapping("/tasks/{taskId}/position")
     public TaskBoardDto moveTask(
             @PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatusAndPositionDto positionDto) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
         TaskBoard board = taskBoardsService.moveTask(boardId, taskId, positionDto.getFollowingTaskId(), positionDto.getStatus());
