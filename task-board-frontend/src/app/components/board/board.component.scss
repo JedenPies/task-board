@@ -50,6 +50,14 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   margin-bottom: 24px;
   width: 100%;
 
+  h2 {
+    display: flex;
+    align-items: center; /* Idealne wyśrodkowanie w pionie */
+    gap: 10px;           /* Stałe odstępy między elementami nagłówka */
+    margin: 0;
+    flex-wrap: wrap;
+  }
+
   .board-title {
     font-size: 24px;
     font-weight: 700;
@@ -394,12 +402,35 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .public-badge {
-  vertical-align: middle;
-  font-size: 10px;
-  color: #833;
-  border: 1px solid #833;
-  background-color: #faa;
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: 4px;
   cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  /* Stan: Tablica Publiczna (Zielona) */
+  &.board-public {
+    color: #146c43;
+    border: 1px solid #a3cfbb;
+    background-color: #d1e7dd;
+
+    &:hover {
+      background-color: color.adjust(#d1e7dd, $lightness: -4%);
+    }
+  }
+
+  /* Stan: Tablica Prywatna (Pomarańczowa) */
+  &.board-private {
+    color: #b65005;
+    border: 1px solid #ffda6a;
+    background-color: #fff3cd;
+
+    &:hover {
+      background-color: color.adjust(#fff3cd, $lightness: -4%);
+    }
+  }
 }

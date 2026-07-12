@@ -23,9 +23,9 @@
         <p class="board-title" (click)="!accessDenied() && isEditingName.set(true)">{{ boardName() }}</p>
         @if (board(); as b) {
           @if (b.is_public) {
-            <span class="public-badge" (click)="goPublicModal.open()">Go private</span>
+            <span class="public-badge board-public" (click)="goPublicModal.open()">Public</span>
           } @else {
-            <span  class="public-badge" (click)="goPublicModal.open()">Go public</span>
+            <span  class="public-badge board-private" (click)="goPublicModal.open()">Private</span>
           }
         }
       } @else {

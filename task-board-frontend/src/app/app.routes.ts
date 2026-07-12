@@ -4,11 +4,11 @@ export const routes: Routes = [
 
   {
     path: '',
-    loadComponent: () => import('./components/board-list/board-list').then(m => m.BoardList)
+    loadComponent: () => import('./components/board-list/board-list.component').then(m => m.BoardListComponent)
   },
   {
     path: 'board/:id',
-    loadComponent: () => import('./components/board/board').then(m => m.Board)
+    loadComponent: () => import('./components/board/board.component').then(m => m.BoardComponent)
   }
 
 ];

@@ -3,7 +3,7 @@
     <div class="logo">Mój Kanban</div>
     <div class="nav-actions">
       @if (authService.isLoggedIn()) {
-        <button (click)="logout()" class="btn-ghost">Wyloguj</button>
+        <button (click)="authService.logout()" class="btn-ghost">Wyloguj</button>
       } @else {
         <button (click)="loginModal.open()" class="btn-primary">Zaloguj</button>
       }
@@ -14,9 +14,7 @@
 <!-- Główna zawartość -->
 <main class="main-content">
   <h2>Twoje Tablice</h2>
-  <!-- Sekcja tworzenia -->
   <section class="board-form">
-<!--    <h2>Utwórz nową tablicę</h2>-->
     <form (submit)="createBoard(); $event.preventDefault()" class="search-box">
       <input type="text" [(ngModel)]="newBoardTitle" name="title" required placeholder="Nazwa nowej tablicy">
       <button type="submit" class="btn-primary">Dodaj</button>
@@ -26,7 +24,6 @@
   <!-- Lista tablic -->
   @if (authService.isLoggedIn()) {
     <section class="boards-list-section">
-<!--      <h2>Twoje tablice</h2>-->
       <ul class="boards-list">
         @for (board of boards(); track board.id) {
           <li>
@@ -40,4 +37,4 @@
   }
 </main>
 
-<app-login-modal></app-login-modal>
+<app-login-modal #loginModal></app-login-modal>

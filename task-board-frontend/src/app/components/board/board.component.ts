@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { TaskBoardService } from '../../services/task-board';
+import { TaskBoardService } from '../../services/task-board.service';
 import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
-import { AuthService } from '../../services/auth';
-import { LoginModal } from '../login-modal/login-modal';
-import { GoPublicModal } from '../go-public-modal/go-public-modal';
+import { AuthService } from '../../services/auth.service';
+import { LoginModalComponent } from '../login-modal/login-modal.component';
+import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.component';
 
 @Component({
   selector: 'app-board',
@@ -17,15 +17,16 @@ import { GoPublicModal } from '../go-public-modal/go-public-modal';
     RouterModule,
     ReactiveFormsModule,
     DragDropModule,
-    LoginModal,
-    GoPublicModal,
+    LoginModalComponent,
+    PublicFlagModalComponent,
   ],
-  templateUrl: './board.html',
-  styleUrl: './board.scss',
+  templateUrl: './board.component.html',
+  styleUrl: './board.component.scss',
 })
-export class Board implements OnInit {
-  @ViewChild(LoginModal) loginModal!: LoginModal;
-  @ViewChild(GoPublicModal) goPublicModal!: GoPublicModal;
+export class BoardComponent implements OnInit {
+
+  @ViewChild(LoginModalComponent) loginModal!: LoginModalComponent;
+  @ViewChild(PublicFlagModalComponent) goPublicModal!: PublicFlagModalComponent;
 
   id = input.required<string>();
   boardName = signal<string>('Ładowanie...');
@@ -37,8 +38,8 @@ export class Board implements OnInit {
   doneTasks = signal<TaskDto[]>([]);
 
   recentlyDeletedTask = signal<TaskDto | null>(null);
-  isEditingName = signal<boolean>(false);
 
+  isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
 
   authService = inject(AuthService);
@@ -61,7 +62,6 @@ export class Board implements OnInit {
       `http://localhost:8081/api/task-boards/${this.id()}/sse-stream`,
     );
     this.eventSource.addEventListener('REFRESH', () => {
-      console.log('Refresh odebrane');
       this.loadBoardData();
     });
     this.eventSource.onerror = (error) => {
@@ -244,16 +244,8 @@ export class Board implements OnInit {
     });
   }
 
-  /**
-   * Scala dane z serwera z aktualną kolumną:
-   * - istniejące zadania (dopasowane po id) zostają na swoich miejscach, a ich dane są
-   *   aktualizowane w miejscu (ta sama referencja -> stabilny `track task` w szablonie),
-   * - zadania usunięte na serwerze są pomijane,
-   * - nowe zadania trafiają na koniec, w kolejności otrzymanej z serwera.
-   */
   private mergeTasks(current: TaskDto[], incoming: TaskDto[]): TaskDto[] {
     const incomingById = new Map(incoming.filter((t) => !!t.id).map((t) => [t.id, t]));
-
     const kept: TaskDto[] = [];
     for (const task of current) {
       const fresh = task.id ? incomingById.get(task.id) : undefined;

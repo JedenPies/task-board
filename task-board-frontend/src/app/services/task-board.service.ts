@@ -40,4 +40,9 @@ export class TaskBoardService {
     return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', `${newName}`,
       { headers: { 'Content-Type': 'application/json' }});
   }
+
+  updateBoardPublicity(boardId: string, isPublic: boolean): Observable<void> {
+    return this.http.put<void>(this.apiUrl + '/' + boardId + '/public', `${isPublic}`,
+      { headers: { 'Content-Type': 'application/json' }});
+  }
 }

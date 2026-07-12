@@ -1,24 +1,26 @@
 import { Component, ElementRef, ViewChild, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-modal',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './login-modal.html',
-  styleUrls: ['./login-modal.scss'],
+  templateUrl: './login-modal.component.html',
+  styleUrls: ['./login-modal.component.scss'],
 })
-export class LoginModal {
+export class LoginModalComponent {
 
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
+
+  authService = inject(AuthService);
 
   loginSuccess = output<void>();
 
   username = '';
   password = '';
-  authService = inject(AuthService);
 
+  // noinspection JSUnusedGlobalSymbols
   open() {
     this.dialog.nativeElement.showModal();
   }

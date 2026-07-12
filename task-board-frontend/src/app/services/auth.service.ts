@@ -11,6 +11,7 @@ interface LoginResponse {
 })
 
 export class AuthService {
+
   private http = inject(HttpClient)
   private authUrl = 'http://localhost:8080/api/authentication';
   private tokenSignal = signal<string | null>(localStorage.getItem('token'));
