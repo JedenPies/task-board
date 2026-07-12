@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.task_board.domain.Task;
 import net.patrykdobrowolski.task_board.domain.TaskStatus;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
+import net.patrykdobrowolski.task_board.domain.exception.CannotMoveTaskException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
+import net.patrykdobrowolski.task_board.rest.dto.NewTaskDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskDto;
 import net.patrykdobrowolski.task_board.rest.mapper.TaskDtoMapper;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
@@ -26,7 +28,7 @@ public class TasksResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody TaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
+    public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody NewTaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
         Task task = taskDtoMapper.fromDto(taskDto);
         Task result = taskBoardsService.addTaskToBoard(boardId, task);
         sseTaskBoardService.broadcastBoardChange(boardId);
@@ -39,7 +41,7 @@ public class TasksResource {
     }
 
     @PutMapping("/{taskId}/status")
-    public TaskDto changeStatus(@PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException {
+    public TaskDto changeStatus(@PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
         Task task = taskBoardsService.changeTaskStatus(boardId, taskId, newStatus);
         sseTaskBoardService.broadcastBoardChange(boardId);
         return taskDtoMapper.toDto(task);

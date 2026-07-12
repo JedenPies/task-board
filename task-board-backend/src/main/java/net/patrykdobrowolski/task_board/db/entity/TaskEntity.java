@@ -18,6 +18,7 @@ public class TaskEntity {
     private String description;
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+    private Long position;
 
     @ManyToOne
     @JoinColumn(name = "task_board_id")

@@ -8,6 +8,7 @@ import net.patrykdobrowolski.task_board.domain.TaskBoard;
 import net.patrykdobrowolski.task_board.domain.TaskStatus;
 import net.patrykdobrowolski.task_board.domain.UserContext;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
+import net.patrykdobrowolski.task_board.domain.exception.CannotMoveTaskException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
@@ -33,9 +34,7 @@ public class TaskBoardsService {
     public Task addTaskToBoard(UUID boardId, Task task) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("board", boardId));
         board.checkEditPermissions(userContext);
-        if (board.taskById(task.getId()).isPresent()) throw ObjectAlreadyExistsException.of("Task", task.getId());
-        task.setStatus(TaskStatus.TODO);
-        board.addTask(task);
+        board.addNewTask(task);
         repositoryService.save(board);
         return task;
     }
@@ -49,11 +48,10 @@ public class TaskBoardsService {
     }
 
     @Transactional
-    public Task changeTaskStatus(UUID boardId, UUID taskId, TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException {
+    public Task changeTaskStatus(UUID boardId, UUID taskId, TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
         TaskBoard board = findBoard(boardId);
         board.checkEditPermissions(userContext);
-        Task task = board.taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
-        task.setStatus(newStatus);
+        Task task = board.moveTask(taskId, newStatus, null);
         repositoryService.save(board);
         return task;
     }
@@ -95,6 +93,15 @@ public class TaskBoardsService {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
         board.checkPublicFlagPermission(userContext);
         board.setIsPublic(isPublic);
+        repositoryService.save(board);
+        return board;
+    }
+
+    @Transactional
+    public TaskBoard moveTask(UUID boardId, UUID taskId, UUID followingTaskId, TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
+        TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
+        board.checkEditPermissions(userContext);
+        board.moveTask(taskId, newStatus, followingTaskId);
         repositoryService.save(board);
         return board;
     }

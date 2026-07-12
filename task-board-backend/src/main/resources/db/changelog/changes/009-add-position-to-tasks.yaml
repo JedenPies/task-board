@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009.1-add-position-to-tasks
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: tasks
+            columns:
+              - column:
+                  name: position
+                  type: BIGINT
+        - createIndex:
+            indexName: idx_tasks_status_position
+            tableName: tasks
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: position
+  - changeSet:
+      id: 009.2-backfill-task-positions
+      author: patryk
+      dbms: postgresql
+      changes:
+        - sql:
+            sql: >
+              WITH numbered_tasks AS (
+                  SELECT 
+                      id,
+                      (ROW_NUMBER() OVER (PARTITION BY task_board_id, status ORDER BY id)) * 65536 AS new_position
+                  FROM tasks
+              )
+              UPDATE tasks t
+              SET position = nt.new_position
+              FROM numbered_tasks nt
+              WHERE t.id = nt.id;
+
+  - changeSet:
+      id: 009.3-make-position-not-null
+      author: patryk
+      changes:
+        - addNotNullConstraint:
+            tableName: tasks
+            columnName: position
+            columnDataType: BIGINT

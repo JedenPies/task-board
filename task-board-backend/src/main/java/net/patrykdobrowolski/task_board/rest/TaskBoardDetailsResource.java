@@ -3,8 +3,10 @@ package net.patrykdobrowolski.task_board.rest;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.task_board.domain.TaskBoard;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
+import net.patrykdobrowolski.task_board.domain.exception.CannotMoveTaskException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardDto;
+import net.patrykdobrowolski.task_board.rest.dto.TaskStatusAndPositionDto;
 import net.patrykdobrowolski.task_board.rest.mapper.TaskBoardMapper;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
 import org.springframework.http.MediaType;
@@ -39,6 +41,14 @@ public class TaskBoardDetailsResource {
     @GetMapping
     public TaskBoardDto getBoard(@PathVariable UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
         return taskBoardMapper.toDto(taskBoardsService.findBoard(boardId));
+    }
+
+    @PatchMapping("/tasks/{taskId}/position")
+    public TaskBoardDto moveTask(
+            @PathVariable UUID boardId, @PathVariable UUID taskId, @RequestBody TaskStatusAndPositionDto positionDto) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
+        TaskBoard board = taskBoardsService.moveTask(boardId, taskId, positionDto.getFollowingTaskId(), positionDto.getStatus());
+        sseTaskBoardService.broadcastBoardChange(boardId);
+        return taskBoardMapper.toDto(board);
     }
 
     @GetMapping(value = "/sse-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

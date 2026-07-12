@@ -17,4 +17,6 @@ public class Task {
 
     @Setter
     private TaskStatus status;
+    @Setter
+    private Long position;
 }
