@@ -103,6 +103,7 @@ public class TaskBoardsService {
         return board;
     }
 
+    @Transactional
     public Task editTask(UUID boardId, UUID taskId, UpdateTaskCommand updateTaskCommand) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
         board.checkEditPermissions(userContext);
