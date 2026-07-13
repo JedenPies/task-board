@@ -1,5 +1,6 @@
 package net.patrykdobrowolski.task_board.domain;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,18 +29,18 @@ public class TaskBoard {
     @Setter
     private Boolean isPublic = false;
 
-    public void addNewTask(Task task) throws ObjectAlreadyExistsException {
+    public Task addNewTask(Task task) throws ObjectAlreadyExistsException, ObjectNotFoundException, CannotMoveTaskException {
         if (taskById(task.getId()).isPresent()) throw ObjectAlreadyExistsException.of("Task", task.getId());
         task.setStatus(Optional.ofNullable(task.getStatus()).orElse(TaskStatus.TODO));
-        Long max = tasks.stream()
-                .map(Task::getPosition)
-                .max(Long::compareTo)
-                .orElse(0L);
-        task.setPosition(max + POSITION_GAP);
-        tasks.add(task);
+        UUID firstTaskId = tasks.stream()
+                .min(Comparator.comparing(Task::getPosition))
+                .map(Task::getId)
+                .orElse(null);
+        moveTask(task.getId(), task.getStatus(), firstTaskId);
+        return task;
     }
 
-    public Task moveTask(UUID taskId, TaskStatus newStatus, UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
+    public Task moveTask(UUID taskId, TaskStatus newStatus, @Nullable UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
         Task taskToMove = taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
         if (taskId.equals(followingTaskId)) throw new CannotMoveTaskException();
         Optional<Task> followingTask =

@@ -28,12 +28,12 @@ public class TaskBoardsService {
     }
 
     @Transactional
-    public Task addTaskToBoard(UUID boardId, Task task) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
+    public Task addTaskToBoard(UUID boardId, Task task) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException, CannotMoveTaskException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("board", boardId));
         board.checkEditPermissions(userContext);
-        board.addNewTask(task);
+        Task added = board.addNewTask(task);
         repositoryService.save(board);
-        return task;
+        return added;
     }
 
     @Transactional

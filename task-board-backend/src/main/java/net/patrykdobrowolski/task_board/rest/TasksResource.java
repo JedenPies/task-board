@@ -29,7 +29,7 @@ public class TasksResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody NewTaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
+    public TaskDto addNewTask(@PathVariable UUID boardId, @Valid @RequestBody NewTaskDto taskDto) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException, CannotMoveTaskException {
         Task task = taskDtoMapper.fromDto(taskDto);
         Task result = taskBoardsService.addTaskToBoard(boardId, task);
         sseTaskBoardService.broadcastBoardChange(boardId);
