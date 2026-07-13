@@ -11,6 +11,7 @@ import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsExce
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -29,47 +30,51 @@ public class TaskBoard {
     @Setter
     private Boolean isPublic = false;
 
-    public Task addNewTask(Task task) throws ObjectAlreadyExistsException, ObjectNotFoundException, CannotMoveTaskException {
+    public Task addNewTask(Task task) throws ObjectAlreadyExistsException {
         if (taskById(task.getId()).isPresent()) throw ObjectAlreadyExistsException.of("Task", task.getId());
         task.setStatus(Optional.ofNullable(task.getStatus()).orElse(TaskStatus.TODO));
-        UUID firstTaskId = tasks.stream()
-                .min(Comparator.comparing(Task::getPosition))
-                .map(Task::getId)
-                .orElse(null);
-        moveTask(task.getId(), task.getStatus(), firstTaskId);
+        Optional<Task> firstTask = tasks.stream()
+                .filter(t -> t.getStatus() == task.getStatus())
+                .min(Comparator.comparing(Task::getPosition));
+        insertBefore(task, firstTask.orElse(null));
         return task;
     }
 
     public Task moveTask(UUID taskId, TaskStatus newStatus, @Nullable UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
         Task taskToMove = taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
-        if (taskId.equals(followingTaskId)) throw new CannotMoveTaskException();
-        Optional<Task> followingTask =
-                followingTaskId != null
-                        ? Optional.of(taskByIdAndStatus(followingTaskId, newStatus).orElseThrow(() -> ObjectNotFoundException.of("Task", followingTaskId)))
-                        : Optional.empty();
         this.tasks.remove(taskToMove);
+        if (taskId.equals(followingTaskId)) throw new CannotMoveTaskException();
         taskToMove.setStatus(newStatus);
-        this.tasks.sort(Comparator.comparing(Task::getPosition));
+        Task followingTask = taskByIdAndStatus(followingTaskId, newStatus)
+                .orElseThrow(() -> ObjectNotFoundException.of("Task", followingTaskId));
+        return insertBefore(taskToMove, followingTask);
+    }
 
-        int nextIndex = followingTask.map(tasks::indexOf).orElse(tasks.size());
-        int prevIndex = nextIndex - 1; // skrajnie - moze byc -1
-
-        Optional<Task> precedingTask = prevIndex < 0 ? Optional.empty() : Optional.of(tasks.get(prevIndex));
-
-        long prevPosition = precedingTask.map(Task::getPosition).orElse(0L);
-        long nextPosition = followingTask.map(Task::getPosition).orElse(prevPosition + POSITION_GAP * 2);
-        long newPosition = (nextPosition + prevPosition) / 2;
-        taskToMove.setPosition(newPosition);
-
-        tasks.add(nextIndex, taskToMove);
-        if (Math.abs(prevPosition - nextPosition) < 2) {
-            long currentPos = POSITION_GAP;
-            for (Task t : tasks) {
-                t.setPosition(currentPos);
-                currentPos += POSITION_GAP;
-            }
+    private Task insertBefore(Task newTask, Task followingTask) {
+        List<Task> tasks = this.tasks.stream().filter(t -> t.getStatus() == newTask.getStatus())
+                .sorted(Comparator.comparing(Task::getPosition))
+                .collect(Collectors.toCollection(ArrayList::new));
+        int followingTaskIndex = tasks.indexOf(followingTask);
+        int precedingTaskIndex = Math.max(followingTaskIndex - 1, -1);
+        long followingTaskPosition = (followingTaskIndex >= 0 ? Optional.of(tasks.get(followingTaskIndex)) : Optional.<Task>empty())
+                .map(Task::getPosition).orElse(POSITION_GAP * 2);
+        long precedingTaskPosition = (precedingTaskIndex >= 0 ? Optional.of(tasks.get(precedingTaskIndex)) : Optional.<Task>empty())
+                .map(Task::getPosition).orElse(0L);
+        newTask.setPosition((precedingTaskPosition + followingTaskPosition) / 2);
+        if (followingTaskPosition - precedingTaskPosition <= 1) {
+            tasks.add(followingTaskIndex, newTask);
+            rebalance(tasks);
         }
-        return taskToMove;
+        this.tasks.add(newTask);
+        return newTask;
+    }
+
+    private void rebalance(List<Task> tasksToRebalance) {
+       long currentPos = POSITION_GAP;
+       for (Task t : tasksToRebalance) {
+            t.setPosition(currentPos);
+            currentPos += POSITION_GAP;
+        }
     }
 
     public Task editTask(UUID taskId, UpdateTaskCommand updateTaskCommand) throws ObjectNotFoundException {
@@ -116,5 +121,4 @@ public class TaskBoard {
             throw new AccessDeniedException();
         }
     }
-
 }
