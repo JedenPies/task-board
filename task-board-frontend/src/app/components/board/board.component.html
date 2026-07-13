@@ -45,25 +45,17 @@
       <button class="btn-primary" (click)="loginModal.open()">Zaloguj Się</button>
     </div>
   } @else {
-    <div class="add-task-container">
-      <form [formGroup]="taskForm" (ngSubmit)="onAddTask()">
-        <div class="form-group">
-          <input type="text" formControlName="title" placeholder="Tytuł nowego zadania..." class="form-input" />
-          @if (taskForm.get('title')?.touched && taskForm.get('title')?.invalid) {
-            <span class="error-msg">Tytuł jest wymagany (min. 3 znaki).</span>
-          }
-        </div>
-        <div class="form-group">
-          <input type="text" formControlName="description" placeholder="Opis zadania (opcjonalnie)..." class="form-input" />
-        </div>
-        <button type="submit" [disabled]="taskForm.invalid" class="btn-submit">+ Dodaj zadanie</button>
-      </form>
-    </div>
 
     <div class="kanban-board-header">
-      <div class="kanban-column"><h3>Do zrobienia ({{ todoTasks().length }})</h3></div>
-      <div class="kanban-column"><h3>W toku ({{ inProgressTasks().length }})</h3></div>
-      <div class="kanban-column"><h3>Zrobione ({{ doneTasks().length }})</h3></div>
+      <div class="kanban-column">
+        <h3>Do zrobienia ({{ todoTasks().length }})<button class="btn-add" (click)="taskDetailsModal.openForCreate('TODO')">+</button></h3>
+      </div>
+      <div class="kanban-column">
+        <h3>W toku ({{ inProgressTasks().length }})<button class="btn-add" (click)="taskDetailsModal.openForCreate('IN_PROGRESS')">+</button></h3>
+      </div>
+      <div class="kanban-column">
+        <h3>Zrobione ({{ doneTasks().length }})<button class="btn-add" (click)="taskDetailsModal.openForCreate('DONE')">+</button></h3>
+      </div>
     </div>
 
     <div class="kanban-board" cdkDropListGroup>
@@ -71,8 +63,8 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
           @for (task of todoTasks(); track task.id) {
-            <div class="task-card" cdkDrag (click)="taskDetailsModal.open(task)">
-              <div class="task-content">
+            <div class="task-card" cdkDrag>
+              <div class="task-content" (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">
                 <h4>{{ task.title }}</h4>
                 @if (task.description) { <p>{{ task.description }}</p> }
               </div>
@@ -87,8 +79,8 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
           @for (task of inProgressTasks(); track task.id) {
-            <div class="task-card" cdkDrag (click)="taskDetailsModal.open(task)">
-              <div class="task-content">
+            <div class="task-card" cdkDrag>
+              <div class="task-content" (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">
                 <h4>{{ task.title }}</h4>
                 @if (task.description) { <p>{{ task.description }}</p> }
               </div>
@@ -103,8 +95,8 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
           @for (task of doneTasks(); track task.id) {
-            <div class="task-card" cdkDrag (click)="taskDetailsModal.open(task)">
-              <div class="task-content">
+            <div class="task-card" cdkDrag>
+              <div class="task-content" (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">
                 <h4>{{ task.title }}</h4>
                 @if (task.description) { <p>{{ task.description }}</p> }
               </div>

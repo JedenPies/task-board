@@ -1,7 +1,8 @@
 import { Component, ElementRef, input, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskBoardService } from '../../services/task-board.service';
-import { TaskDto, UpdateTaskCommandDto } from '../../models/board.model';
+import { TaskDto, TaskStatus, UpdateTaskCommandDto } from '../../models/board.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-task-details-modal',
@@ -22,6 +23,7 @@ export class TaskDetailsModalComponent {
 
   // ZMIANA: Robimy z tego Sygnał
   currentTask = signal<TaskDto | null>(null);
+  targetStatus = signal<TaskStatus | null>(null);
   isSaving = signal<boolean>(false); // to też warto zrobić sygnałem
 
   constructor() {
@@ -31,14 +33,20 @@ export class TaskDetailsModalComponent {
     });
   }
 
-  open(task: TaskDto) {
-    // ZMIANA: używamy .set()
+  openForEdit(task: TaskDto) {
     this.currentTask.set(task);
-
+    this.targetStatus.set(null);
     this.taskForm.patchValue({
       title: task.title,
       description: task.description || '',
     });
+    this.dialog.nativeElement.showModal();
+  }
+
+  openForCreate(status: TaskStatus) {
+    this.currentTask.set(null);
+    this.targetStatus.set(status);
+    this.taskForm.reset();
     this.dialog.nativeElement.showModal();
   }
 
@@ -51,15 +59,31 @@ export class TaskDetailsModalComponent {
 
   save() {
     const task = this.currentTask();
-    if (this.taskForm.invalid || !task) return;
-
+    const status = this.targetStatus();
+    if (this.taskForm.invalid || (!task && !status)) return;
+    console.log('save: ' + status + ' ' + task);
+    let operation$: Observable<any>;
     this.isSaving.set(true);
-    const command: UpdateTaskCommandDto = {
-      newTitle: this.taskForm.value.title,
-      newDescription: this.taskForm.value.description,
-    };
+    if (task) {
+      const command: UpdateTaskCommandDto = {
+        newTitle: this.taskForm.value.title,
+        newDescription: this.taskForm.value.description,
+      };
+      operation$ = this.taskBoardService.updateTaskDetails(this.boardId(), task.id, command);
+    } else if (status !== null && status !== undefined) {
+      const newTask: TaskDto = {
+        id: crypto.randomUUID(),
+        title: this.taskForm.value.title,
+        description: this.taskForm.value.description,
+        status: status,
+      };
+      operation$ = this.taskBoardService.addNewTask(this.boardId(), newTask);
+    } else {
+      return;
+    }
 
-    this.taskBoardService.updateTaskDetails(this.boardId(), task.id, command).subscribe({
+
+    operation$.subscribe({
       next: () => {
         this.isSaving.set(false);
         this.close();

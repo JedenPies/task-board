@@ -1,11 +1,11 @@
 <dialog #dialog class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>Edytuj zadanie</h3>
+      <h3>{{ currentTask() ? 'Edytuj zadanie' : 'Dodaj nowe zadanie' }}</h3>
       <button class="close-btn" (click)="close()" type="button">&times;</button>
     </div>
 
-    @if (currentTask()) {
+<!--    @if (currentTask()) {-->
       <form [formGroup]="taskForm" (ngSubmit)="save()">
 
         <div class="form-group">
@@ -26,6 +26,6 @@
         </div>
 
       </form>
-    }
+<!--    }-->
   </div>
 </dialog>
