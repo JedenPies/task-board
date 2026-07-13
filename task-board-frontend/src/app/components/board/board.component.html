@@ -64,9 +64,9 @@
         <div class="task-list" cdkDropList id="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
           @for (task of todoTasks(); track task.id) {
             <div class="task-card" cdkDrag>
-              <div class="task-content" (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">
-                <h4>{{ task.title }}</h4>
-                @if (task.description) { <p>{{ task.description }}</p> }
+              <div class="task-content">
+                <h4 (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.title }}</h4>
+                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
             </div>
@@ -80,9 +80,9 @@
         <div class="task-list" cdkDropList id="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
           @for (task of inProgressTasks(); track task.id) {
             <div class="task-card" cdkDrag>
-              <div class="task-content" (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">
-                <h4>{{ task.title }}</h4>
-                @if (task.description) { <p>{{ task.description }}</p> }
+              <div class="task-content">
+                <h4 (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.title }}</h4>
+                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
             </div>
@@ -96,9 +96,9 @@
         <div class="task-list" cdkDropList id="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
           @for (task of doneTasks(); track task.id) {
             <div class="task-card" cdkDrag>
-              <div class="task-content" (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">
-                <h4>{{ task.title }}</h4>
-                @if (task.description) { <p>{{ task.description }}</p> }
+              <div class="task-content">
+                <h4 (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.title }}</h4>
+                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
             </div>
