@@ -13,7 +13,6 @@ public interface TaskDtoMapper {
 
     TaskDto toDto(Task task);
     Task fromDto(TaskDto taskDto);
-    @Mapping(target = "status", ignore = true)
     @Mapping(target = "position", ignore = true)
     Task fromDto(NewTaskDto taskDto);
 

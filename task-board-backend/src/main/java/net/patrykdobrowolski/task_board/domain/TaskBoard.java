@@ -30,7 +30,7 @@ public class TaskBoard {
 
     public void addNewTask(Task task) throws ObjectAlreadyExistsException {
         if (taskById(task.getId()).isPresent()) throw ObjectAlreadyExistsException.of("Task", task.getId());
-        task.setStatus(TaskStatus.TODO);
+        task.setStatus(Optional.ofNullable(task.getStatus()).orElse(TaskStatus.TODO));
         Long max = tasks.stream()
                 .map(Task::getPosition)
                 .max(Long::compareTo)

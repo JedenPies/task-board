@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
+import net.patrykdobrowolski.task_board.domain.TaskStatus;
 
 import java.util.UUID;
 
@@ -21,5 +22,6 @@ public class NewTaskDto {
     private final String title;
     @Size(max = 2000, message = "max length is 2000")
     private final String description;
+    private final TaskStatus status;
 }
 
