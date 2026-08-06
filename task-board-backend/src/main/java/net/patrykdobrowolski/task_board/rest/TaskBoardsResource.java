@@ -3,7 +3,7 @@ package net.patrykdobrowolski.task_board.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.task_board.domain.TaskBoard;
-import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
+import net.patrykdobrowolski.task_board.rest.dto.CreateTaskBoardCommandDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardDto;
 import net.patrykdobrowolski.task_board.rest.mapper.TaskBoardMapper;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
@@ -27,7 +27,7 @@ public class TaskBoardsResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskBoardDto postNewBoard(@Valid @RequestBody TaskBoardDto taskBoardDto) throws ObjectAlreadyExistsException {
+    public TaskBoardDto postNewBoard(@Valid @RequestBody CreateTaskBoardCommandDto taskBoardDto) {
         TaskBoard taskBoard = taskBoardMapper.fromDto(taskBoardDto);
         TaskBoard created = taskBoardsService.createBoard(taskBoard);
         return taskBoardMapper.toDto(created);

@@ -1,8 +1,14 @@
 export interface TaskBoardDto {
   id: string;
   name: string;
-  is_public: boolean;
+  isPublic: boolean;
   tasks: TaskDto[];
+  canChangeVisibility: false;
+  canEdit: true;
+}
+
+export interface CreateTaskBoardCommandDto {
+  name: null;
 }
 
 export interface TaskDto {

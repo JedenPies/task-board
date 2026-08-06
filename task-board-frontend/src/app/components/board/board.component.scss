@@ -62,15 +62,17 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
     font-size: 24px;
     font-weight: 700;
     color: #333;
-    cursor: pointer;
     display: inline-block;
     padding: 4px 8px;
     border-radius: 6px;
     transition: background-color 0.2s;
     margin: 0;
 
-    &:hover {
-      background-color: #f0f0f0;
+    &.editable {
+      &:hover {
+        cursor: pointer;
+        background-color: #f0f0f0;
+      }
     }
   }
 
@@ -81,7 +83,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
     font-family: inherit;
     border: 2px solid #000;
     border-radius: 6px;
-    padding: 4px 8px;
+    padding: 4px 8px 5px 8px;
     outline: none;
     background-color: #fff;
     width: 100%;
@@ -408,18 +410,22 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 4px;
-  cursor: pointer;
   user-select: none;
   transition: all 0.2s ease;
 
-  /* Stan: Tablica Publiczna (Zielona) */
+  &.editable {
+    cursor: pointer;
+  }
+
   &.board-public {
     color: #146c43;
     border: 1px solid #a3cfbb;
     background-color: #d1e7dd;
 
     &:hover {
-      background-color: color.adjust(#d1e7dd, $lightness: -4%);
+      &.editable {
+        background-color: color.adjust(#d1e7dd, $lightness: -4%);
+      }
     }
   }
 
@@ -430,7 +436,9 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
     background-color: #fff3cd;
 
     &:hover {
-      background-color: color.adjust(#fff3cd, $lightness: -4%);
+      &.editable {
+        background-color: color.adjust(#fff3cd, $lightness: -4%);
+      }
     }
   }
 }

@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, input, signal, inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  input,
+  signal,
+  inject,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -25,7 +34,7 @@ import { TaskDetailsModalComponent } from '../task-details-modal/task-details-mo
     DragDropModule,
     LoginModalComponent,
     PublicFlagModalComponent,
-    TaskDetailsModalComponent
+    TaskDetailsModalComponent,
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
@@ -33,6 +42,8 @@ import { TaskDetailsModalComponent } from '../task-details-modal/task-details-mo
 export class BoardComponent implements OnInit, OnDestroy {
   @ViewChild(LoginModalComponent) loginModal!: LoginModalComponent;
   @ViewChild(PublicFlagModalComponent) goPublicModal!: PublicFlagModalComponent;
+
+  @ViewChild('boardNameInput') boardNameInput?: ElementRef<HTMLInputElement>;
 
   id = input.required<string>();
   boardName = signal<string>('Ładowanie...');
@@ -45,6 +56,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   recentlyDeletedTask = signal<TaskDto | null>(null);
   isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
+
+  isPublic = signal<boolean>(false);
 
   authService = inject(AuthService);
   private taskBoardService = inject(TaskBoardService);
@@ -74,6 +87,21 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
+  enableNameEdit(enable: boolean) {
+    if (!enable || this.accessDenied() || !this.board()?.canEdit) {
+      this.isEditingName.set(false);
+      return;
+    }
+    this.isEditingName.set(true);
+    setTimeout(() => {
+      const input = this.boardNameInput?.nativeElement;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 0);
+  }
+
   logout(): void {
     this.authService.logout();
     this.todoTasks.set([]);
@@ -87,6 +115,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       next: (boardData) => {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         this.board.set(boardData);
+        console.log('czy jest isPublic?' + boardData);
 
         const tasks = boardData.tasks ?? [];
         this.todoTasks.set(tasks.filter((t) => t.status === 'TODO'));

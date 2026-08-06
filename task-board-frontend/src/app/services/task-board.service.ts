@@ -1,7 +1,13 @@
 import {inject, Service} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {TaskBoardDto, TaskDto, TaskStatus, UpdateTaskCommandDto } from '../models/board.model';
+import {
+  CreateTaskBoardCommandDto,
+  TaskBoardDto,
+  TaskDto,
+  TaskStatus,
+  UpdateTaskCommandDto,
+} from '../models/board.model';
 
 @Service()
 export class TaskBoardService {
@@ -14,8 +20,8 @@ export class TaskBoardService {
     return this.http.get<TaskBoardDto[]>(this.apiUrl);
   }
 
-  createBoard(id: string, name: string): Observable<TaskBoardDto> {
-    return this.http.post<TaskBoardDto>(this.apiUrl, { id, name });
+  createBoard(name: string): Observable<TaskBoardDto> {
+    return this.http.post<TaskBoardDto>(this.apiUrl, { name });
   }
 
   getBoard(boardId: string): Observable<TaskBoardDto> {

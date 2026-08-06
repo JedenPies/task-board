@@ -28,7 +28,7 @@ public class TaskBoardsService {
     }
 
     @Transactional
-    public Task addTaskToBoard(UUID boardId, Task task) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException, CannotMoveTaskException {
+    public Task addTaskToBoard(UUID boardId, Task task) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("board", boardId));
         board.checkEditPermissions(userContext);
         Task added = board.addNewTask(task);
@@ -37,9 +37,9 @@ public class TaskBoardsService {
     }
 
     @Transactional
-    public TaskBoard createBoard(TaskBoard taskBoard) throws ObjectAlreadyExistsException {
-        if (repositoryService.findById(taskBoard.getId()).isPresent()) {
-            throw ObjectAlreadyExistsException.of("Board", taskBoard.getId());
+    public TaskBoard createBoard(TaskBoard taskBoard) {
+        if (userContext.isNotLoggedIn()) {
+            taskBoard.setIsPublic(true);
         }
         return repositoryService.save(taskBoard.withOwner(userContext.getUserName()));
     }
@@ -56,7 +56,7 @@ public class TaskBoardsService {
     @Transactional
     public TaskBoard findBoard(UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard found = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
-        found.checkEditPermissions(userContext);
+        found.checkViewPermissions(userContext);
         return found;
     }
 

@@ -15,26 +15,29 @@
   <div class="board-header">
     <h2>
       <a routerLink="/">Strona główna</a> »
-      @if (!isEditingName()) {
-        <p class="board-title" (click)="!accessDenied() && isEditingName.set(true)">{{ boardName() }}</p>
-        @if (board(); as b) {
+      @if (board(); as b) {
+        @if (!isEditingName()) {
+          <p class="board-title" [class.editable]="b.canEdit"
+             (click)="!accessDenied() && board()?.canEdit && enableNameEdit(true)">{{ boardName() }}</p>
           <span
             class="public-badge"
-            [class.board-public]="b.is_public"
-            [class.board-private]="!b.is_public"
-            (click)="goPublicModal.open()">
-            {{ b.is_public ? 'Public' : 'Private' }}
+            [class.editable]="b.canChangeVisibility"
+            [class.board-public]="b.isPublic"
+            [class.board-private]="!b.isPublic"
+            (click)="b.canChangeVisibility && goPublicModal.open()">
+            {{ b.isPublic ? 'Public' : 'Private' }}
           </span>
+        } @else {
+          <input
+            #boardNameInput
+            type="text"
+            [value]="boardName()"
+            class="board-title-input"
+            autofocus
+            (keyup.enter)="onUpdateBoardName($event)"
+            (keyup.escape)="enableNameEdit(false)"
+            (blur)="onUpdateBoardName($event)" />
         }
-      } @else {
-        <input
-          type="text"
-          [value]="boardName()"
-          class="board-title-input"
-          autofocus
-          (keyup.enter)="onUpdateBoardName($event)"
-          (keyup.escape)="isEditingName.set(false)"
-          (blur)="onUpdateBoardName($event)" />
       }
     </h2>
   </div>
@@ -65,7 +68,7 @@
           @for (task of todoTasks(); track task.id) {
             <div class="task-card" cdkDrag>
               <div class="task-content">
-                <h4 (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.title }}</h4>
+                <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
                 @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>

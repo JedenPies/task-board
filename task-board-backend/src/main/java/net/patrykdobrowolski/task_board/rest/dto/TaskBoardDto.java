@@ -20,4 +20,7 @@ public class TaskBoardDto {
     private final String name;
     private final Boolean isPublic;
     private final List<@Valid TaskDto> tasks;
+
+    private final Boolean canEdit;
+    private final Boolean canChangeVisibility;
 }

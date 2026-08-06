@@ -24,12 +24,11 @@ export class BoardListComponent {
   newBoardTitle = '';
 
   createBoard() {
-    const id = crypto.randomUUID();
     const name = this.newBoardTitle;
-    this.taskBoardService.createBoard(id, name).subscribe({
-      next: () => {
-        this.newBoardTitle = '';
-        this.router.navigate(['/board', id]);
+    this.taskBoardService.createBoard(name).subscribe({
+      next: (t ) => {
+        this.newBoardTitle = t.name;
+        this.router.navigate(['/board', t.id ]);
       },
       error: (err) => {
         console.error('Błąd tworzenia tablicy', err);

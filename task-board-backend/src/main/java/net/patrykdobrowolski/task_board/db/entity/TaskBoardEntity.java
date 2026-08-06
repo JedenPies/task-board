@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class TaskBoardEntity {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;

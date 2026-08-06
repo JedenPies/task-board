@@ -106,18 +106,31 @@ public class TaskBoard {
 
     public boolean isAllowedToEdit(UserContext userContext) {
         return owner == null
-                || Boolean.TRUE.equals(isPublic)
                 || owner.equals(userContext.getUserName());
     }
 
+    public boolean isAllowedToChangeVisibility(UserContext userContext) {
+        return owner != null && owner.equals(userContext.getUserName());
+    }
+
+    public boolean isAllowedToView(UserContext userContext) {
+        return isPublic || isAllowedToEdit(userContext);
+    }
+
     public void checkPublicFlagPermission(UserContext userContext) throws AccessDeniedException {
-        if (owner == null || !owner.equals(userContext.getUserName())) {
+        if (!isAllowedToChangeVisibility(userContext)) {
             throw new AccessDeniedException();
         }
     }
 
     public void checkEditPermissions(UserContext userContext) throws AccessDeniedException {
         if (!isAllowedToEdit(userContext)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public void checkViewPermissions(UserContext userContext) throws AccessDeniedException {
+        if (!isAllowedToView(userContext)) {
             throw new AccessDeniedException();
         }
     }
