@@ -50,7 +50,7 @@ export class TaskBoardService {
     });
   }
 
-  updateBoardPublicity(boardId: string, isPublic: boolean): Observable<void> {
+  updateBoardVisibility(boardId: string, isPublic: boolean): Observable<void> {
     return this.http.put<void>(this.apiUrl + '/' + boardId + '/public', `${isPublic}`, {
       headers: { 'Content-Type': 'application/json' },
     });

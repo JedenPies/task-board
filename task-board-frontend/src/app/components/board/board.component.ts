@@ -40,9 +40,9 @@ import { TaskDetailsModalComponent } from '../task-details-modal/task-details-mo
   styleUrl: './board.component.scss',
 })
 export class BoardComponent implements OnInit, OnDestroy {
+
   @ViewChild(LoginModalComponent) loginModal!: LoginModalComponent;
   @ViewChild(PublicFlagModalComponent) goPublicModal!: PublicFlagModalComponent;
-
   @ViewChild('boardNameInput') boardNameInput?: ElementRef<HTMLInputElement>;
 
   id = input.required<string>();
@@ -84,6 +84,16 @@ export class BoardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.eventSource) {
       this.eventSource.close();
+    }
+  }
+
+  openVisibilityModal() {
+    console.log('Kliknięto badge widoczności')
+    console.log('Aktualna tablica', this.board())
+    console.log('Czy można zmienić widoczność: ', this.board()?.canChangeVisibility)
+
+    if (this.board()?.canChangeVisibility) {
+      this.goPublicModal?.open()
     }
   }
 

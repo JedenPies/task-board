@@ -1,7 +1,7 @@
 import { Component, ElementRef, inject, input, output, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BoardComponent } from '../board/board.component';
 import { TaskBoardService } from '../../services/task-board.service';
+import { TaskBoardDto } from '../../models/board.model';
 
 @Component({
   selector: 'app-go-public-modal',
@@ -14,14 +14,16 @@ export class PublicFlagModalComponent {
 
   @ViewChild('modalElement') modalElement!: ElementRef<HTMLDialogElement>;
 
-  board = input<BoardComponent | null>(null);
+  board = input<TaskBoardDto | null>(null);
 
   visibilityChanged = output<void>();
 
-  private taskBoardService = inject(TaskBoardService);
   isLoading = signal<boolean>(false);
 
+  private taskBoardService = inject(TaskBoardService);
+
   open() {
+
     this.modalElement.nativeElement.showModal();
   }
   close() {
@@ -32,7 +34,17 @@ export class PublicFlagModalComponent {
     const currentBoard = this.board();
     if (!currentBoard) return;
     this.isLoading.set(true);
-
+    this.taskBoardService.updateBoardVisibility(this.board()!.id, !this.board()!.isPublic).subscribe({
+      next: (b) => {
+        this.isLoading.set(false)
+        this.close()
+      },
+      error: (err) => {
+        console.error(err)
+        this.isLoading.set(false)
+        this.close()
+      },
+    })
 
   }
 }

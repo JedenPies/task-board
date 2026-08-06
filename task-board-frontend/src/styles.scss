@@ -5,6 +5,17 @@ body {
   font-family: $font-stack;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  /* Ukrycie paska dla Firefoxa */
+  scrollbar-width: none;
+  /* Ukrycie paska dla starszych Edge/IE */
+  -ms-overflow-style: none;
+}
+
 body:has(dialog[open]) {
   overflow: hidden;
 }

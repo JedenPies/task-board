@@ -263,6 +263,8 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
             color: #666;
             font-size: 0.85rem;
             line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-word;
           }
         }
       }

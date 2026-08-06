@@ -24,7 +24,7 @@
             [class.editable]="b.canChangeVisibility"
             [class.board-public]="b.isPublic"
             [class.board-private]="!b.isPublic"
-            (click)="b.canChangeVisibility && goPublicModal.open()">
+            (click)="b.canChangeVisibility && openVisibilityModal()">
             {{ b.isPublic ? 'Public' : 'Private' }}
           </span>
         } @else {
@@ -69,7 +69,7 @@
             <div class="task-card" cdkDrag>
               <div class="task-content">
                 <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
-                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
+                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" class="task-description">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
             </div>
@@ -84,8 +84,8 @@
           @for (task of inProgressTasks(); track task.id) {
             <div class="task-card" cdkDrag>
               <div class="task-content">
-                <h4 (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.title }}</h4>
-                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
+                <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
+                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
             </div>
@@ -100,8 +100,8 @@
           @for (task of doneTasks(); track task.id) {
             <div class="task-card" cdkDrag>
               <div class="task-content">
-                <h4 (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.title }}</h4>
-                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" style="cursor: text;">{{ task.description }}</p> }
+                <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
+                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)">{{ task.description }}</p> }
               </div>
               <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
             </div>
@@ -123,5 +123,5 @@
 </div>
 
 <app-login-modal (loginSuccess)="loadBoardData(); accessDenied.set(false)"></app-login-modal>
-<app-go-public-modal></app-go-public-modal>
+<app-go-public-modal #goPublicModal [board]="board()"></app-go-public-modal>
 <app-task-details-modal #taskDetailsModal [boardId]="id()"></app-task-details-modal>

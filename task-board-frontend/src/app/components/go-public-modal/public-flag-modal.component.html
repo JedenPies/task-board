@@ -4,7 +4,7 @@
       <h3>Zmień widoczność tablicy</h3>
 
       <p class="modal-text">
-        @if (b.isPublic()) {
+        @if (b.isPublic) {
           Ta tablica jest obecnie <strong>publiczna</strong>. Jeśli zmienisz ją na prywatną, tylko zalogowani i uprawnieni użytkownicy będą mieli do niej dostęp.
         } @else {
           Ta tablica jest obecnie <strong>prywatna</strong>. Jeśli zmienisz ją na publiczną, każdy posiadający link będzie mógł ją otworzyć i edytować zadania.
@@ -17,7 +17,7 @@
           @if (isLoading()) {
             Zapisywanie...
           } @else {
-            {{ b.isPublic() ? 'Zmień na prywatną' : 'Zmień na publiczną' }}
+            {{ b.isPublic ? 'Zmień na prywatną' : 'Zmień na publiczną' }}
           }
         </button>
       </div>
