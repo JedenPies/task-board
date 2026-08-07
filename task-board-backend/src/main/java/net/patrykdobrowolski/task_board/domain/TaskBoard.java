@@ -40,17 +40,16 @@ public class TaskBoard {
         return task;
     }
 
-    public Task moveTask(UUID taskId, TaskStatus newStatus, @Nullable UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
+    public void moveTask(UUID taskId, TaskStatus newStatus, @Nullable UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
         Task taskToMove = taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
         this.tasks.remove(taskToMove);
         if (taskId.equals(followingTaskId)) throw new CannotMoveTaskException();
         taskToMove.setStatus(newStatus);
-        Task followingTask = taskByIdAndStatus(followingTaskId, newStatus)
-                .orElseThrow(() -> ObjectNotFoundException.of("Task", followingTaskId));
-        return insertBefore(taskToMove, followingTask);
+        Task followingTask = taskByIdAndStatus(followingTaskId, newStatus).orElse(null);
+        insertBefore(taskToMove, followingTask);
     }
 
-    private Task insertBefore(Task newTask, Task followingTask) {
+    private void insertBefore(Task newTask, @Nullable Task followingTask) {
         List<Task> tasks = this.tasks.stream().filter(t -> t.getStatus() == newTask.getStatus())
                 .sorted(Comparator.comparing(Task::getPosition))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -66,7 +65,6 @@ public class TaskBoard {
             rebalance(tasks);
         }
         this.tasks.add(newTask);
-        return newTask;
     }
 
     private void rebalance(List<Task> tasksToRebalance) {
@@ -117,6 +115,10 @@ public class TaskBoard {
         return isPublic || isAllowedToEdit(userContext);
     }
 
+    public boolean isAllowedToMoveTask(UserContext userContext) {
+        return isPublic || isAllowedToEdit(userContext);
+    }
+
     public void checkPublicFlagPermission(UserContext userContext) throws AccessDeniedException {
         if (!isAllowedToChangeVisibility(userContext)) {
             throw new AccessDeniedException();
@@ -131,6 +133,12 @@ public class TaskBoard {
 
     public void checkViewPermissions(UserContext userContext) throws AccessDeniedException {
         if (!isAllowedToView(userContext)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public void checkMoveTaskPermissions(UserContext userContext) throws AccessDeniedException {
+        if (!isAllowedToMoveTask(userContext)) {
             throw new AccessDeniedException();
         }
     }

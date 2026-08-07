@@ -4,6 +4,7 @@ import net.patrykdobrowolski.task_board.domain.TaskBoard;
 import net.patrykdobrowolski.task_board.domain.UserContext;
 import net.patrykdobrowolski.task_board.rest.dto.CreateTaskBoardCommandDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardDto;
+import net.patrykdobrowolski.task_board.rest.dto.TaskBoardOverviewDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskDto;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -22,6 +23,10 @@ public abstract class TaskBoardMapper {
     @Mapping(target = "canEdit", expression = "java(taskBoard.isAllowedToEdit(userContext))")
     @Mapping(target = "canChangeVisibility", expression = "java(taskBoard.isAllowedToChangeVisibility(userContext))")
     public abstract TaskBoardDto toDto(TaskBoard taskBoard);
+
+    @Mapping(target = "canEdit", expression = "java(taskBoard.isAllowedToEdit(userContext))")
+    @Mapping(target = "canChangeVisibility", expression = "java(taskBoard.isAllowedToChangeVisibility(userContext))")
+    public abstract TaskBoardOverviewDto toOverviewDto(TaskBoard taskBoard);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tasks", ignore = true)

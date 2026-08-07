@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal, ViewChild } from '@angular/core';
-import { TaskBoardDto } from '../../models/board.model';
+import { TaskBoardDto, TaskBoardOverviewDto } from '../../models/board.model';
 import { TaskBoardService } from '../../services/task-board.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -19,7 +19,7 @@ export class BoardListComponent {
   taskBoardService = inject(TaskBoardService);
   router = inject(Router);
 
-  boards = signal<TaskBoardDto[]>([]);
+  boards = signal<TaskBoardOverviewDto[]>([]);
 
   newBoardTitle = '';
 

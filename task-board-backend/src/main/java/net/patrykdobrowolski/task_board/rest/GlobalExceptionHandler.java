@@ -1,5 +1,6 @@
 package net.patrykdobrowolski.task_board.rest;
 
+import io.jsonwebtoken.JwtException;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
@@ -51,5 +52,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDto onAccessDeniedException() {
         return ErrorDto.builder().message("Access denied").build();
+    }
+
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto onException(JwtException exception) {
+        return ErrorDto.builder().message(exception.getMessage()).build();
     }
 }

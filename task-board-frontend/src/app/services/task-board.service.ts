@@ -2,8 +2,8 @@ import {inject, Service} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {
-  CreateTaskBoardCommandDto,
   TaskBoardDto,
+  TaskBoardOverviewDto,
   TaskDto,
   TaskStatus,
   UpdateTaskCommandDto,
@@ -16,8 +16,8 @@ export class TaskBoardService {
 
   constructor() {}
 
-  findAllBoards(): Observable<TaskBoardDto[]> {
-    return this.http.get<TaskBoardDto[]>(this.apiUrl);
+  findAllBoards(): Observable<TaskBoardOverviewDto[]> {
+    return this.http.get<TaskBoardOverviewDto[]>(this.apiUrl);
   }
 
   createBoard(name: string): Observable<TaskBoardDto> {
@@ -45,13 +45,15 @@ export class TaskBoardService {
   }
 
   updateBoardName(boardId: string, newName: string): Observable<void> {
-    return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', `${newName}`, {
+    const command = { newName: newName }
+    return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', command, {
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
   updateBoardVisibility(boardId: string, isPublic: boolean): Observable<void> {
-    return this.http.put<void>(this.apiUrl + '/' + boardId + '/public', `${isPublic}`, {
+    const command = { isPublic: isPublic }
+    return this.http.put<void>(this.apiUrl + '/' + boardId + '/visibility', command, {
       headers: { 'Content-Type': 'application/json' },
     });
   }
