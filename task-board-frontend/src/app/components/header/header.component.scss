@@ -1,0 +1,36 @@
+.navbar {
+  border-bottom: 1px solid #ccc;
+  background: #efefff;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1188px;
+  margin: 0 auto;    /* Wyśrodkowanie */
+  padding: 22px 0; /* Boczne marginesy zgrywają się z listą tablic */
+
+  .logo {
+    font-weight: bold;
+    font-size: 30px;
+
+    a {
+      color: #333;
+      text-decoration: none;
+    }
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    font-size: 0.95rem;
+
+    &:hover { background: #f0f0f0; }
+  }
+}

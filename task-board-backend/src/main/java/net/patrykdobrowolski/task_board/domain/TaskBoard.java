@@ -137,7 +137,7 @@ public class TaskBoard {
         }
     }
 
-    public void checkMoveTaskPermissions(UserContext userContext) throws AccessDeniedException {
+    public void checkManipulateTasksPermissions(UserContext userContext) throws AccessDeniedException {
         if (!isAllowedToMoveTask(userContext)) {
             throw new AccessDeniedException();
         }

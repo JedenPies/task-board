@@ -1,0 +1,14 @@
+<header class="navbar">
+  <div class="navbar-container">
+    <div class="logo"><a routerLink="/">Mój Kanban</a></div>
+    <nav>
+      @if (authService.isLoggedIn()) {
+        <button (click)="onLogoutClick()" class="btn-ghost">Wyloguj</button>
+      } @else {
+        <button (click)="loginModal.open()" class="btn-primary">Zaloguj</button>
+      }
+    </nav>
+  </div>
+</header>
+
+<app-login-modal></app-login-modal>

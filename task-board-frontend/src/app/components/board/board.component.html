@@ -1,32 +1,11 @@
-<header class="navbar">
-  <div class="navbar-container">
-    <div class="logo">Mój Kanban</div>
-    <nav>
-      @if (authService.isLoggedIn()) {
-        <button (click)="logout()" class="btn-ghost">Wyloguj</button>
-      } @else {
-        <button (click)="loginModal.open()" class="btn-primary">Zaloguj</button>
-      }
-    </nav>
-  </div>
-</header>
-
 <div class="board-detail-container">
   <div class="board-header">
     <h2>
-      <a routerLink="/">Strona główna</a> »
       @if (board(); as b) {
+        Tablica:
         @if (!isEditingName()) {
           <p class="board-title" [class.editable]="b.canEdit"
-             (click)="!accessDenied() && board()?.canEdit && enableNameEdit(true)">{{ boardName() }}</p>
-          <span
-            class="public-badge"
-            [class.editable]="b.canChangeVisibility"
-            [class.board-public]="b.isPublic"
-            [class.board-private]="!b.isPublic"
-            (click)="b.canChangeVisibility && openVisibilityModal()">
-            {{ b.isPublic ? 'Public' : 'Private' }}
-          </span>
+             (click)="!accessDenied() && board()?.canEdit && enableNameEdit(true)" [title]="b.canEdit ? 'Edit name' : ''">{{ boardName() }}</p>
         } @else {
           <input
             #boardNameInput
@@ -38,6 +17,14 @@
             (keyup.escape)="enableNameEdit(false)"
             (blur)="onUpdateBoardName($event)" />
         }
+          <span
+            class="public-badge"
+            [class.editable]="b.canChangeVisibility"
+            [class.board-public]="b.isPublic"
+            [class.board-private]="!b.isPublic"
+            (click)="b.canChangeVisibility && openVisibilityModal()">
+            {{ b.isPublic ? 'Public' : 'Private' }}
+          </span>
       }
     </h2>
   </div>
@@ -45,7 +32,7 @@
   @if (accessDenied()) {
     <div class="access-denied-message">
       <p>Nie masz uprawnień do tej tablicy.</p>
-      <button class="btn-primary" (click)="loginModal.open()">Zaloguj Się</button>
+<!--      <button class="btn-primary">Zaloguj Się</button>-->
     </div>
   } @else {
 
@@ -62,16 +49,15 @@
     </div>
 
     <div class="kanban-board" cdkDropListGroup>
-
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
           @for (task of todoTasks(); track task.id) {
-            <div class="task-card" cdkDrag>
+            <div class="task-card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
               <div class="task-content">
-                <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
-                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)" class="task-description">{{ task.description }}</p> }
+                <h4>{{ task.title }}</h4>
+                @if (task.description) { <p class="task-description">{{ task.description }}</p> }
               </div>
-              <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
+              <button class="btn-delete" (click)="deleteTaskWithUndo(task); $event.stopPropagation();" title="Usuń zadanie">×</button>
             </div>
           } @empty {
             <p class="empty-label">Brak zadań</p>
@@ -82,12 +68,12 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
           @for (task of inProgressTasks(); track task.id) {
-            <div class="task-card" cdkDrag>
+            <div class="task-card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
               <div class="task-content">
-                <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
-                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)">{{ task.description }}</p> }
+                <h4>{{ task.title }}</h4>
+                @if (task.description) { <p>{{ task.description }}</p> }
               </div>
-              <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
+              <button class="btn-delete" (click)="deleteTaskWithUndo(task); $event.stopPropagation();" title="Usuń zadanie">×</button>
             </div>
           } @empty {
             <p class="empty-label">Brak zadań</p>
@@ -98,12 +84,12 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
           @for (task of doneTasks(); track task.id) {
-            <div class="task-card" cdkDrag>
+            <div class="task-card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
               <div class="task-content">
-                <h4 (click)="taskDetailsModal.openForEdit(task)">{{ task.title }}</h4>
-                @if (task.description) { <p (click)="taskDetailsModal.openForEdit(task)">{{ task.description }}</p> }
+                <h4>{{ task.title }}</h4>
+                @if (task.description) { <p>{{ task.description }}</p> }
               </div>
-              <button class="btn-delete" (click)="deleteTaskWithUndo(task)" title="Usuń zadanie">×</button>
+              <button class="btn-delete" (click)="deleteTaskWithUndo(task); $event.stopPropagation();" title="Usuń zadanie">×</button>
             </div>
           } @empty {
             <p class="empty-label">Brak zadań</p>
@@ -122,6 +108,5 @@
   }
 </div>
 
-<app-login-modal (loginSuccess)="loadBoardData(); accessDenied.set(false)"></app-login-modal>
 <app-go-public-modal #goPublicModal [board]="board()"></app-go-public-modal>
 <app-task-details-modal #taskDetailsModal [boardId]="id()"></app-task-details-modal>

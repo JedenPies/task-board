@@ -20,9 +20,9 @@ import {
 import { TaskBoardService } from '../../services/task-board.service';
 import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
 import { AuthService } from '../../services/auth.service';
-import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.component';
 import { TaskDetailsModalComponent } from '../task-details-modal/task-details-modal.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-board',
@@ -32,7 +32,6 @@ import { TaskDetailsModalComponent } from '../task-details-modal/task-details-mo
     RouterModule,
     ReactiveFormsModule,
     DragDropModule,
-    LoginModalComponent,
     PublicFlagModalComponent,
     TaskDetailsModalComponent,
   ],
@@ -41,7 +40,6 @@ import { TaskDetailsModalComponent } from '../task-details-modal/task-details-mo
 })
 export class BoardComponent implements OnInit, OnDestroy {
 
-  @ViewChild(LoginModalComponent) loginModal!: LoginModalComponent;
   @ViewChild(PublicFlagModalComponent) goPublicModal!: PublicFlagModalComponent;
   @ViewChild('boardNameInput') boardNameInput?: ElementRef<HTMLInputElement>;
 
@@ -57,7 +55,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
 
-  isPublic = signal<boolean>(false);
+  private authSub!: Subscription;
 
   authService = inject(AuthService);
   private taskBoardService = inject(TaskBoardService);
@@ -79,21 +77,38 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());
     this.eventSource.onerror = (error) => console.error('Błąd połączenia SSE:', error);
+    this.authSub = this.authService.authState.subscribe((isLoggedIn) => {
+      if (isLoggedIn) {
+        this.onUserLogin()
+      } else {
+        this.onUserLogout()
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if (this.eventSource) {
       this.eventSource.close();
     }
+    if (this.authSub) {
+      this.authSub.unsubscribe();
+    }
+  }
+
+  private onUserLogin() {
+    this.loadBoardData()
+  }
+
+  private onUserLogout() {
+    this.todoTasks.set([]);
+    this.inProgressTasks.set([]);
+    this.doneTasks.set([]);
+    this.loadBoardData();
   }
 
   openVisibilityModal() {
-    console.log('Kliknięto badge widoczności')
-    console.log('Aktualna tablica', this.board())
-    console.log('Czy można zmienić widoczność: ', this.board()?.canChangeVisibility)
-
     if (this.board()?.canChangeVisibility) {
-      this.goPublicModal?.open()
+      this.goPublicModal?.open();
     }
   }
 
@@ -112,21 +127,13 @@ export class BoardComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.todoTasks.set([]);
-    this.inProgressTasks.set([]);
-    this.doneTasks.set([]);
-    this.loadBoardData();
-  }
-
   loadBoardData(): void {
     this.taskBoardService.getBoard(this.id()).subscribe({
       next: (boardData) => {
+        console.log('pobrano dane')
+        this.accessDenied.set(false)
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         this.board.set(boardData);
-        console.log('czy jest isPublic?' + boardData);
-
         const tasks = boardData.tasks ?? [];
         this.todoTasks.set(tasks.filter((t) => t.status === 'TODO'));
         this.inProgressTasks.set(tasks.filter((t) => t.status === 'IN_PROGRESS'));

@@ -30,7 +30,7 @@ public class TaskBoardsService {
     @Transactional
     public Task addTaskToBoard(UUID boardId, Task task) throws ObjectNotFoundException, ObjectAlreadyExistsException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("board", boardId));
-        board.checkEditPermissions(userContext);
+        board.checkManipulateTasksPermissions(userContext);
         Task added = board.addNewTask(task);
         repositoryService.save(board);
         return added;
@@ -54,14 +54,14 @@ public class TaskBoardsService {
     @Transactional
     public Task findTask(UUID boardId, UUID taskId) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
-        board.checkEditPermissions(userContext);
+        board.checkManipulateTasksPermissions(userContext);
         return board.taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
     }
 
     @Transactional
     public Task deleteTask(UUID boardId, UUID taskId) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
-        board.checkEditPermissions(userContext);
+        board.checkManipulateTasksPermissions(userContext);
         Task task = board.deleteTaskById(taskId);
         repositoryService.save(board);
         return task;
@@ -88,7 +88,7 @@ public class TaskBoardsService {
     @Transactional
     public TaskBoard moveTask(UUID boardId, UUID taskId, UUID followingTaskId, TaskStatus newStatus) throws ObjectNotFoundException, AccessDeniedException, CannotMoveTaskException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
-        board.checkMoveTaskPermissions(userContext);
+        board.checkManipulateTasksPermissions(userContext);
         board.moveTask(taskId, newStatus, followingTaskId);
         repositoryService.save(board);
         return board;
@@ -97,7 +97,7 @@ public class TaskBoardsService {
     @Transactional
     public Task editTask(UUID boardId, UUID taskId, UpdateTaskCommand updateTaskCommand) throws ObjectNotFoundException, AccessDeniedException {
         TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
-        board.checkEditPermissions(userContext);
+        board.checkManipulateTasksPermissions(userContext);
         Task edited = board.editTask(taskId, updateTaskCommand);
         repositoryService.save(board);
         return edited;

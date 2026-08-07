@@ -2,185 +2,122 @@
 
 $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
-.navbar {
-  border-bottom: 1px solid #eee;
-  background: #fff;
-}
-
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px; /* Dokładnie to samo co w main-content */
-  margin: 0 auto;    /* Wyśrodkowanie */
-  padding: 1rem 1.5rem; /* Boczne marginesy zgrywają się z listą tablic */
-
-  .logo { font-weight: bold; font-size: 1.2rem; }
-
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    color: #333;
-    font-size: 0.95rem;
-
-    &:hover { background: #f0f0f0; }
-  }
-}
-
 /* Główny kontener 850px jak w dashboardzie */
 .board-detail-container {
-  max-width: 1200px; /* Zmienione z 850px na 1200px */
-  margin: 2rem auto;    /* Zmienione na margin, żeby zachowywało się jak na liście */
+  max-width: 1200px;
+  margin: 2rem auto;
   padding: 0 1.5rem;
-  background-color: #fff;
-  //min-height: 100vh;
-  scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
-  //height: calc(100vh - 190px);
-  //box-sizing: border-box;
 }
 
 /* Nagłówek tablicy */
 .board-header {
-  margin-bottom: 24px;
-  width: 100%;
+  flex: 1;
+  margin: 0 10px 20px 10px;
 
   h2 {
     display: flex;
-    align-items: center; /* Idealne wyśrodkowanie w pionie */
-    gap: 10px;           /* Stałe odstępy między elementami nagłówka */
+    align-items: center;
+    gap: 2px;
     margin: 0;
     flex-wrap: wrap;
-  }
-
-  .board-title {
     font-size: 24px;
-    font-weight: 700;
-    color: #333;
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-    margin: 0;
 
-    &.editable {
-      &:hover {
-        cursor: pointer;
-        background-color: #f0f0f0;
+    .board-title {
+      flex: 1;
+      font-weight: 700;
+      color: #333;
+      display: inline-block;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+      margin: 0 8px;
+
+      &.editable {
+        &:hover {
+          cursor: pointer;
+          background-color: #f0f0f0;
+        }
       }
     }
-  }
 
-  .board-title-input {
-    font-size: 20px;
-    font-weight: 700;
-    color: #333;
-    font-family: inherit;
-    border: 2px solid #000;
-    border-radius: 6px;
-    padding: 4px 8px 5px 8px;
-    outline: none;
-    background-color: #fff;
-    width: 100%;
-    max-width: 400px;
-  }
-}
-
-/* Formularz dodawania zadania */
-.add-task-container {
-  background: #fff;
-  margin-bottom: 30px;
-  width: 100%;
-
-  form {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
+    .board-title-input {
       flex: 1;
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      font-family: inherit;
+      border: 1px solid #000;
+      border-radius: 6px;
+      padding: 4px 8px 5px 8px;
+      outline: none;
+      margin: 1px 8px;
+      width: 100%;
 
-      .form-input {
-        padding: 10px 14px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 0.95rem;
-        outline: none;
-        transition: border-color 0.2s;
+    }
 
-        &:focus {
-          border-color: #000;
+    a {
+      font-weight: 700;
+      color: #339;
+      text-decoration: none;
+      padding: 4px 8px 5px 8px;
+      margin: 0;
+    }
+    .public-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      user-select: none;
+      transition: all 0.2s ease;
+
+      &.editable {
+        cursor: pointer;
+      }
+
+      &.board-public {
+        color: #146c43;
+        border: 1px solid #a3cfbb;
+        background-color: #d1e7dd;
+
+        &:hover {
+          &.editable {
+            background-color: color.adjust(#d1e7dd, $lightness: -4%);
+          }
         }
       }
 
-      .error-msg {
-        color: #de350b;
-        font-size: 0.75rem;
-        margin-top: 4px;
+      /* Stan: Tablica Prywatna (Pomarańczowa) */
+      &.board-private {
+        color: #b65005;
+        border: 1px solid #ffda6a;
+        background-color: #fff3cd;
+
+        &:hover {
+          &.editable {
+            background-color: color.adjust(#fff3cd, $lightness: -4%);
+          }
+        }
       }
     }
 
-    .btn-submit {
-      background-color: #000; /* Zmienione na czarne dla spójności */
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-
-      &:hover:not(:disabled) {
-        background-color: #333;
-      }
-
-      &:disabled {
-        background-color: #f0f0f0;
-        color: #a5adba;
-        cursor: not-allowed;
-      }
-    }
   }
 }
 
 .kanban-board-header {
   display: flex;
-  gap: 0.7rem;
-  //align-items: flex-start;
-  //width: 100%;
-  //flex: 1; /* Rozciąga się na całą wolną przestrzeń pod nagłówkiem */
-  overflow: hidden; /* Zapobiega powiększaniu się kontenera w dół */
-  padding-bottom: 1rem;
 
   .kanban-column {
     flex: 1;
-    background-color: #fff;
-    //border-right: 2px dashed #fff;
-    margin-right: 2px;
-    padding-right: 0.7rem; /* Odstęp PO LEWEJ stronie linii przerywanej */
-    padding-top: 5px;
+    margin: 0;
+    padding: 2px;
 
-    width: 320px;
-    min-width: 320px;
-    //max-height: 100%;    /* Kolumna nie może być wyższa niż plansza */
-    //box-sizing: border-box;
-
-    &:last-child {
-      border-right: none;
-      padding-right: 0;
-    }
     h3 {
       font-size: 1rem;
       color: #666;
-      margin-top: 0;
-      margin-bottom: 12px;
       text-align: center;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -192,29 +129,23 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 /* Układ Kanban */
 .kanban-board {
   display: flex;
-  gap: 0.7rem; /* Odstęp PO PRAWEJ stronie linii przerywanej */
   overflow: hidden;     /* Zapobiega powiększaniu się kontenera w dół */
-  padding-bottom: 1rem;
   height: 100%;
 
   .kanban-column {
     flex: 1;
+    padding: 9px;
+    border-right: 1px dashed #eee;
+
     background-color: #fff;
-    border-right: 2px dashed #eee;
-    padding-right: 0.7rem; /* Odstęp PO LEWEJ stronie linii przerywanej */
-    padding-top: 5px;
 
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
-    width: 320px;
-    min-width: 320px;
     max-height: 100%;    /* Kolumna nie może być wyższa niż plansza */
-    box-sizing: border-box;
 
     &:last-child {
       border-right: none;
-      padding-right: 0;
+      padding-right: 10px;
     }
 
     .task-list {
@@ -405,45 +336,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   font-size: 0.95rem;
 }
 
-.public-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
-  user-select: none;
-  transition: all 0.2s ease;
 
-  &.editable {
-    cursor: pointer;
-  }
-
-  &.board-public {
-    color: #146c43;
-    border: 1px solid #a3cfbb;
-    background-color: #d1e7dd;
-
-    &:hover {
-      &.editable {
-        background-color: color.adjust(#d1e7dd, $lightness: -4%);
-      }
-    }
-  }
-
-  /* Stan: Tablica Prywatna (Pomarańczowa) */
-  &.board-private {
-    color: #b65005;
-    border: 1px solid #ffda6a;
-    background-color: #fff3cd;
-
-    &:hover {
-      &.editable {
-        background-color: color.adjust(#fff3cd, $lightness: -4%);
-      }
-    }
-  }
-}
 
 .btn-add {
   border-radius: 50%;

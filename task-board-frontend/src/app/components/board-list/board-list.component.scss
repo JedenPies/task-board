@@ -1,21 +1,3 @@
-/* Reset i podstawy */
-.navbar {
-  border-bottom: 1px solid #eee;
-  background: #fff;
-  /* Cała reszta wylatuje do navbar-container */
-}
-
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px; /* Dokładnie to samo co w main-content */
-  margin: 0 auto;    /* Wyśrodkowanie */
-  padding: 1rem 1.5rem; /* Boczne marginesy zgrywają się z listą tablic */
-
-  .logo { font-weight: bold; font-size: 1.2rem; }
-}
-
 .main-content {
   max-width: 1200px; // Zwiększone z 600px na 850px – złoty środek dla dashboardów
   margin: 2rem auto;
