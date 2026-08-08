@@ -41,6 +41,7 @@ public class TaskBoard {
     }
 
     public void moveTask(UUID taskId, TaskStatus newStatus, @Nullable UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
+
         Task taskToMove = taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
         this.tasks.remove(taskToMove);
         if (taskId.equals(followingTaskId)) throw new CannotMoveTaskException();
@@ -53,15 +54,22 @@ public class TaskBoard {
         List<Task> tasks = this.tasks.stream().filter(t -> t.getStatus() == newTask.getStatus())
                 .sorted(Comparator.comparing(Task::getPosition))
                 .collect(Collectors.toCollection(ArrayList::new));
-        int followingTaskIndex = tasks.indexOf(followingTask);
-        int precedingTaskIndex = Math.max(followingTaskIndex - 1, -1);
-        long followingTaskPosition = (followingTaskIndex >= 0 ? Optional.of(tasks.get(followingTaskIndex)) : Optional.<Task>empty())
-                .map(Task::getPosition).orElse(POSITION_GAP * 2);
-        long precedingTaskPosition = (precedingTaskIndex >= 0 ? Optional.of(tasks.get(precedingTaskIndex)) : Optional.<Task>empty())
-                .map(Task::getPosition).orElse(0L);
-        newTask.setPosition((precedingTaskPosition + followingTaskPosition) / 2);
+
+        Optional<Task> followingTaskOpt = Optional.ofNullable(followingTask);
+        Optional<Task> precedingTaskOpt;
+        if (followingTaskOpt.isEmpty()) {
+            precedingTaskOpt = tasks.isEmpty() ? Optional.empty() : Optional.of(tasks.getLast());
+        } else {
+            int foll = tasks.indexOf(followingTaskOpt.get());
+            precedingTaskOpt = foll > 0 ? Optional.of(tasks.get(foll - 1)) : Optional.empty();
+        }
+
+        Long precedingTaskPosition = precedingTaskOpt.map(Task::getPosition).orElse(0L);
+        Long followingTaskPosition = followingTaskOpt.map(Task::getPosition).orElse(precedingTaskPosition + POSITION_GAP * 2);
+        Long newTaskPosition = (precedingTaskPosition + followingTaskPosition) / 2;
+        newTask.setPosition(newTaskPosition);
         if (followingTaskPosition - precedingTaskPosition <= 1) {
-            tasks.add(followingTaskIndex, newTask);
+            tasks.add(newTask);
             rebalance(tasks);
         }
         this.tasks.add(newTask);

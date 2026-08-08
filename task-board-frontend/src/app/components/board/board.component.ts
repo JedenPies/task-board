@@ -72,7 +72,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadBoardData();
     this.eventSource = new EventSource(
-      `http://localhost:8081/api/task-boards/${this.id()}/sse-stream`,
+      `/api/task-boards/${this.id()}/sse-stream`,
     );
 
     this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());

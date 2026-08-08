@@ -27,7 +27,6 @@ export class BoardListComponent {
   newBoardTitle = '';
 
   ngOnInit() {
-    this.loadBoards();
     this.authSub = this.authService.authState.subscribe((isLoggedIn) => {
       this.loadBoards();
     });

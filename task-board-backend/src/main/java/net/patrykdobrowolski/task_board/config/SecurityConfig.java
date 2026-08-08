@@ -3,6 +3,7 @@ package net.patrykdobrowolski.task_board.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,8 +28,26 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager();
+    }
+
+    @Bean("securityFilterChain")
+    @Profile("!local")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
-        http
+        return commonHttpSecurity(http).build();
+    }
+
+    @Bean("securityFilterChain")
+    @Profile("local")
+    public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) {
+        return commonHttpSecurity(http)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .build();
+    }
+
+    private HttpSecurity commonHttpSecurity(HttpSecurity http) {
+        return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -36,13 +55,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager();
     }
 
     private CorsConfigurationSource corsConfigurationSource() {

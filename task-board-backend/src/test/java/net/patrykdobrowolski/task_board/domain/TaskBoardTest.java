@@ -52,6 +52,20 @@ class TaskBoardTest {
     }
 
     @Test
+    @DisplayName("Powinien poprawnie przesunąć zadanie pomiędzy dwa inne zadania")
+    void shouldMoveTaskToTheEndWhenNoFollowingTaskIsProvided() throws ObjectNotFoundException, CannotMoveTaskException {
+        // given
+        UUID taskId = taskBoard.taskById(ID1).orElseThrow().getId();
+
+        // when
+        taskBoard.moveTask(taskId, TaskStatus.TODO, null);
+
+        // then
+        Task movedTask = taskBoard.taskById(taskId).orElseThrow();
+        assertThat(movedTask.getPosition()).isEqualTo(GAP * 4);
+    }
+
+    @Test
     @DisplayName("Powinien uruchomić rebalansowanie, gdy zabraknie miejsca (kolizja)")
     void shouldTriggerRebalanceWhenNoGap() throws ObjectNotFoundException, CannotMoveTaskException {
         // given

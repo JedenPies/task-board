@@ -11,7 +11,7 @@ import {
 
 @Service()
 export class TaskBoardService {
-  private apiUrl = 'http://localhost:8081/api/task-boards';
+  private apiUrl = '/api/task-boards';
   private http = inject(HttpClient);
 
   constructor() {}
