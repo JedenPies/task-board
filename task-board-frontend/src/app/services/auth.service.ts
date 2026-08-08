@@ -1,6 +1,6 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 interface LoginResponse {
   accessToken: string;
@@ -13,11 +13,9 @@ export class AuthService {
 
   private http = inject(HttpClient);
   private authUrl = '/api/authentication';
+
   private tokenSignal = signal<string | null>(localStorage.getItem('token'));
 
-  public authState = new Subject<boolean>();
-
-  // TODO I bet it could be replaced with authState
   isLoggedIn = computed(() => !!this.tokenSignal());
 
   getToken() {
@@ -29,7 +27,6 @@ export class AuthService {
       tap((response) => {
         localStorage.setItem('token', response.accessToken);
         this.tokenSignal.set(response.accessToken);
-        this.authState.next(true)
       }),
     );
   }
@@ -46,6 +43,5 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token')
     this.tokenSignal.set(null)
-    this.authState.next(false)
   }
 }

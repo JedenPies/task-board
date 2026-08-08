@@ -7,6 +7,7 @@ import {
   inject,
   ViewChild,
   ElementRef,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -55,8 +56,6 @@ export class BoardComponent implements OnInit, OnDestroy {
   isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
 
-  private authSub!: Subscription;
-
   authService = inject(AuthService);
   private taskBoardService = inject(TaskBoardService);
   private fb = inject(FormBuilder);
@@ -69,6 +68,17 @@ export class BoardComponent implements OnInit, OnDestroy {
     description: [''],
   });
 
+  constructor() {
+    effect(() => {
+      const loggedIn = this.authService.isLoggedIn();
+      if (loggedIn) {
+        this.onUserLogin();
+      } else {
+        this.onUserLogout();
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.loadBoardData();
     this.eventSource = new EventSource(
@@ -77,21 +87,11 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());
     this.eventSource.onerror = (error) => console.error('Błąd połączenia SSE:', error);
-    this.authSub = this.authService.authState.subscribe((isLoggedIn) => {
-      if (isLoggedIn) {
-        this.onUserLogin()
-      } else {
-        this.onUserLogout()
-      }
-    });
   }
 
   ngOnDestroy(): void {
     if (this.eventSource) {
       this.eventSource.close();
-    }
-    if (this.authSub) {
-      this.authSub.unsubscribe();
     }
   }
 
@@ -209,23 +209,23 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onAddTask(): void {
-    if (this.taskForm.invalid) return;
-
-    const newTask = {
-      ...this.taskForm.value,
-      id: crypto.randomUUID(),
-      status: 'TODO',
-    } as TaskDto;
-
-    this.taskBoardService.addNewTask(this.id(), newTask).subscribe({
-      next: (createdTask) => {
-        this.todoTasks.update((tasks) => [...tasks, createdTask]);
-        this.taskForm.reset();
-      },
-      error: (err) => console.error(err),
-    });
-  }
+  // onAddTask(): void {
+  //   if (this.taskForm.invalid) return;
+  //
+  //   const newTask = {
+  //     ...this.taskForm.value,
+  //     id: crypto.randomUUID(),
+  //     status: 'TODO',
+  //   } as TaskDto;
+  //
+  //   this.taskBoardService.addNewTask(this.id(), newTask).subscribe({
+  //     next: (createdTask) => {
+  //       this.todoTasks.update((tasks) => [...tasks, createdTask]);
+  //       this.taskForm.reset();
+  //     },
+  //     error: (err) => console.error(err),
+  //   });
+  // }
 
   deleteTaskWithUndo(task: TaskDto): void {
     if (!task.id || !task.status) return;

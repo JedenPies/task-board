@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-board-list',
@@ -20,22 +19,15 @@ export class BoardListComponent {
   taskBoardService = inject(TaskBoardService);
   router = inject(Router);
 
-  private authSub!: Subscription;
-
   boards = signal<TaskBoardOverviewDto[]>([]);
 
   newBoardTitle = '';
 
-  ngOnInit() {
-    this.authSub = this.authService.authState.subscribe((isLoggedIn) => {
+  constructor() {
+    effect(() => {
+      this.authService.isLoggedIn();
       this.loadBoards();
     });
-  }
-
-  ngOnDestroy() {
-    if (this.authSub) {
-      this.authSub.unsubscribe();
-    }
   }
 
   createBoard() {
