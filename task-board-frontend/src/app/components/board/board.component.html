@@ -1,7 +1,14 @@
-<div class="board-detail-container">
-  <div class="board-header">
-    <h2>
-      @if (board(); as b) {
+@if (accessDenied()) {
+  <div class="board-detail-container">
+  <div class="access-denied-message">
+    <p>Nie masz uprawnień do tej tablicy.</p>
+    <!--      <button class="btn-primary">Zaloguj Się</button>-->
+  </div>
+  </div>
+} @else if (board(); as b) {
+  <div class="board-detail-container">
+    <div class="board-header">
+      <h2>
         Tablica:
         @if (!isEditingName()) {
           <p class="board-title" [class.editable]="b.canEdit"
@@ -17,24 +24,16 @@
             (keyup.escape)="enableNameEdit(false)"
             (blur)="onUpdateBoardName($event)" />
         }
-          <span
-            class="public-badge"
-            [class.editable]="b.canChangeVisibility"
-            [class.board-public]="b.isPublic"
-            [class.board-private]="!b.isPublic"
-            (click)="b.canChangeVisibility && openVisibilityModal()">
+        <span
+          class="public-badge"
+          [class.editable]="b.canChangeVisibility"
+          [class.board-public]="b.isPublic"
+          [class.board-private]="!b.isPublic"
+          (click)="b.canChangeVisibility && openVisibilityModal()">
             {{ b.isPublic ? 'Public' : 'Private' }}
           </span>
-      }
-    </h2>
-  </div>
-
-  @if (accessDenied()) {
-    <div class="access-denied-message">
-      <p>Nie masz uprawnień do tej tablicy.</p>
-<!--      <button class="btn-primary">Zaloguj Się</button>-->
+      </h2>
     </div>
-  } @else {
 
     <div class="kanban-board-header">
       <div class="kanban-column">
@@ -98,15 +97,16 @@
       </div>
 
     </div>
-  }
 
-  @if (recentlyDeletedTask(); as deletedTask) {
-    <div class="snackbar-undo">
-      <span>Usunięto zadanie: <strong>{{ deletedTask.title }}</strong></span>
-      <button class="btn-undo" (click)="onUndoDelete()">Cofnij</button>
-    </div>
-  }
-</div>
+
+    @if (recentlyDeletedTask(); as deletedTask) {
+      <div class="snackbar-undo">
+        <span>Usunięto zadanie: <strong>{{ deletedTask.title }}</strong></span>
+        <button class="btn-undo" (click)="onUndoDelete()">Cofnij</button>
+      </div>
+    }
+  </div>
+}
 
 <app-go-public-modal #goPublicModal [board]="board()"></app-go-public-modal>
 <app-task-details-modal #taskDetailsModal [boardId]="id()"></app-task-details-modal>

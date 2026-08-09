@@ -1,6 +1,9 @@
 <dialog #dialog class="dialog">
   <form (submit)="onLogin($event)">
     <h3>Logowanie</h3>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
     <input type="text" [(ngModel)]="username" name="username" placeholder="Login" required />
     <input
       type="password"
@@ -15,4 +18,5 @@
       <button type="submit">Zaloguj</button>
     </div>
   </form>
+  <app-loader />
 </dialog>

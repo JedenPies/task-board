@@ -1,29 +1,13 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  input,
-  signal,
-  inject,
-  ViewChild,
-  ElementRef,
-  effect,
-} from '@angular/core';
+import { Component, effect, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import {
-  DragDropModule,
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskBoardService } from '../../services/task-board.service';
 import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
 import { AuthService } from '../../services/auth.service';
 import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.component';
 import { TaskDetailsModalComponent } from '../task-details-modal/task-details-modal.component';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-board',
@@ -34,7 +18,7 @@ import { Subscription } from 'rxjs';
     ReactiveFormsModule,
     DragDropModule,
     PublicFlagModalComponent,
-    TaskDetailsModalComponent,
+    TaskDetailsModalComponent
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
@@ -81,9 +65,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadBoardData();
-    this.eventSource = new EventSource(
-      `/api/task-boards/${this.id()}/sse-stream`,
-    );
+    this.eventSource = new EventSource(`/api/task-boards/${this.id()}/sse-stream`);
 
     this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());
     this.eventSource.onerror = (error) => console.error('Błąd połączenia SSE:', error);
@@ -96,10 +78,12 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   private onUserLogin() {
-    this.loadBoardData()
+    this.accessDenied.set(false);
+    this.loadBoardData();
   }
 
   private onUserLogout() {
+    this.board.set(null);
     this.todoTasks.set([]);
     this.inProgressTasks.set([]);
     this.doneTasks.set([]);
@@ -130,8 +114,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   loadBoardData(): void {
     this.taskBoardService.getBoard(this.id()).subscribe({
       next: (boardData) => {
-        console.log('pobrano dane')
-        this.accessDenied.set(false)
+        console.log('pobrano dane');
+        this.accessDenied.set(false);
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         this.board.set(boardData);
         const tasks = boardData.tasks ?? [];
@@ -208,24 +192,6 @@ export class BoardComponent implements OnInit, OnDestroy {
         });
     }
   }
-
-  // onAddTask(): void {
-  //   if (this.taskForm.invalid) return;
-  //
-  //   const newTask = {
-  //     ...this.taskForm.value,
-  //     id: crypto.randomUUID(),
-  //     status: 'TODO',
-  //   } as TaskDto;
-  //
-  //   this.taskBoardService.addNewTask(this.id(), newTask).subscribe({
-  //     next: (createdTask) => {
-  //       this.todoTasks.update((tasks) => [...tasks, createdTask]);
-  //       this.taskForm.reset();
-  //     },
-  //     error: (err) => console.error(err),
-  //   });
-  // }
 
   deleteTaskWithUndo(task: TaskDto): void {
     if (!task.id || !task.status) return;
