@@ -25,6 +25,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenGenerator tokenGenerator;
     private final Clock clock;
+    private final OAuth2AuthenticationProviderFactory oAuth2AuthenticationProviderFactory;
+    private final UsersService usersService;
 
     private String dummyHash;
 
@@ -37,6 +39,13 @@ public class AuthenticationService {
         User userFound = usersRepository.findByUsername(request.username()).orElseThrow(this::invalidCredentialsExceptionAfterEmptyHashing);
         checkPassword(userFound, request.password());
         return generateAndRegisterTokens(userFound);
+    }
+
+    public TokensPair authenticate(AuthProvider authProvider, String authString) throws Exception {
+        ExternalUserProfile userProfile = oAuth2AuthenticationProviderFactory.getProvider(authProvider).authenticate(authString);
+        User user = usersRepository.findByExternalAuthProvider(authProvider, userProfile.userId()).orElseGet(
+                () -> usersService.createNewUser(authProvider, userProfile));
+        return generateAndRegisterTokens(user);
     }
 
     @Transactional

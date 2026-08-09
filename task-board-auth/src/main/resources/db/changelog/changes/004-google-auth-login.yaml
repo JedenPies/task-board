@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: prepare-google-auth-login
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: auth_provider
+                  type: varchar(50)
+              - column:
+                  name: provider_id
+                  type: varchar(255)
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: auth_provider, provider_id
+            constraintName: ux_users_auth_provider_id

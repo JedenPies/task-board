@@ -9,16 +9,15 @@ import net.patrykdobrowolski.auth.domain.InvalidRefreshTokenException;
 import net.patrykdobrowolski.auth.domain.TokensPair;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticateCommandDto;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticationResultDto;
+import net.patrykdobrowolski.auth.rest.dto.OAuth2LoginRequestDto;
 import net.patrykdobrowolski.auth.rest.mapper.DtoMapper;
+import net.patrykdobrowolski.auth.service.AuthProvider;
 import net.patrykdobrowolski.auth.service.AuthenticationService;
 import net.patrykdobrowolski.auth.service.InvalidCredentialsException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Stream;
 
@@ -39,6 +38,16 @@ public class AuthenticationResource {
 
         AuthenticateWithPasswordCommand request = dtoMapper.toRequest(authenticateCommandDto);
         TokensPair result = authenticationService.authenticate(request);
+        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
+        return AuthenticationResultDto.builder().accessToken(result.accessToken()).build();
+    }
+
+    @PostMapping("/oauth2/{provider}")
+    public AuthenticationResultDto oauthAuthentication(
+            @PathVariable AuthProvider provider,
+            @RequestBody OAuth2LoginRequestDto request,
+            HttpServletResponse rawResponse) throws Exception {
+        TokensPair result = authenticationService.authenticate(provider, request.getToken());
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
         return AuthenticationResultDto.builder().accessToken(result.accessToken()).build();
     }

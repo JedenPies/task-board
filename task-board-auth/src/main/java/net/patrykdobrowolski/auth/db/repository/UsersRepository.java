@@ -1,6 +1,7 @@
 package net.patrykdobrowolski.auth.db.repository;
 
 import net.patrykdobrowolski.auth.db.entity.UserEntity;
+import net.patrykdobrowolski.auth.service.AuthProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +12,5 @@ import java.util.UUID;
 public interface UsersRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> findByAuthProviderAndProviderId(AuthProvider authProvider, String providerId);
 }

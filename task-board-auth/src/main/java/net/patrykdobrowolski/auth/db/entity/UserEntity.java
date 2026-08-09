@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.patrykdobrowolski.auth.service.AuthProvider;
 
 import java.util.UUID;
 
@@ -19,6 +20,15 @@ public class UserEntity {
     private UUID id;
 
     private String username;
+
+    private String email;
+    private String displayName;
+
     @Getter
     private String passwordEncoded;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
+    private String providerId;
 }

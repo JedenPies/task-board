@@ -31,6 +31,19 @@ export class AuthService {
     );
   }
 
+  loginWithExternalProvider(provider: string, token: string): Observable<any> {
+    return this.http.post<any>(this.authUrl + '/oauth2/' + provider.toUpperCase(), { token }, { withCredentials: true }).pipe(
+      tap((response) => {
+        localStorage.setItem('token', response.accessToken);
+        this.tokenSignal.set(response.accessToken);
+      })
+    )
+  }
+
+  loginWithGoogle(token: string): Observable<any> {
+    return this.loginWithExternalProvider('google', token);
+  }
+
   refreshToken(): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(this.authUrl + '/refresh', {}, { withCredentials: true }).pipe(
       tap((response) => {
