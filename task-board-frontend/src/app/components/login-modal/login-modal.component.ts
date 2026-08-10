@@ -5,8 +5,6 @@ import { LoaderComponent } from '../loader/loader.component';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
-declare var google: any;
-
 @Component({
   selector: 'app-login-modal',
   standalone: true,
@@ -29,26 +27,12 @@ export class LoginModalComponent {
   username = '';
   password = '';
 
-  ngAfterViewInit() {
-    this.initializeGoogleSignIn();
-  }
-
-  private initializeGoogleSignIn() {
-    google.accounts.id.initialize({
-      client_id: this.googleClientId,
-      callback: (response: any) => this.handleGoogleResponse(response),
-    });
-
-    google.accounts.id.renderButton(document.getElementById('google-btn'), {
-      theme: 'outline',
-      size: 'large',
-      width: 320,
-    });
-  }
-
-  private handleGoogleResponse(response: any) {
-    this.authService.loginWithGoogle(response.credential).subscribe();
-    this.close();
+  loginWithGoogle() {
+    sessionStorage.setItem('postLoginRedirect', this.router.url);
+    const redirectUri = `${window.location.origin}/callback/auth/google`;
+    const scope = encodeURIComponent('email profile openid');
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${this.googleClientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
+    window.location.href = googleAuthUrl;
   }
 
   loginWithGithub() {
@@ -61,7 +45,6 @@ export class LoginModalComponent {
     this.password = '';
     this.username = '';
     this.dialog.nativeElement.showModal();
-    this.initializeGoogleSignIn();
   }
   close() {
     this.dialog.nativeElement.close();

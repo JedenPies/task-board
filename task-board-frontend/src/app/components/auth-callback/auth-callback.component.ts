@@ -27,7 +27,7 @@ export class AuthCallbackComponent implements OnInit {
           this.router.navigateByUrl(returnUrl);
         },
         error: (err) => {
-          console.error('Błąd logowania przez GitHuba:', err);
+          console.error('Błąd logowania przez ', provider, ': ', err);
           this.router.navigate(['/']);
         },
       });
