@@ -17,3 +17,8 @@ spring:
 jwt:
   secret: "ToJestMojBardzoSuperTajnyKluczKtoregoNiktNieZgadnie12345!@#$%"
   expiration-ms: 900000
+
+oauth2:
+  github:
+    client-id: ${OAUTH2_GITHUB_CLIENT_ID:someClientId}
+    client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET:someClientSecret}
