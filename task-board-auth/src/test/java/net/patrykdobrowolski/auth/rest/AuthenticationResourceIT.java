@@ -1,5 +1,7 @@
 package net.patrykdobrowolski.auth.rest;
 
+import jakarta.servlet.http.Cookie;
+import net.patrykdobrowolski.auth.SpringBootTestBase;
 import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
 import net.patrykdobrowolski.auth.domain.User;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticateCommandDto;
@@ -13,8 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.servlet.http.Cookie;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class AuthenticationResourceIT {
+class AuthenticationResourceIT extends SpringBootTestBase {
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,15 +84,11 @@ class AuthenticationResourceIT {
         mockMvc.perform(post("/api/authentication")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                // Jeśli masz GlobalExceptionHandler, który mapuje InvalidCredentialsException na 401 lub 403,
-                // upewnij się, że ten status odpowiada Twojej implementacji.
-                // Zwykle to .isUnauthorized()
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void shouldRefreshTokensUsingCookie() throws Exception {
-        // given - Najpierw logujemy się, żeby zdobyć validujący Refresh Token w ciasteczku
         AuthenticateCommandDto command = new AuthenticateCommandDto(TEST_USER, TEST_PASSWORD);
         MvcResult authResult = mockMvc.perform(post("/api/authentication")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,10 +99,9 @@ class AuthenticationResourceIT {
         Cookie refreshTokenCookie = authResult.getResponse().getCookie("refresh_token");
         assertThat(refreshTokenCookie).isNotNull();
 
-        // when - Wywołujemy endpoint refresh przekazując pozyskane ciasteczko
+        // then
         MvcResult refreshResult = mockMvc.perform(post("/api/authentication/refresh")
                         .cookie(refreshTokenCookie))
-                // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(cookie().exists("refresh_token"))
