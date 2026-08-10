@@ -12,8 +12,9 @@ import org.mapstruct.Mapping;
 public interface TaskDtoMapper {
 
     TaskDto toDto(Task task);
-    Task fromDto(TaskDto taskDto);
     @Mapping(target = "position", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     Task fromDto(NewTaskDto taskDto);
 
     UpdateTaskCommand fromDto(UpdateTaskCommandDto updateTaskCommandDto);

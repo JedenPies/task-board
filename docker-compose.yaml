@@ -20,9 +20,9 @@ services:
     image: postgres:17-alpine
     container_name: task-board-auth-pg
     environment:
-      POSTGRES_USER: auth
-      POSTGRES_PASSWORD: auth123
-      POSTGRES_DB: task_board_auth
+      POSTGRES_USER: ${POSTGRES_TASK_BOARD_AUTH_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_TASK_BOARD_AUTH_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_TASK_BOARD_AUTH_DATABASE}
     ports:
       - "5432:5432"
     volumes:
@@ -39,9 +39,13 @@ services:
     environment:
       - POSTGRES_TASK_BOARD_AUTH_HOST=task-board-auth-pg
       - POSTGRES_TASK_BOARD_AUTH_PORT=5432
-      - POSTGRES_TASK_BOARD_AUTH_DATABASE=task_board_auth
-      - POSTGRES_TASK_BOARD_AUTH_USERNAME=auth
-      - POSTGRES_TASK_BOARD_AUTH_PASSWORD=auth123
+      - POSTGRES_TASK_BOARD_AUTH_DATABASE=${POSTGRES_TASK_BOARD_AUTH_DATABASE}
+      - POSTGRES_TASK_BOARD_AUTH_USERNAME=${POSTGRES_TASK_BOARD_AUTH_USERNAME}
+      - POSTGRES_TASK_BOARD_AUTH_PASSWORD=${POSTGRES_TASK_BOARD_AUTH_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - OAUTH2_GITHUB_CLIENT_ID=${OAUTH2_GITHUB_CLIENT_ID}
+      - OAUTH2_GITHUB_CLIENT_SECRET=${OAUTH2_GITHUB_CLIENT_SECRET}
+      - OAUTH2_GOOGLE_CLIENT_ID=${OAUTH2_GOOGLE_CLIENT_ID}
     networks:
       - task-board-network
     depends_on:
@@ -51,9 +55,9 @@ services:
     image: postgres:17-alpine
     container_name: task-board-backend-pg
     environment:
-      POSTGRES_USER: patryk
-      POSTGRES_PASSWORD: patryk123
-      POSTGRES_DB: task_board
+      POSTGRES_USER: ${POSTGRES_TASK_BOARD_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_TASK_BOARD_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_TASK_BOARD_DATABASE}
     ports:
       - "5433:5432"
     volumes:
@@ -70,9 +74,10 @@ services:
     environment:
       - POSTGRES_TASK_BOARD_HOST=task-board-backend-pg
       - POSTGRES_TASK_BOARD_PORT=5432
-      - POSTGRES_TASK_BOARD_DATABASE=task_board
-      - POSTGRES_TASK_BOARD_USERNAME=patryk
-      - POSTGRES_TASK_BOARD_PASSWORD=patryk123
+      - POSTGRES_TASK_BOARD_DATABASE=${POSTGRES_TASK_BOARD_DATABASE}
+      - POSTGRES_TASK_BOARD_USERNAME=${POSTGRES_TASK_BOARD_USERNAME}
+      - POSTGRES_TASK_BOARD_PASSWORD=${POSTGRES_TASK_BOARD_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
     networks:
       - task-board-network
     depends_on:
@@ -82,6 +87,9 @@ services:
     build:
       context: task-board-frontend
       dockerfile: Dockerfile
+      args:
+        - OAUTH2_GOOGLE_CLIENT_ID=${OAUTH2_GOOGLE_CLIENT_ID}
+        - OAUTH2_GITHUB_CLIENT_ID=${OAUTH2_GITHUB_CLIENT_ID}
     image: task-board-frontend
     container_name: task-board-frontend
     networks:

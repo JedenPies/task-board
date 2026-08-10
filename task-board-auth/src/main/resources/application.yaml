@@ -2,9 +2,9 @@ spring:
   application:
     name: task-board-auth
   datasource:
-    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_AUTH_HOST:localhost}:${POSTGRES_TASK_BOARD_AUTH_PORT:5432}/${POSTGRES_TASK_BOARD_AUTH_DATABASE:task_board_auth}
-    username: ${POSTGRES_TASK_BOARD_AUTH_USERNAME:auth}
-    password: ${POSTGRES_TASK_BOARD_AUTH_PASSWORD:auth123}
+    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_AUTH_HOST}:${POSTGRES_TASK_BOARD_AUTH_PORT}/${POSTGRES_TASK_BOARD_AUTH_DATABASE}
+    username: ${POSTGRES_TASK_BOARD_AUTH_USERNAME}
+    password: ${POSTGRES_TASK_BOARD_AUTH_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
@@ -15,10 +15,12 @@ spring:
     default-schema: public
 
 jwt:
-  secret: "ToJestMojBardzoSuperTajnyKluczKtoregoNiktNieZgadnie12345!@#$%"
+  secret: ${JWT_SECRET}
   expiration-ms: 900000
 
 oauth2:
   github:
-    client-id: ${OAUTH2_GITHUB_CLIENT_ID:someClientId}
-    client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET:someClientSecret}
+    client-id: ${OAUTH2_GITHUB_CLIENT_ID}
+    client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET}
+  google:
+    client-id: ${OAUTH2_GOOGLE_CLIENT_ID}

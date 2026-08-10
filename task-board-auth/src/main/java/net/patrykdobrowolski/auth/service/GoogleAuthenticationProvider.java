@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -12,6 +13,9 @@ import java.util.Collections;
 
 @Service
 public class GoogleAuthenticationProvider implements OAuth2AuthenticationProvider {
+
+    @Value("${oauth2.google.client-id}")
+    private String clientId;
 
     @Override
     public boolean supports(AuthProvider authProvider) {
@@ -22,7 +26,7 @@ public class GoogleAuthenticationProvider implements OAuth2AuthenticationProvide
     public ExternalUserProfile authenticate(String tokenString) throws GeneralSecurityException, IOException {
 
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList("414596253914-8cdt79p5tk6biv66pk1h0o21l40gd8uu.apps.googleusercontent.com"))
+                .setAudience(Collections.singletonList(clientId))
                 .build();
         GoogleIdToken idToken = verifier.verify(tokenString);
         if (idToken != null) {

@@ -2,9 +2,9 @@ spring:
   application:
     name: task-board-backend
   datasource:
-    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_HOST:localhost}:${POSTGRES_TASK_BOARD_PORT:5433}/${POSTGRES_TASK_BOARD_DATABASE:task_board}
-    username: ${POSTGRES_TASK_BOARD_USERNAME:patryk}
-    password: ${POSTGRES_TASK_BOARD_PASSWORD:patryk123}
+    url: jdbc:postgresql://${POSTGRES_TASK_BOARD_HOST}:${POSTGRES_TASK_BOARD_PORT}/${POSTGRES_TASK_BOARD_DATABASE}
+    username: ${POSTGRES_TASK_BOARD_USERNAME}
+    password: ${POSTGRES_TASK_BOARD_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
@@ -14,7 +14,7 @@ spring:
     enabled: true
     default-schema: public
 jwt:
-  secret: "ToJestMojBardzoSuperTajnyKluczKtoregoNiktNieZgadnie12345!@#$%"
+  secret: ${JWT_SECRET}
 
 server:
   port: 8081

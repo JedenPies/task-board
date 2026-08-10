@@ -32,6 +32,7 @@ public abstract class TaskBoardMapper {
     @Mapping(target = "tasks", ignore = true)
     @Mapping(target = "owner", ignore = true)
     @Mapping(target = "isPublic", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     public abstract TaskBoard fromDto(CreateTaskBoardCommandDto taskBoardDto);
 
     @AfterMapping

@@ -3,6 +3,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+ARG OAUTH2_GOOGLE_CLIENT_ID
+ARG OAUTH2_GITHUB_CLIENT_ID
+
+RUN sed -i "s/GOOGLE_CLIENT_ID_PLACEHOLDER/${OAUTH2_GOOGLE_CLIENT_ID}/g" src/environments/environment.ts
+RUN sed -i "s/GITHUB_CLIENT_ID_PLACEHOLDER/${OAUTH2_GITHUB_CLIENT_ID}/g" src/environments/environment.ts
+
 RUN npm run build --configuration=production
 
 FROM nginx:alpine

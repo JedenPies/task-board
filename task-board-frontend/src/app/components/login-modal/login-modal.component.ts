@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { LoaderComponent } from '../loader/loader.component';
 import { Router } from '@angular/router';
-
+import { environment } from '../../../environments/environment';
 
 declare var google: any;
 
@@ -21,8 +21,8 @@ export class LoginModalComponent {
 
   private router = inject(Router);
 
-  private githubClientId = 'Ov23li2tJ3I9sGVFdlva';
-  private googleClientId = '414596253914-8cdt79p5tk6biv66pk1h0o21l40gd8uu.apps.googleusercontent.com';
+  private githubClientId = environment.githubClientId;
+  private googleClientId = environment.googleClientId;
 
   errorMessage = signal<string | null>(null);
 
@@ -39,10 +39,11 @@ export class LoginModalComponent {
       callback: (response: any) => this.handleGoogleResponse(response),
     });
 
-    google.accounts.id.renderButton(
-      document.getElementById('google-btn'),
-      { theme: 'outline', size: 'large', width: 320 },
-    );
+    google.accounts.id.renderButton(document.getElementById('google-btn'), {
+      theme: 'outline',
+      size: 'large',
+      width: 320,
+    });
   }
 
   private handleGoogleResponse(response: any) {
@@ -60,6 +61,7 @@ export class LoginModalComponent {
     this.password = '';
     this.username = '';
     this.dialog.nativeElement.showModal();
+    this.initializeGoogleSignIn();
   }
   close() {
     this.dialog.nativeElement.close();
