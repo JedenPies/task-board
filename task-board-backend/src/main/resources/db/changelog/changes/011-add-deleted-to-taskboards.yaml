@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-add-deleted-to-task_boards
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: task_boards
+            columns:
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_task_board_deleted
+            tableName: task_boards
+            columns:
+              - column:
+                  name: deleted
+

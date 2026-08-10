@@ -1,5 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { TaskBoardOverviewDto } from '../../models/board.model';
+import { TaskBoardDto, TaskBoardOverviewDto } from '../../models/board.model';
 import { TaskBoardService } from '../../services/task-board.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -14,7 +14,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './board-list.component.scss',
 })
 export class BoardListComponent {
-
   authService = inject(AuthService);
   taskBoardService = inject(TaskBoardService);
   router = inject(Router);
@@ -23,11 +22,19 @@ export class BoardListComponent {
 
   newBoardTitle = '';
 
+  taskBoardBeingDeleted = signal<TaskBoardOverviewDto | null>(null);
+
+  private undoTimeoutId: any = null;
+
   constructor() {
     effect(() => {
       this.authService.isLoggedIn();
       this.loadBoards();
     });
+  }
+
+  ngOnDestroy() {
+    this.executeDelete();
   }
 
   createBoard() {
@@ -56,5 +63,35 @@ export class BoardListComponent {
 
   private clearBoards() {
     this.boards.set([]);
+  }
+
+  deleteTaskBoard(taskBoard: TaskBoardOverviewDto) {
+    if (!taskBoard.id) return;
+    if (this.undoTimeoutId) this.executeDelete();
+    this.taskBoardBeingDeleted.set(taskBoard);
+    this.boards.update((boards) => boards.filter((tb) => tb.id !== taskBoard.id));
+    this.undoTimeoutId = setTimeout(() => this.executeDelete(), 5000);
+  }
+
+  private executeDelete() {
+    const taskBoard = this.taskBoardBeingDeleted();
+    if (taskBoard?.id) {
+      clearTimeout(this.undoTimeoutId);
+      this.undoTimeoutId = null;
+      this.taskBoardBeingDeleted.set(null);
+      this.taskBoardService.deleteBoard(taskBoard.id).subscribe({
+        error: (err) => console.error('Error deleting taskboard'),
+      });
+    }
+  }
+
+  onUndoDelete() {
+    const taskBoard = this.taskBoardBeingDeleted();
+    if (taskBoard?.id) {
+      clearTimeout(this.undoTimeoutId);
+      this.undoTimeoutId = null;
+      this.taskBoardBeingDeleted.set(null);
+      this.boards.update((boards) => [...boards, taskBoard]);
+    }
   }
 }

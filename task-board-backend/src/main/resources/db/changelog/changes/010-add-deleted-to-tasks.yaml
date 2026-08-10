@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010-add-deleted-to-tasks
+      author: patryk
+      changes:
+        - addColumn:
+            tableName: tasks
+            columns:
+              - column:
+                  name: deleted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_tasks_deleted
+            tableName: tasks
+            columns:
+              - column:
+                  name: deleted
+

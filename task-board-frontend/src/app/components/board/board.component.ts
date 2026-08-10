@@ -18,13 +18,12 @@ import { TaskDetailsModalComponent } from '../task-details-modal/task-details-mo
     ReactiveFormsModule,
     DragDropModule,
     PublicFlagModalComponent,
-    TaskDetailsModalComponent
+    TaskDetailsModalComponent,
   ],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
 })
 export class BoardComponent implements OnInit, OnDestroy {
-
   @ViewChild(PublicFlagModalComponent) goPublicModal!: PublicFlagModalComponent;
   @ViewChild('boardNameInput') boardNameInput?: ElementRef<HTMLInputElement>;
 
@@ -75,6 +74,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     if (this.eventSource) {
       this.eventSource.close();
     }
+    this.executePermanentDelete();
   }
 
   private onUserLogin() {
@@ -119,14 +119,15 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         this.board.set(boardData);
         const tasks = boardData.tasks ?? [];
-        this.todoTasks.set(tasks.filter((t) => t.status === 'TODO'));
-        this.inProgressTasks.set(tasks.filter((t) => t.status === 'IN_PROGRESS'));
-        this.doneTasks.set(tasks.filter((t) => t.status === 'DONE'));
+        const deletedTaskId = this.recentlyDeletedTask()?.id;
+        this.todoTasks.set(this.sorted(tasks.filter((t) => t.status === 'TODO' && t.id != deletedTaskId)));
+        this.inProgressTasks.set(this.sorted(tasks.filter((t) => t.status === 'IN_PROGRESS' && t.id != deletedTaskId)));
+        this.doneTasks.set(this.sorted(tasks.filter((t) => t.status === 'DONE' && t.id != deletedTaskId)));
       },
       error: (err) => {
         console.error(err);
         this.board.set(null);
-        if (err.status === 403 || err.status === 401) {
+        if (err.status === 403) {
           this.accessDenied.set(true);
           this.boardName.set('Brak dostępu');
         } else {
@@ -211,7 +212,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       clearTimeout(this.undoTimeoutId);
       this.undoTimeoutId = null;
 
-      this.getSignalByStatus(task.status).update((tasks) => [...tasks, task]);
+      this.getSignalByStatus(task.status).update((tasks) => this.sorted([...tasks, task]));
       this.recentlyDeletedTask.set(null);
     }
   }
@@ -233,5 +234,9 @@ export class BoardComponent implements OnInit, OnDestroy {
     if (status === 'TODO') return this.todoTasks;
     if (status === 'IN_PROGRESS') return this.inProgressTasks;
     return this.doneTasks;
+  }
+
+  private sorted(tasks: TaskDto[]): TaskDto[] {
+    return [...tasks].sort((a, b) => a.position - b.position);
   }
 }

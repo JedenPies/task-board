@@ -102,4 +102,12 @@ public class TaskBoardsService {
         repositoryService.save(board);
         return edited;
     }
+
+    @Transactional
+    public void deleteBoard(UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
+        TaskBoard board = repositoryService.findById(boardId).orElseThrow(() -> ObjectNotFoundException.of("Board", boardId));
+        board.checkDeletePermissions(userContext);
+        board.delete();
+        repositoryService.save(board);
+    }
 }

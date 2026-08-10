@@ -20,6 +20,13 @@ export interface TaskDto {
   title: string;
   description: string;
   status: TaskStatus;
+  position: number;
+}
+
+export interface NewTaskDto {
+  title: string;
+  description: string;
+  status: TaskStatus;
 }
 
 export interface UpdateTaskCommandDto {

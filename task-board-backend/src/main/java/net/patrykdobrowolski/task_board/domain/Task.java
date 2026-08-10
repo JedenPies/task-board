@@ -20,8 +20,14 @@ public class Task {
     @Setter
     private Long position;
 
+    private boolean deleted;
+
     public void update(UpdateTaskCommand command) {
         this.title = command.getNewTitle();
         this.description = command.getNewDescription();
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }

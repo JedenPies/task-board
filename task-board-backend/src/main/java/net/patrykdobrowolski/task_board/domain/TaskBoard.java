@@ -30,6 +30,8 @@ public class TaskBoard {
     @Setter
     private Boolean isPublic = false;
 
+    private boolean deleted;
+
     public Task addNewTask(Task task) throws ObjectAlreadyExistsException {
         if (taskById(task.getId()).isPresent()) throw ObjectAlreadyExistsException.of("Task", task.getId());
         task.setStatus(Optional.ofNullable(task.getStatus()).orElse(TaskStatus.TODO));
@@ -102,12 +104,16 @@ public class TaskBoard {
 
     public Task deleteTaskById(UUID taskId) throws ObjectNotFoundException {
         Task found = tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst().orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
-        tasks.remove(found);
+        found.delete();
         return found;
     }
 
     public void changeName(String newName) {
         this.name = newName;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 
     public boolean isAllowedToEdit(UserContext userContext) {
@@ -125,6 +131,10 @@ public class TaskBoard {
 
     public boolean isAllowedToMoveTask(UserContext userContext) {
         return isPublic || isAllowedToEdit(userContext);
+    }
+
+    public boolean isAllowedToDelete(UserContext userContext) {
+        return owner.equals(userContext.getUserName());
     }
 
     public void checkPublicFlagPermission(UserContext userContext) throws AccessDeniedException {
@@ -147,6 +157,12 @@ public class TaskBoard {
 
     public void checkManipulateTasksPermissions(UserContext userContext) throws AccessDeniedException {
         if (!isAllowedToMoveTask(userContext)) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public void checkDeletePermissions(UserContext userContext) throws AccessDeniedException {
+        if (!isAllowedToDelete(userContext)) {
             throw new AccessDeniedException();
         }
     }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor @AllArgsConstructor
 @Getter
 @Builder
+@SQLRestriction("deleted = false")
 public class TaskBoardEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,9 +23,12 @@ public class TaskBoardEntity {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "taskBoard")
+    @SQLRestriction("deleted = false")
     private List<TaskEntity> tasks;
 
     private String owner;
     private Boolean isPublic;
+
+    private boolean deleted;
 
 }

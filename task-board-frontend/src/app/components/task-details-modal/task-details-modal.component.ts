@@ -1,7 +1,7 @@
 import { Component, ElementRef, input, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskBoardService } from '../../services/task-board.service';
-import { TaskDto, TaskStatus, UpdateTaskCommandDto } from '../../models/board.model';
+import { NewTaskDto, TaskDto, TaskStatus, UpdateTaskCommandDto } from '../../models/board.model';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -21,7 +21,6 @@ export class TaskDetailsModalComponent {
 
   taskForm: FormGroup;
 
-  // ZMIANA: Robimy z tego Sygnał
   currentTask = signal<TaskDto | null>(null);
   targetStatus = signal<TaskStatus | null>(null);
   isSaving = signal<boolean>(false); // to też warto zrobić sygnałem
@@ -71,8 +70,7 @@ export class TaskDetailsModalComponent {
       };
       operation$ = this.taskBoardService.updateTaskDetails(this.boardId(), task.id, command);
     } else if (status !== null && status !== undefined) {
-      const newTask: TaskDto = {
-        id: crypto.randomUUID(),
+      const newTask: NewTaskDto = {
         title: this.taskForm.value.title,
         description: this.taskForm.value.description,
         status: status,

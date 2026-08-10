@@ -12,14 +12,26 @@
     <section class="boards-list-section">
       <ul class="boards-list">
         @for (board of boards(); track board.id) {
-          <li>
-            <a [routerLink]="['/board', board.id]">{{ board.name }}</a>
+          <li class="taskboard-card-container"> <a class="taskboard-card-link" [routerLink]="['/board', board.id]">
+            <h3>{{ board.name }}</h3>
+          </a>
+            <button class="btn-delete" (click)="deleteTaskBoard(board)" title="Usuń tablicę">×</button>
           </li>
         } @empty {
           <p>Nie masz jeszcze żadnych tablic.</p>
         }
       </ul>
     </section>
+
+    @if (taskBoardBeingDeleted(); as taskBoard) {
+      <div class="snackbar-undo">
+        <span>Usunięto zadanie: <strong>{{ taskBoard.name }}</strong></span>
+        <button class="btn-undo" (click)="onUndoDelete()">Cofnij</button>
+      </div>
+    }
+
   }
+
+
 </main>
 

@@ -110,3 +110,37 @@ body:has(dialog[open]) {
   cursor: pointer;
   font-size: 0.95rem;
 }
+
+/* Snackbar cofania */
+.snackbar-undo {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f44;
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  z-index: 9999;
+  font-size: 0.95rem;
+  animation: slideUp 0.3s cubic-bezier(0, 0, 0.2, 1);
+
+  .btn-undo {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}

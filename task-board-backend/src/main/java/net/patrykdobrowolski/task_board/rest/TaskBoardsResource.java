@@ -43,6 +43,12 @@ public class TaskBoardsResource {
         return taskBoardMapper.toDto(taskBoardsService.findBoard(boardId));
     }
 
+    @DeleteMapping(value = "/{boardId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBoard(@PathVariable UUID boardId) throws ObjectNotFoundException, AccessDeniedException {
+        taskBoardsService.deleteBoard(boardId);
+    }
+
 
     @PutMapping("/{boardId}/name")
     public TaskBoardDto changeBoardName(@PathVariable UUID boardId, @RequestBody ChangeNameCommandDto command) throws ObjectNotFoundException, AccessDeniedException {

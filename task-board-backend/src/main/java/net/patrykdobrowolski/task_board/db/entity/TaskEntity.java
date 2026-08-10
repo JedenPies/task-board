@@ -13,6 +13,7 @@ import java.util.UUID;
 public class TaskEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String title;
     private String description;
@@ -23,6 +24,8 @@ public class TaskEntity {
     @ManyToOne
     @JoinColumn(name = "task_board_id")
     private TaskBoardEntity taskBoard;
+
+    private boolean deleted;
 
     public void linkBoard(TaskBoardEntity taskBoard) {
         this.taskBoard = taskBoard;

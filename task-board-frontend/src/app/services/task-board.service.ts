@@ -2,6 +2,7 @@ import {inject, Service} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {
+  NewTaskDto,
   TaskBoardDto,
   TaskBoardOverviewDto,
   TaskDto,
@@ -28,7 +29,7 @@ export class TaskBoardService {
     return this.http.get<TaskBoardDto>(this.apiUrl + '/' + boardId);
   }
 
-  addNewTask(boardId: string, taskDto: TaskDto): Observable<TaskDto> {
+  addNewTask(boardId: string, taskDto: NewTaskDto): Observable<TaskDto> {
     return this.http.post<TaskDto>(this.apiUrl + '/' + boardId + '/tasks', taskDto);
   }
 
@@ -49,6 +50,10 @@ export class TaskBoardService {
     return this.http.put<void>(this.apiUrl + '/' + boardId + '/name', command, {
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+
+  deleteBoard(boardId: string): Observable<void> {
+    return this.http.delete<void>(this.apiUrl + '/' + boardId);
   }
 
   updateBoardVisibility(boardId: string, isPublic: boolean): Observable<void> {

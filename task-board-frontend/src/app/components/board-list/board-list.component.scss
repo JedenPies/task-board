@@ -20,7 +20,7 @@
   }
 }
 
-/* Lista tablic */
+///* Lista tablic */
 .boards-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 kafelki w rzędzie */
@@ -39,7 +39,7 @@
     align-items: flex-start;   /* Tekst do lewej krawędzi */
     justify-content: flex-start; /* Tekst do górnej krawędzi */
 
-    height: 80px;              /* Twoja nowa, niższa wysokość */
+    height: 90px;              /* Twoja nowa, niższa wysokość */
     padding: 1rem;
     background: #f9f9f9;
     border: 1px solid #eee;
@@ -49,31 +49,60 @@
     font-weight: 500;
     transition: all 0.2s ease;
 
-    &:hover {
-      background: #f0f0f0;
-      border-color: #ccc;
-      transform: translateY(-2px);
-    }
-  }a {
-     display: flex;
-     flex-direction: column;    /* Zmieniamy na kolumnę, żeby elementy układały się pionowo */
-     align-items: flex-start;   /* Tekst do lewej krawędzi */
-     justify-content: flex-start; /* Tekst do górnej krawędzi */
+    //&:hover {
+    //  background: #f0f0f0;
+    //  border-color: #ccc;
+    //  transform: translateY(-2px);
+    //}
+  }
+}
 
-     height: 80px;              /* Twoja nowa, niższa wysokość */
-     padding: 1rem;
-     background: #f9f9f9;
-     border: 1px solid #eee;
-     border-radius: 8px;
-     text-decoration: none;
-     color: #333;
-     font-weight: 500;
-     transition: all 0.2s ease;
+/* Zakładam, że Twoja klasa .taskboard-card miała jakieś style (np. tło, obramowanie).
+   Przenosimy je na nowy kontener. */
+.taskboard-card-container {
+  position: relative; /* Bardzo ważne dla pozycjonowania guzika! */
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
 
-     &:hover {
-       background: #f0f0f0;
-       border-color: #ccc;
-       transform: translateY(-2px);
-     }
-   }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+}
+
+.taskboard-card-link {
+  display: block; /* Sprawia, że link zajmuje cały obszar kontenera */
+  padding: 16px;  /* Twój stary padding */
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+
+  h3 {
+    margin: 0;
+    /* np. ucięcie za długiego tekstu, by nie wchodził pod guzik */
+    padding-right: 24px;
+  }
+}
+
+.btn-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #999;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 10; /* Gwarantuje, że przycisk jest "nad" linkiem */
+
+  &:hover {
+    color: red;
+  }
 }
