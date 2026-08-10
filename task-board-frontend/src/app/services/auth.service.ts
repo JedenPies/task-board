@@ -1,60 +1,78 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-
-interface LoginResponse {
-  accessToken: string;
-}
+import { AuthorizationResultDto } from '../models/board.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-
   private http = inject(HttpClient);
   private authUrl = '/api/authentication';
 
-  private tokenSignal = signal<string | null>(localStorage.getItem('token'));
-
-  isLoggedIn = computed(() => !!this.tokenSignal());
-
-  getToken() {
-    return this.tokenSignal();
+  private storeAuthorizationData(data: AuthorizationResultDto) {
+    this.authorizationData.set(data);
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('userDisplayName', data.userDisplayName);
   }
 
-  login(username: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.authUrl, { username, password }, { withCredentials: true }).pipe(
-      tap((response) => {
-        localStorage.setItem('token', response.accessToken);
-        this.tokenSignal.set(response.accessToken);
-      }),
-    );
+  private clearAuthorizationData() {
+    this.authorizationData.set(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userDisplayName');
+  }
+
+  authorizationData = signal<AuthorizationResultDto | null>(this.initialAuthData());
+  isLoggedIn = computed(() => !!this.authorizationData()?.accessToken);
+
+  private initialAuthData(): AuthorizationResultDto | null {
+    const token = localStorage.getItem('accessToken');
+    const displayName = localStorage.getItem('userDisplayName');
+    if (token) {
+      return { accessToken: token, userDisplayName: displayName || '' };
+    }
+    return null;
+  }
+
+  getToken() {
+    return this.authorizationData()?.accessToken;
+  }
+
+  login(username: string, password: string): Observable<AuthorizationResultDto> {
+    return this.http
+      .post<AuthorizationResultDto>(this.authUrl, { username, password }, { withCredentials: true })
+      .pipe(tap((response) => this.storeAuthorizationData(response)));
   }
 
   loginWithExternalProvider(provider: string, token: string): Observable<any> {
-    return this.http.post<any>(this.authUrl + '/oauth2/' + provider.toUpperCase(), { token }, { withCredentials: true }).pipe(
-      tap((response) => {
-        localStorage.setItem('token', response.accessToken);
-        this.tokenSignal.set(response.accessToken);
-      })
-    )
+    return this.http
+      .post<AuthorizationResultDto>(
+        this.authUrl + '/oauth2/' + provider.toUpperCase(),
+        { token },
+        { withCredentials: true },
+      )
+      .pipe(
+        tap((response) => {
+          this.storeAuthorizationData(response);
+        }),
+      );
   }
 
   loginWithGoogle(token: string): Observable<any> {
     return this.loginWithExternalProvider('google', token);
   }
 
-  refreshToken(): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.authUrl + '/refresh', {}, { withCredentials: true }).pipe(
-      tap((response) => {
-        localStorage.setItem('token', response.accessToken);
-        this.tokenSignal.set(response.accessToken);
-      }),
-    );
+  refreshToken(): Observable<AuthorizationResultDto> {
+    return this.http
+      .post<AuthorizationResultDto>(this.authUrl + '/refresh', {}, { withCredentials: true })
+      .pipe(
+        tap((response) => {
+          this.storeAuthorizationData(response);
+        }),
+      );
   }
 
   logout(): void {
-    localStorage.removeItem('token')
-    this.tokenSignal.set(null)
+    this.clearAuthorizationData();
   }
 }

@@ -1,6 +1,7 @@
 <header class="navbar">
   <div class="navbar-container">
     <div class="logo"><a routerLink="/">Mój Kanban</a></div>
+    <h3>{{authService.authorizationData()?.userDisplayName}}</h3>
     <nav>
       @if (authService.isLoggedIn()) {
         <button (click)="onLogoutClick()" class="btn-ghost">Wyloguj</button>

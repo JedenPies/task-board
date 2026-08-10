@@ -35,13 +35,13 @@ public class AuthenticationService {
         dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
     }
 
-    public TokensPair authenticate(AuthenticateWithPasswordCommand request) throws InvalidCredentialsException {
+    public AuthenticationResult authenticate(AuthenticateWithPasswordCommand request) throws InvalidCredentialsException {
         User userFound = usersRepository.findByUsername(request.username()).orElseThrow(this::invalidCredentialsExceptionAfterEmptyHashing);
         checkPassword(userFound, request.password());
         return generateAndRegisterTokens(userFound);
     }
 
-    public TokensPair authenticate(AuthProvider authProvider, String authString) throws Exception {
+    public AuthenticationResult authenticate(AuthProvider authProvider, String authString) throws Exception {
         ExternalUserProfile userProfile = oAuth2AuthenticationProviderFactory.getProvider(authProvider).authenticate(authString);
         User user = usersRepository.findByExternalAuthProvider(authProvider, userProfile.userId()).orElseGet(
                 () -> usersService.createNewUser(authProvider, userProfile));
@@ -49,20 +49,20 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public TokensPair refresh(String oldToken) throws InvalidRefreshTokenException {
+    public AuthenticationResult refresh(String oldToken) throws InvalidRefreshTokenException {
         UserToken current = userTokensRepository.findByRefreshToken(oldToken).orElseThrow(InvalidRefreshTokenException::new);
         Optional<String> replacement = current.use(clock);
-        TokensPair newTokensPair = replacement.isEmpty()
+        AuthenticationResult newAuthenticationResult = replacement.isEmpty()
             ? replaceWithNew(current)
             : generateAccessToken(current.getUser(), replacement.get());
         userTokensRepository.save(current);
-        return newTokensPair;
+        return newAuthenticationResult;
     }
 
-    private @NonNull TokensPair replaceWithNew(UserToken current) {
-        TokensPair tokensPair = generateAndRegisterTokens(current.getUser());
-        current.replacedBy(tokensPair.refreshToken());
-        return tokensPair;
+    private @NonNull AuthenticationResult replaceWithNew(UserToken current) {
+        AuthenticationResult authenticationResult = generateAndRegisterTokens(current.getUser());
+        current.replacedBy(authenticationResult.refreshToken());
+        return authenticationResult;
     }
 
     private @NonNull InvalidCredentialsException invalidCredentialsExceptionAfterEmptyHashing() {
@@ -76,21 +76,22 @@ public class AuthenticationService {
         }
     }
 
-    private TokensPair generateAndRegisterTokens(User userFound) {
+    private AuthenticationResult generateAndRegisterTokens(User userFound) {
         String refreshToken = tokenGenerator.generateRefreshToken(userFound);
-        TokensPair tokensPair = generateAccessToken(userFound, refreshToken);
-        registerToken(userFound, tokensPair);
-        return tokensPair;
+        AuthenticationResult authenticationResult = generateAccessToken(userFound, refreshToken);
+        registerToken(userFound, authenticationResult);
+        return authenticationResult;
     }
 
-    private TokensPair generateAccessToken(User userFound, String refreshToken) {
-        return TokensPair.builder()
+    private AuthenticationResult generateAccessToken(User userFound, String refreshToken) {
+        return AuthenticationResult.builder()
+                .user(userFound)
                 .accessToken(tokenGenerator.generateAccessToken(userFound))
                 .refreshToken(refreshToken)
                 .build();
     }
 
-    private void registerToken(User userFound, TokensPair result) {
+    private void registerToken(User userFound, AuthenticationResult result) {
         UserToken newToken = UserToken.builder()
                 .user(userFound)
                 .refreshToken(result.refreshToken())

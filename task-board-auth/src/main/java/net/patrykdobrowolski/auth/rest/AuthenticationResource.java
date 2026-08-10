@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.auth.domain.AuthenticateWithPasswordCommand;
 import net.patrykdobrowolski.auth.domain.InvalidRefreshTokenException;
-import net.patrykdobrowolski.auth.domain.TokensPair;
+import net.patrykdobrowolski.auth.domain.AuthenticationResult;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticateCommandDto;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticationResultDto;
 import net.patrykdobrowolski.auth.rest.dto.OAuth2LoginRequestDto;
@@ -37,9 +37,9 @@ public class AuthenticationResource {
             HttpServletResponse rawResponse) throws InvalidCredentialsException {
 
         AuthenticateWithPasswordCommand request = dtoMapper.toRequest(authenticateCommandDto);
-        TokensPair result = authenticationService.authenticate(request);
+        AuthenticationResult result = authenticationService.authenticate(request);
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
-        return AuthenticationResultDto.builder().accessToken(result.accessToken()).build();
+        return map(result);
     }
 
     @PostMapping("/oauth2/{provider}")
@@ -47,16 +47,16 @@ public class AuthenticationResource {
             @PathVariable AuthProvider provider,
             @RequestBody OAuth2LoginRequestDto request,
             HttpServletResponse rawResponse) throws Exception {
-        TokensPair result = authenticationService.authenticate(provider, request.getToken());
+        AuthenticationResult result = authenticationService.authenticate(provider, request.getToken());
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
-        return AuthenticationResultDto.builder().accessToken(result.accessToken()).build();
+        return map(result);
     }
 
     @PostMapping("/refresh")
     public AuthenticationResultDto refresh(HttpServletRequest rawRequest, HttpServletResponse rawResponse) throws InvalidRefreshTokenException {
-        TokensPair result = authenticationService.refresh(extractRefreshTokenCookie(rawRequest));
+        AuthenticationResult result = authenticationService.refresh(extractRefreshTokenCookie(rawRequest));
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
-        return AuthenticationResultDto.builder().accessToken(result.accessToken()).build();
+        return map(result);
     }
 
     private static @NonNull String extractRefreshTokenCookie(HttpServletRequest rawRequest) throws InvalidRefreshTokenException {
@@ -66,7 +66,7 @@ public class AuthenticationResource {
                 .findFirst().orElseThrow(InvalidRefreshTokenException::new);
     }
 
-    private static @NonNull ResponseCookie generateCookie(TokensPair result) {
+    private static @NonNull ResponseCookie generateCookie(AuthenticationResult result) {
         return ResponseCookie.from("refresh_token", result.refreshToken())
                 .httpOnly(true)
                 .secure(true)
@@ -74,5 +74,9 @@ public class AuthenticationResource {
                 .maxAge(SEVEN_DAYS)
                 .sameSite("Strict")
                 .build();
+    }
+
+    private AuthenticationResultDto map(AuthenticationResult result) {
+        return AuthenticationResultDto.builder().accessToken(result.accessToken()).userDisplayName(result.user().getDisplayName()).build();
     }
 }

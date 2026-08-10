@@ -12,13 +12,19 @@
   padding: 22px 24px; /* Boczne marginesy zgrywają się z listą tablic */
 
   .logo {
+    flex: 1;
     font-weight: bold;
     font-size: 30px;
-
     a {
       color: #333;
       text-decoration: none;
     }
+  }
+
+  h3 {
+    font-size: 16px;
+    color: #66a;
+    margin: 0 20px;
   }
 
   .btn-ghost {

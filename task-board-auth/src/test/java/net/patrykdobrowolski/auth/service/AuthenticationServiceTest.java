@@ -3,7 +3,7 @@ package net.patrykdobrowolski.auth.service;
 import net.patrykdobrowolski.auth.db.repository.UserTokensRepositoryService;
 import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
 import net.patrykdobrowolski.auth.domain.AuthenticateWithPasswordCommand;
-import net.patrykdobrowolski.auth.domain.TokensPair;
+import net.patrykdobrowolski.auth.domain.AuthenticationResult;
 import net.patrykdobrowolski.auth.domain.User;
 import net.patrykdobrowolski.auth.domain.UserToken;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,7 +102,7 @@ class AuthenticationServiceTest {
         when(clock.instant()).thenReturn(Instant.now());
 
         // when
-        TokensPair result = authenticationService.authenticate(command);
+        AuthenticationResult result = authenticationService.authenticate(command);
 
         // then
         assertThat(result.accessToken()).isEqualTo("new-access-token");
@@ -139,7 +139,7 @@ class AuthenticationServiceTest {
         when(clock.instant()).thenReturn(Instant.now()); // Potrzebne do zapisania nowego tokena (Instant.now(clock))
 
         // when
-        TokensPair result = authenticationService.refresh(oldToken);
+        AuthenticationResult result = authenticationService.refresh(oldToken);
 
         // then
         assertThat(result.accessToken()).isEqualTo("brand-new-access-token");
@@ -167,7 +167,7 @@ class AuthenticationServiceTest {
         when(tokenGenerator.generateAccessToken(user)).thenReturn("new-access-token-for-grace");
 
         // when
-        TokensPair result = authenticationService.refresh(oldToken);
+        AuthenticationResult result = authenticationService.refresh(oldToken);
 
         // then
         assertThat(result.accessToken()).isEqualTo("new-access-token-for-grace");
