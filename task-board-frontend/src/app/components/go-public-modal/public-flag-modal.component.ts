@@ -35,13 +35,13 @@ export class PublicFlagModalComponent {
     if (!currentBoard) return;
     this.isLoading.set(true);
     this.taskBoardService.updateBoardVisibility(this.board()!.id, !this.board()!.isPublic).subscribe({
-      next: (b) => {
-        this.isLoading.set(false)
-        this.close()
+      next: (board) => {
+        this.isLoading.set(false);
+        this.close();
       },
       error: (err) => {
-        console.error(err)
-        this.isLoading.set(false)
+        console.error(err);
+        this.isLoading.set(false);
         this.close()
       },
     })

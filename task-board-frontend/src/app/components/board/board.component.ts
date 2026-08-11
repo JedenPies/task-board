@@ -114,7 +114,6 @@ export class BoardComponent implements OnInit, OnDestroy {
   loadBoardData(): void {
     this.taskBoardService.getBoard(this.id()).subscribe({
       next: (boardData) => {
-        console.log('pobrano dane');
         this.accessDenied.set(false);
         this.boardName.set(boardData.name ?? 'Tablica Kanban');
         this.board.set(boardData);

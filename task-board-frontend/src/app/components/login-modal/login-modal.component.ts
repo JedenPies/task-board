@@ -1,14 +1,13 @@
 import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { LoaderComponent } from '../loader/loader.component';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login-modal',
   standalone: true,
-  imports: [FormsModule, LoaderComponent],
+  imports: [FormsModule],
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.scss'],
 })

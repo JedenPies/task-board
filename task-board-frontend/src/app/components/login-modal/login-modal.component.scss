@@ -1,80 +1,110 @@
+@use '../../../variables' as *;
+
+$text-dark: darken($c3, 25%);
+$border-light: lighten($c3, 38%);
+
+dialog.modal-dialog {
+  form.modern-form {
+    width: 360px;
+    max-width: 90vw;
+    box-sizing: border-box;
+  }
+}
+
+.modal-header {
+  h3 {
+    font-weight: 700;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: lighten($c3, 20%);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $c1; /* Pomarańczowy akcent */
+    }
+  }
+}
+
 .social-login-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center; /* Dodane: wyśrodkuje oba przyciski w kontenerze formularza */
-  align-items: center;
-  gap: 16px; /* Zwiększyłem gap z 8px na 16px dla lepszego oddechu między kwadratami */
-  margin: 0 auto;
-}
-
-.social-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  gap: 12px;
   justify-content: center;
-  width: 110px;
-  height: 110px;
 
-  background-color: #ffffff;
-  color: #3c4043;
-  border: 1px solid #dadce0;
-  border-radius: 4px;
+  .social-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    background-color: #ffffff;
+    border: 1px solid $border-light;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 
-  font-family: 'Roboto', 'Segoe UI', Tahoma, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.25px;
+    svg {
+      width: 26px;
+      height: 26px;
+      fill: $text-dark;
+      margin-bottom: 6px;
+    }
 
-  cursor: pointer;
-  transition: background-color 0.2s, box-shadow 0.2s;
+    span {
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-dark;
+    }
 
-  p {
-    /* Usunięto flex: 1, text-align: left i margin-left */
-    margin: 8px 0 0 0; /* Zostawiamy tylko lekki odstęp od góry (od ikony) */
-    text-align: center;
-    line-height: 1.2; /* Pomaga, gdy długi tekst "Zaloguj przez..." zawija się na dwie linijki */
-  }
+    &:hover {
+      background-color: lighten($c2, 8%);
+      border-color: lighten($c3, 20%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba($c3, 0.08);
+    }
 
-  svg {
-    width: 40px;
-    height: 40px;
-    margin: 0; /* Wyzerowano margin-right, żeby ikona była idealnie na środku */
-  }
-
-  /* Efekt najechania skopiowany z Google */
-  &:hover {
-    background-color: #f8f9fa;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($c5, 0.2);
+    }
   }
 }
 
-/* Wyśrodkowanie nagłówka "Logowanie" */
-h3 {
+.divider {
+  display: flex;
+  align-items: center;
   text-align: center;
-  width: 100%;
-  margin-top: 0;
-  margin-bottom: 20px;
-}
+  margin: 4px 0;
 
-/* Wyśrodkowanie kontenera z przyciskiem Anuluj (lub dolnymi akcjami) */
-.modal-actions,
-.form-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 16px;
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid $border-light;
+  }
 
-  /* Jeśli przycisk Anuluj jest pojedynczym elementem lub wewnątrz btn-ghost */
-  .btn, .btn-ghost, .btn-secondary {
-    margin: 0 auto;
+  span {
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: lighten($c3, 15%);
   }
 }
 
-/* Jeśli przycisk Anuluj znajduje się bezpośrednio w formularzu bez kontenera: */
-button[type="button"].btn-ghost,
-.btn-cancel {
-  display: block;
-  margin: 16px auto 0 auto;
+.error-msg {
+  background-color: rgba($c1, 0.12);
+  color: darken($c1, 15%);
+  border: 1px solid rgba($c1, 0.3);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
   text-align: center;
 }

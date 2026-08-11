@@ -1,3 +1,4 @@
+<main class="main-content">
 @if (accessDenied()) {
   <div class="board-detail-container">
   <div class="access-denied-message">
@@ -7,7 +8,7 @@
   </div>
 } @else if (board(); as b) {
   <div class="board-detail-container">
-    <div class="board-header">
+    <div class="board-header component-header">
       <h2>
         Tablica:
         @if (!isEditingName()) {
@@ -51,7 +52,7 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="TODO" [cdkDropListData]="todoTasks()" (cdkDropListDropped)="onTaskDrop($event, 'TODO')">
           @for (task of todoTasks(); track task.id) {
-            <div class="task-card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
+            <div class="task-card card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
               <div class="task-content">
                 <h4>{{ task.title }}</h4>
                 @if (task.description) { <p class="task-description">{{ task.description }}</p> }
@@ -67,7 +68,7 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="IN_PROGRESS" [cdkDropListData]="inProgressTasks()" (cdkDropListDropped)="onTaskDrop($event, 'IN_PROGRESS')">
           @for (task of inProgressTasks(); track task.id) {
-            <div class="task-card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
+            <div class="task-card card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
               <div class="task-content">
                 <h4>{{ task.title }}</h4>
                 @if (task.description) { <p>{{ task.description }}</p> }
@@ -83,7 +84,7 @@
       <div class="kanban-column">
         <div class="task-list" cdkDropList id="DONE" [cdkDropListData]="doneTasks()" (cdkDropListDropped)="onTaskDrop($event, 'DONE')">
           @for (task of doneTasks(); track task.id) {
-            <div class="task-card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
+            <div class="task-card card" cdkDrag (click)="taskDetailsModal.openForEdit(task)">
               <div class="task-content">
                 <h4>{{ task.title }}</h4>
                 @if (task.description) { <p>{{ task.description }}</p> }
@@ -107,6 +108,6 @@
     }
   </div>
 }
-
+</main>
 <app-go-public-modal #goPublicModal [board]="board()"></app-go-public-modal>
 <app-task-details-modal #taskDetailsModal [boardId]="id()"></app-task-details-modal>

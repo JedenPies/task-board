@@ -1,146 +1,293 @@
-/* You can add global styles to this file, and also import other style files */
 @use 'variables' as *;
 
 body {
   font-family: $font-stack;
   margin: 0;
-}
-
-::-webkit-scrollbar {
-  display: none;
-}
-
-body {
   /* Ukrycie paska dla Firefoxa */
   scrollbar-width: none;
   /* Ukrycie paska dla starszych Edge/IE */
   -ms-overflow-style: none;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 body:has(dialog[open]) {
   overflow: hidden;
 }
 
-.dialog {
-  padding: 2rem;
-  border: 1px solid #eee;
-  border-radius: 12px; // Trochę łagodniejsze zaokrąglenie
-  width: 320px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1); // Delikatny cień dodaje "głębi" popupowi
+dialog.modal-dialog {
+  border: none;
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+  width: 300px;
 
   &::backdrop {
-    background: rgba(0, 0, 0, 0.3); // Jaśniejsze przyciemnienie tła
-    backdrop-filter: blur(2px);     // Subtelne rozmycie tła
+    background: rgba(#1a202c, 0.5);
+    backdrop-filter: blur(4px);
+  }
+}
+
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  background: $bg-color;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba($c3, 0.08);
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    h3 {
+      margin: 0;
+      color: $text-color;
+      font-size: 1.3rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: lighten($c3, 20%);
+      cursor: pointer;
+      transition: color 0.2s;
+      padding: 0;
+      line-height: 1;
+
+      &:hover {
+        color: $c1;
+      }
+    }
   }
 
-  h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.25rem;
-    color: #333;
-  }
-
-  form {
+  .form-group {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 8px;
 
-    .error-message {
-      color: red;
-      font-size: 0.85rem;
-      margin: 0;
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $c3;
+      margin: 0.1rem 0.5rem;
     }
-  }
 
-  input {
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box; /* Ważne dla inputów wewnątrz */
-
-    &:focus {
+    input, textarea {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: $text-color;
+      background-color: #fcfcfc;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      transition: all 0.2s ease-in-out;
       outline: none;
-      border-color: #000;
+      font-family: inherit;
+
+      &::placeholder {
+        color: lighten($c3, 25%);
+      }
+
+      &:focus {
+        border-color: $c5;
+        background-color: $bg-color;
+        box-shadow: 0 0 0 4px rgba($c5, 0.15);
+      }
+    }
+
+    textarea {
+      resize: none;
+      min-height: 100px;
     }
   }
 
-  .modal-actions {
+  .form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
 
     button {
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.9rem;
+      transition: all 0.2s;
+      outline: none;
     }
 
-    button[type="submit"] {
-      background: #000;
-      color: #fff;
-      border: none;
-    }
-
-    button[type="button"] {
+    .btn-cancel {
       background: transparent;
-      border: 1px solid #ccc;
-      color: #666;
+      color: $c3;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: rgba($c1, 0.08);
+        color: darken($c1, 10%);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 4px rgba($c1, 0.15);
+      }
+    }
+
+    .btn-submit {
+      background-color: $c4;
+      color: #ffffff;
+      border: 1px solid $c4;
+
+      &:hover {
+        background-color: darken($c4, 8%);
+        border-color: darken($c4, 8%);
+        box-shadow: 0 4px 12px rgba($c4, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 4px rgba($c4, 0.25);
+      }
     }
   }
 }
 
-.btn-primary {
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.btn-ghost {
-  background: transparent;
-  border: 1px solid #ccc;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-/* Snackbar cofania */
 .snackbar-undo {
   position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #f44;
-  color: #fff;
-  padding: 14px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
-  z-index: 9999;
-  font-size: 0.95rem;
-  animation: slideUp 0.3s cubic-bezier(0, 0, 0.2, 1);
+
+  background-color: darken($c3, 25%);
+  color: #ffffff;
+  padding: 14px 20px 14px 24px;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+
+  font-size: 1.1em;
+
+  animation: slide-up-fade 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+  span {
+    line-height: 1.4;
+
+    strong {
+      font-weight: 600;
+      color: $c2;
+    }
+  }
 
   .btn-undo {
-    background-color: #fff;
-    color: #000;
+    background: transparent;
     border: none;
-    padding: 6px 14px;
-    border-radius: 4px;
+    color: $c1;
     font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    font-size: 0.85rem;
+    padding: 8px 12px;
+    margin: -8px -4px -8px 0;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
-      background-color: #f0f0f0;
+      background-color: rgba($c1, 0.15);
+      color: lighten($c1, 10%);
     }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($c1, 0.4);
+    }
+  }
+}
+
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.card {
+  position: relative;
+  padding: 1rem;
+  gap: 10px;
+  background-color: #f9f9f9 !important;
+  border: 1px solid $border-light;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba($c3, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba($c3, 0.12);
+    border-color: lighten($c3, 25%);
+
+    .btn-delete {
+      opacity: 1;
+    }
+  }
+}
+
+.component-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+
+  h2 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.5rem;
+    color: $text-dark;
+  }
+}
+
+.btn-delete {
+  width: 12px;
+  height: 20px;
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #de350b;
   }
 }

@@ -1,15 +1,14 @@
-// Wspólna paleta i tokeny współdzielone przez komponenty.
-// Dołączać przez: @use "../../../variables" as *;
-
-$bg-main: #f4f5f7;
-$bg-column: #ebecf0;
-$bg-card: #ffffff;
-
-$text-dark: #172b4d;
-$text-muted: #5e6c84;
-$text-secondary: #6b778c;
-
-$accent-blue: #0052cc;
-$accent-blue-hover: #0747a6;
-
 $font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+$c1: #f79256;
+$c2: #d6f6dd;
+$c3: #507255;
+$c4: #488b49;
+$c5: #2274a5;
+
+$text-color: darken($c3, 20%);
+$border-color: lighten($c3, 40%);
+$bg-color: #ffffff;
+
+$text-dark: darken($c3, 25%);
+$border-light: lighten($c3, 35%);

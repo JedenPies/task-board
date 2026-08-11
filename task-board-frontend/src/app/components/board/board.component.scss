@@ -1,8 +1,8 @@
 @use "sass:color";
+@use '../../../variables' as *;
 
 $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
-/* Główny kontener 850px jak w dashboardzie */
 .board-detail-container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -11,7 +11,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   flex-direction: column;
 }
 
-/* Nagłówek tablicy */
 .board-header {
   flex: 1;
   margin: 0 10px 20px 10px;
@@ -48,7 +47,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
       font-weight: 700;
       color: #333;
       font-family: inherit;
-      border: 1px solid #000;
+      border: 1px solid $border-light;
       border-radius: 6px;
       padding: 4px 8px 5px 8px;
       outline: none;
@@ -90,7 +89,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
         }
       }
 
-      /* Stan: Tablica Prywatna (Pomarańczowa) */
       &.board-private {
         color: #b65005;
         border: 1px solid #ffda6a;
@@ -126,10 +124,9 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
 }
 
-/* Układ Kanban */
 .kanban-board {
   display: flex;
-  overflow: hidden;     /* Zapobiega powiększaniu się kontenera w dół */
+  overflow: hidden;
   height: 100%;
 
   .kanban-column {
@@ -141,7 +138,7 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
 
     display: flex;
     flex-direction: column;
-    max-height: 100%;    /* Kolumna nie może być wyższa niż plansza */
+    max-height: 100%;
 
     &:last-child {
       border-right: none;
@@ -154,23 +151,12 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
       gap: 10px;
       overflow: visible !important;
 
-      flex: 1;              /* Lista zadań wypełnia resztę kolumny */
+      flex: 1;
       min-height: 50px;
 
-      /* Pojedyncza karta zadania */
       .task-card {
-        background-color: #f9f9f9 !important; /* Szare tło */
-        border: 1px solid #eee; /* Delikatna ramka */
-        border-radius: 6px;
-        padding: 1rem;
-        box-shadow: none !important;
-
-        transition: transform 0.15s ease, border-color 0.15s ease;
         will-change: transform;
-
-        display: flex;
         justify-content: space-between;
-        align-items: flex-start;
         gap: 10px;
 
         &:hover {
@@ -218,29 +204,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 }
 
-/* Przycisk usuwania */
-.btn-delete {
-  width: 12px;
-  height: 20px;
-  background: none;
-  border: none;
-  color: #ccc;
-  font-size: 1.2rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 4px;
-  border-radius: 4px;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #de350b;
-  }
-}
-
-/* ------------------------------------ */
-/* STYLE DRAG AND DROP (CDK)            */
-/* ------------------------------------ */
-
 .cdk-drop-list-dragging .task-card {
   transition: $cdk-transition !important;
 }
@@ -249,7 +212,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   transition: $cdk-transition !important;
 }
 
-/* Jak wygląda karta w trakcie przenoszenia (w powietrzu) */
 .cdk-drag-preview {
   background-color: #fff !important;
   border: 1px solid #ccc !important;
@@ -273,7 +235,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 }
 
-/* Jak wygląda puste miejsce zostawiane w kolumnie */
 .cdk-drag-placeholder {
   background: #f0f0f0 !important;
   border: 2px dashed #ccc !important;
@@ -286,8 +247,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
     visibility: hidden !important;
   }
 }
-
-
 
 @keyframes slideUp {
   from { bottom: -60px; opacity: 0; }
@@ -303,8 +262,6 @@ $cdk-transition: transform 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
   font-size: 0.95rem;
 }
-
-
 
 .btn-add {
   border-radius: 50%;

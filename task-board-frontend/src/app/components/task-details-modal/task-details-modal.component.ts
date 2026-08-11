@@ -60,7 +60,6 @@ export class TaskDetailsModalComponent {
     const task = this.currentTask();
     const status = this.targetStatus();
     if (this.taskForm.invalid || (!task && !status)) return;
-    console.log('save: ' + status + ' ' + task);
     let operation$: Observable<any>;
     this.isSaving.set(true);
     if (task) {

@@ -1,5 +1,5 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { TaskBoardDto, TaskBoardOverviewDto } from '../../models/board.model';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { TaskBoardOverviewDto } from '../../models/board.model';
 import { TaskBoardService } from '../../services/task-board.service';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -24,6 +24,9 @@ export class BoardListComponent {
 
   taskBoardBeingDeleted = signal<TaskBoardOverviewDto | null>(null);
 
+  loading = signal<boolean>(false);
+  boardListEmpty = computed(() => (this.boards()?.length || 0) === 0 && !this.loading());
+
   private undoTimeoutId: any = null;
 
   constructor() {
@@ -41,13 +44,25 @@ export class BoardListComponent {
     const name = this.newBoardTitle;
     this.taskBoardService.createBoard(name).subscribe({
       next: (t) => {
-        this.newBoardTitle = t.name;
-        this.router.navigate(['/board', t.id]);
+        this.newBoardTitle = '';
+        if (!this.authService.isLoggedIn()) {
+          this.router.navigate(['/board', t.id]);
+        } else {
+          this.executeWithTransition(() => this.boards.update((boards) => [...boards, t]));
+        }
       },
       error: (err) => {
         console.error('Błąd tworzenia tablicy', err);
       },
     });
+  }
+
+  private executeWithTransition(action: () => void) {
+    if (document.startViewTransition) {
+      document.startViewTransition(action);
+    } else {
+      action();
+    }
   }
 
   private dataLoader = effect(() => {
@@ -56,8 +71,10 @@ export class BoardListComponent {
   });
 
   private loadBoards() {
+    this.loading.set(true);
     this.taskBoardService.findAllBoards().subscribe((data) => {
       this.boards.set(data);
+      this.loading.set(false);
     });
   }
 
@@ -69,8 +86,9 @@ export class BoardListComponent {
     if (!taskBoard.id) return;
     if (this.undoTimeoutId) this.executeDelete();
     this.taskBoardBeingDeleted.set(taskBoard);
-    this.boards.update((boards) => boards.filter((tb) => tb.id !== taskBoard.id));
     this.undoTimeoutId = setTimeout(() => this.executeDelete(), 5000);
+    this.executeWithTransition(
+        () => this.boards.update((boards) => boards.filter((tb) => tb.id !== taskBoard.id)));
   }
 
   private executeDelete() {
@@ -80,7 +98,7 @@ export class BoardListComponent {
       this.undoTimeoutId = null;
       this.taskBoardBeingDeleted.set(null);
       this.taskBoardService.deleteBoard(taskBoard.id).subscribe({
-        error: (err) => console.error('Error deleting taskboard'),
+        error: (err) => console.error('Error deleting taskboard')
       });
     }
   }
@@ -90,8 +108,10 @@ export class BoardListComponent {
     if (taskBoard?.id) {
       clearTimeout(this.undoTimeoutId);
       this.undoTimeoutId = null;
-      this.taskBoardBeingDeleted.set(null);
-      this.boards.update((boards) => [...boards, taskBoard]);
+      this.executeWithTransition(() => {
+        this.boards.update((boards) => [...boards, taskBoard]);
+        this.taskBoardBeingDeleted.set(null);
+      });
     }
   }
 }

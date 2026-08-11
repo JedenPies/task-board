@@ -1,19 +1,30 @@
-<dialog #modalElement class="visibility-modal">
-  <div class="modal-container">
+<dialog #modalElement class="modal-dialog">
+  <div class="modern-form">
     @if (board(); as b) {
-      <h3>Zmień widoczność tablicy</h3>
+      <div class="modal-header">
+        <h3>Zmień widoczność tablicy</h3>
+        <button class="close-btn" (click)="close()" type="button" title="Zamknij">&times;</button>
+      </div>
 
-      <p class="modal-text">
-        @if (b.isPublic) {
-          Ta tablica jest obecnie <strong>publiczna</strong>. Jeśli zmienisz ją na prywatną, tylko zalogowani i uprawnieni użytkownicy będą mieli do niej dostęp.
-        } @else {
-          Ta tablica jest obecnie <strong>prywatna</strong>. Jeśli zmienisz ją na publiczną, każdy posiadający link będzie mógł ją otworzyć i edytować zadania.
-        }
-      </p>
+      <div class="modal-body">
+        <p class="modal-text">
+          @if (b.isPublic) {
+            Ta tablica jest obecnie <strong class="highlight-public">publiczna</strong>. Jeśli zmienisz ją na prywatną, tylko zalogowani i uprawnieni użytkownicy będą mieli do niej dostęp.
+          } @else {
+            Ta tablica jest obecnie <strong class="highlight-private">prywatna</strong>. Jeśli zmienisz ją na publiczną, każdy posiadający link będzie mógł ją otworzyć i edytować zadania.
+          }
+        </p>
+      </div>
 
-      <div class="modal-actions">
-        <button type="button" class="btn-ghost" (click)="close()">Anuluj</button>
-        <button type="button" class="btn-primary" [disabled]="isLoading()" (click)="toggleVisibility()">
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="close()">Anuluj</button>
+        <button
+          type="button"
+          class="btn-submit"
+          [class.btn-warning]="b.isPublic"
+          [disabled]="isLoading()"
+          (click)="toggleVisibility()"
+        >
           @if (isLoading()) {
             Zapisywanie...
           } @else {
@@ -24,3 +35,4 @@
     }
   </div>
 </dialog>
+

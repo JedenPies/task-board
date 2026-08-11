@@ -1,42 +1,101 @@
+@use 'variables' as *;
+
+$text-dark: darken($c3, 25%);
+$border-light: lighten($c3, 38%);
+
 .navbar {
-  border-bottom: 1px solid #ccc;
-  background: #efefff;
+  background-color: lighten($border-light, 20%);
+  border-bottom: 1px solid $border-light;
+  box-shadow: 0 2px 8px rgba($c3, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1188px;
-  margin: 0 auto;    /* Wyśrodkowanie */
-  padding: 22px 24px; /* Boczne marginesy zgrywają się z listą tablic */
+  max-width: 1238px;
+  height: 90px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 
   .logo {
     flex: 1;
-    font-weight: bold;
-    font-size: 30px;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+
     a {
-      color: #333;
+      color: $text-dark;
       text-decoration: none;
+      transition: color 0.2s ease-in-out;
+
+      &:hover {
+        color: $c4;
+      }
     }
   }
 
-  h3 {
-    font-size: 16px;
-    color: #66a;
-    margin: 0 20px;
+  .user-info {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: darken($c3, 10%);
+    padding: 6px 16px;
+    margin: 0 12px;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-primary {
+    background-color: $c4;
+    color: #ffffff;
+    border: 1px solid $c4;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+
+    &:hover {
+      background-color: darken($c4, 8%);
+      border-color: darken($c4, 8%);
+      box-shadow: 0 4px 12px rgba($c4, 0.2);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba($c4, 0.25);
+    }
   }
 
   .btn-ghost {
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
+    background-color: transparent;
+    color: $text-dark;
+    border: 1px solid $border-light;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
     cursor: pointer;
-    text-decoration: none;
-    color: #333;
-    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+    outline: none;
 
-    &:hover { background: #f0f0f0; }
+    &:hover {
+      background-color: rgba($c1, 0.08);
+      color: darken($c1, 10%);
+      border-color: rgba($c1, 0.3);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba($c1, 0.15);
+    }
   }
 }
