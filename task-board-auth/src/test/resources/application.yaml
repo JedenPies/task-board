@@ -8,7 +8,9 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+  token-cleanup-cron: 0 0 3 * * *
 jwt:
   secret: "ToJestMojBardzoSuperTajnyKluczKtoregoNiktNieZgadnie12345!@#$%"
   expiration-ms: 900000
+
 

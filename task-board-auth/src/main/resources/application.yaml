@@ -14,6 +14,8 @@ spring:
     enabled: true
     default-schema: public
 
+  token-cleanup-cron: 0 0 3 * * *
+
 jwt:
   secret: ${JWT_SECRET}
   expiration-ms: 900000

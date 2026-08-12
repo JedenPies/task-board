@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,4 +18,8 @@ public interface UserTokensRepository extends JpaRepository<UserTokenEntity, UUI
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")})
     Optional<UserTokenEntity> findByRefreshToken(String refreshToken);
+
+    void deleteByValidUntilBeforeOrIsRevokedTrue(Instant now);
+
+
 }

@@ -1,8 +1,8 @@
 @if (!authService.isLoggedIn() || this.boardListEmpty()) {
   <div class="hero-container">
     <div class="hero-content">
-      <h1>Stwórz swoją pierwszą tablicę</h1>
-      <p class="hero-subtitle">Wpisz nazwę poniżej i natychmiast rozpocznij pracę z Kanbanem.</p>
+      <h1>Create your first task board</h1>
+      <p class="hero-subtitle">Enter a name below and start working with Kanban instantly.</p>
 
       <form (submit)="createBoard(); $event.preventDefault()" class="hero-form">
         <input
@@ -10,25 +10,25 @@
           [(ngModel)]="newBoardTitle"
           name="title"
           required
-          placeholder="Nazwa nowej tablicy..."
+          placeholder="New board name..."
         />
-        <button type="submit" class="btn-hero">Stwórz tablicę &rarr;</button>
+        <button type="submit" class="btn-hero">Create board &rarr;</button>
       </form>
     </div>
   </div>
 } @else {
   <main class="main-content">
     <div class="component-header">
-      <h2>Twoje Tablice</h2>
+      <h2>Your boards</h2>
       <form (submit)="createBoard(); $event.preventDefault()" class="inline-board-form">
         <input
           type="text"
           [(ngModel)]="newBoardTitle"
           name="title"
           required
-          placeholder="Nazwa nowej tablicy..."
+          placeholder="New board name..."
         />
-        <button type="submit" class="btn-submit">Stwórz tablicę &rarr;</button>
+        <button type="submit" class="btn-submit">Create board &rarr;</button>
       </form>
     </div>
 
@@ -39,7 +39,7 @@
             <a class="taskboard-card-link" [routerLink]="['/board', board.id]">
               <h3>{{ board.name }}</h3>
             </a>
-            <button class="btn-delete" (click)="deleteTaskBoard(board)" title="Usuń tablicę">&times;</button>
+            <button class="btn-delete" (click)="deleteTaskBoard(board)" title="Delete board">&times;</button>
           </li>
         }
       </ul>
@@ -50,7 +50,7 @@
 }
 @if (taskBoardBeingDeleted(); as taskBoard) {
   <div class="snackbar-undo">
-    <span>Usunięto tablicę: <strong>{{ taskBoard.name }}</strong></span>
-    <button class="btn-undo" (click)="onUndoDelete()">Cofnij</button>
+    <span>Board <strong>{{ taskBoard.name }}</strong> deleted.</span>
+    <button class="btn-undo" (click)="onUndoDelete()">Undo</button>
   </div>
 }

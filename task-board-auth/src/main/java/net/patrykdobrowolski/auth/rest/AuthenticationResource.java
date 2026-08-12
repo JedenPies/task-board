@@ -39,7 +39,7 @@ public class AuthenticationResource {
 
         AuthenticateWithPasswordCommand request = dtoMapper.toRequest(authenticateCommandDto);
         AuthenticationResult result = authenticationService.authenticate(request);
-        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
+        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result.refreshToken(), SEVEN_DAYS).toString());
         return map(result);
     }
 
@@ -51,15 +51,22 @@ public class AuthenticationResource {
         AuthenticateWithExternalProviderCommand command =
                 AuthenticateWithExternalProviderCommand.builder().provider(provider).token(request.getToken()).build();
         AuthenticationResult result = authenticationService.authenticate(command);
-        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
+        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result.refreshToken(), SEVEN_DAYS).toString());
         return map(result);
     }
 
     @PostMapping("/refresh")
     public AuthenticationResultDto refresh(HttpServletRequest rawRequest, HttpServletResponse rawResponse) throws InvalidRefreshTokenException {
         AuthenticationResult result = authenticationService.refresh(extractRefreshTokenCookie(rawRequest));
-        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
+        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result.refreshToken(), SEVEN_DAYS).toString());
         return map(result);
+    }
+
+    @PostMapping("/logout")
+    public void logout(HttpServletRequest rawRequest, HttpServletResponse rawResponse) throws InvalidRefreshTokenException {
+        String oldToken = extractRefreshTokenCookie(rawRequest);
+        authenticationService.logout(oldToken);
+        rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(oldToken, 0).toString());
     }
 
     private static @NonNull String extractRefreshTokenCookie(HttpServletRequest rawRequest) throws InvalidRefreshTokenException {
@@ -69,12 +76,12 @@ public class AuthenticationResource {
                 .findFirst().orElseThrow(InvalidRefreshTokenException::new);
     }
 
-    private static @NonNull ResponseCookie generateCookie(AuthenticationResult result) {
-        return ResponseCookie.from("refresh_token", result.refreshToken())
+    private static @NonNull ResponseCookie generateCookie(String refreshToken, long maxAge) {
+        return ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .path("/api/authentication/refresh")
-                .maxAge(SEVEN_DAYS)
+                .path("/api/authentication")
+                .maxAge(maxAge)
                 .sameSite("Strict")
                 .build();
     }

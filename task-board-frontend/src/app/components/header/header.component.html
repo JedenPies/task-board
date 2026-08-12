@@ -1,7 +1,7 @@
 <header class="navbar">
   <div class="navbar-container">
     <div class="logo">
-      <a routerLink="/">Mój Kanban</a>
+      <a routerLink="/">Task Boards</a>
     </div>
 
     @if (authService.authorizationData()?.userDisplayName) {
@@ -13,9 +13,9 @@
 
     <nav>
       @if (authService.isLoggedIn()) {
-        <button (click)="onLogoutClick()" class="btn-ghost" type="button">Wyloguj</button>
+        <button (click)="onLogoutClick()" class="btn-ghost" type="button">Sign Out</button>
       } @else {
-        <button (click)="loginModal.open()" class="btn-primary" type="button">Zaloguj</button>
+        <button (click)="loginModal.open()" class="btn-primary" type="button">Sign In</button>
       }
     </nav>
   </div>

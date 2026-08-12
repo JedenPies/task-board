@@ -2,6 +2,7 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthenticationResultDto } from '../models/board.model';
+import { finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,7 @@ export class AuthService {
   private authUrl = '/api/authentication';
 
   private storeAuthorizationData(data: AuthenticationResultDto) {
+    console.log("auth data ", data);
     this.authorizationData.set(data);
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('userDisplayName', data.userDisplayName);
@@ -72,7 +74,13 @@ export class AuthService {
       );
   }
 
-  logout(): void {
-    this.clearAuthorizationData();
+  logout(): Observable<any> {
+    return this.http
+      .post<void>(this.authUrl + '/logout', {}, { withCredentials: true })
+      .pipe(
+        finalize(() => {
+          this.clearAuthorizationData();
+        })
+      )
   }
 }

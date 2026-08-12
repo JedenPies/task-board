@@ -60,6 +60,13 @@ public class AuthenticationService {
         return newAuthenticationResult;
     }
 
+    @Transactional
+    public void logout(String oldToken) throws InvalidRefreshTokenException {
+        UserToken current = userTokensRepository.findByRefreshToken(oldToken).orElseThrow(InvalidRefreshTokenException::new);
+        current.revoke();
+        userTokensRepository.save(current);
+    }
+
     private @NonNull AuthenticationResult replaceWithNew(UserToken current) {
         AuthenticationResult authenticationResult = generateAndRegisterTokens(current.getUser());
         current.replacedBy(authenticationResult.refreshToken());

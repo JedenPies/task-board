@@ -41,6 +41,10 @@ public class UserToken {
         this.replacedBy = newToken;
     }
 
+    public void revoke() {
+        this.isRevoked = true;
+    }
+
     private boolean isAfterGracePeriod(Clock clock) {
         return Instant.now(clock).isAfter(usedAt.plus(10, ChronoUnit.SECONDS));
     }

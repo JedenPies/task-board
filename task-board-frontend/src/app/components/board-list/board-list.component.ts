@@ -32,7 +32,6 @@ export class BoardListComponent {
   constructor() {
     effect(() => {
       this.authService.isLoggedIn();
-      this.loadBoards();
     });
   }
 

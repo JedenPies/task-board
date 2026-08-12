@@ -18,6 +18,13 @@ export class HeaderComponent {
   authService = inject(AuthService);
 
   onLogoutClick() {
-    this.authService.logout();
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('Wylogowano');
+      },
+      error: (err) => {
+        console.log("Błąd wylogowywania po stronie backendu")
+      }
+    });
   }
 }

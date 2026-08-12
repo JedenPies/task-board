@@ -9,6 +9,18 @@ body {
   -ms-overflow-style: none;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Wskazujemy bezpośrednio selector znacznika głównego Angulara */
+app-root {
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* Header | Treść (rozpychająca) | Footer */
+  min-height: 100vh;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }
@@ -323,5 +335,72 @@ dialog.modal-dialog {
 
   &.linkedin {
     mask-image: url('/icons/linkedin.svg');
+  }
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main.content-wrapper {
+  flex: 1;
+}
+
+.app-footer {
+  flex-shrink: 0; // Zapobiega ściskaniu stopki
+  background-color: lighten($border-light, 20%);
+  border-top: 1px solid lighten($c3, 28%);
+  color: darken($c3, 20%);
+  padding: 14px 24px;
+  font-size: 0.85rem;
+
+  .footer-container {
+    max-width: 1190px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .copyright {
+    font-weight: 500;
+
+    a {
+      color: $c4; // Używamy naszego koloru akcentowego
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: darken($c4, 12%);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .cookie-notice {
+    font-size: 0.8rem;
+    color: darken($c3, 10%);
+    max-width: 550px;
+    text-align: right;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-footer .footer-container {
+    flex-direction: column;
+    text-align: center;
+
+    .cookie-notice {
+      text-align: center;
+    }
   }
 }

@@ -12,4 +12,5 @@ import { LoaderComponent } from './components/loader/loader.component';
 })
 export class App {
   title = 'task-board-frontend';
+  readonly currentYear = new Date().getFullYear();
 }

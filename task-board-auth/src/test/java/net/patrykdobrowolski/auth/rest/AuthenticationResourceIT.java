@@ -66,7 +66,7 @@ class AuthenticationResourceIT extends SpringBootTestBase {
                 .andExpect(cookie().exists("refresh_token"))
                 .andExpect(cookie().httpOnly("refresh_token", true))
                 .andExpect(cookie().secure("refresh_token", true))
-                .andExpect(cookie().path("refresh_token", "/api/authentication/refresh"))
+                .andExpect(cookie().path("refresh_token", "/api/authentication"))
                 .andReturn();
 
         // Dodatkowa weryfikacja ciasteczka (np. czy flaga SameSite jest ustawiona na Strict)

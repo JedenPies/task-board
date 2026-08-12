@@ -1,11 +1,11 @@
 <dialog #dialog class="modal-dialog">
   <form class="modern-form" (submit)="onLogin($event)">
     <div class="modal-header">
-      <h3>Logowanie</h3>
-      <button class="close-btn" (click)="close()" type="button" title="Zamknij">&times;</button>
+      <h3>Sign in</h3>
+      <button class="close-btn" (click)="close()" type="button" title="Close">&times;</button>
     </div>
     <div>
-      Skorzystaj z jednej z poniższych metod logowania, aby tworzyć prywatne tablice.
+      Sign in using one of the methods below to start creating private boards.
     </div>
     <div class="social-login-container">
       <button type="button" class="social-btn" (click)="loginWithGithub()">

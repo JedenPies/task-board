@@ -63,9 +63,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadBoardData();
     this.eventSource = new EventSource(`/api/task-boards/${this.id()}/sse-stream`);
-
     this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());
     this.eventSource.onerror = (error) => console.error('Błąd połączenia SSE:', error);
   }
