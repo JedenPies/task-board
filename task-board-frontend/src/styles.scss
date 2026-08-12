@@ -291,3 +291,37 @@ dialog.modal-dialog {
     color: #de350b;
   }
 }
+
+.provider-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  &.small {
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    vertical-align: middle;
+  }
+
+  &.github {
+    mask-image: url('/icons/github.svg');
+  }
+
+  &.google {
+    mask-image: url('/icons/google.svg');
+  }
+
+  &.facebook {
+    mask-image: url('/icons/facebook.svg');
+  }
+
+  &.linkedin {
+    mask-image: url('/icons/linkedin.svg');
+  }
+}

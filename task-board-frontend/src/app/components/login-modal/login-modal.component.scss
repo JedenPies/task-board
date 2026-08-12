@@ -5,7 +5,7 @@ $border-light: lighten($c3, 38%);
 
 dialog.modal-dialog {
   form.modern-form {
-    width: 360px;
+    width: 560px;
     max-width: 90vw;
     box-sizing: border-box;
   }
@@ -29,6 +29,10 @@ dialog.modal-dialog {
     &:hover {
       color: $c1; /* Pomarańczowy akcent */
     }
+
+    &:focus {
+      outline: none;
+    }
   }
 }
 
@@ -45,10 +49,11 @@ dialog.modal-dialog {
     justify-content: center;
     padding: 14px;
     background-color: #ffffff;
-    border: 1px solid $border-light;
-    border-radius: 8px;
+    border: none;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    margin: 1px;
+    width: 60px;
+    min-height: 60px;
 
     svg {
       width: 26px;
@@ -64,9 +69,11 @@ dialog.modal-dialog {
     }
 
     &:hover {
+      margin: 0;
+      border-radius: 8px;
       background-color: lighten($c2, 8%);
-      border-color: lighten($c3, 20%);
-      transform: translateY(-1px);
+      border: 1px solid lighten($c3, 20%);
+      //transform: translateY(-1px);
       box-shadow: 0 4px 10px rgba($c3, 0.08);
     }
 

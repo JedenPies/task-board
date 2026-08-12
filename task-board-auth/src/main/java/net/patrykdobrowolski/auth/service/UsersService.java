@@ -3,6 +3,7 @@ package net.patrykdobrowolski.auth.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
+import net.patrykdobrowolski.auth.domain.ExternalUserLoginData;
 import net.patrykdobrowolski.auth.domain.User;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +20,10 @@ public class UsersService {
 
     @Transactional
     public User createNewUser(AuthProvider authProvider, ExternalUserProfile profile) {
+        ExternalUserLoginData loginData = ExternalUserLoginData.of(authProvider, profile);
         User newUser = User.builder()
                 .authProvider(authProvider)
-                .username(profile.username())
+                .username(loginData.asUsername())
                 .providerId(profile.userId())
                 .email(profile.email())
                 .displayName(profile.name())

@@ -41,10 +41,11 @@ public class AuthenticationService {
         return generateAndRegisterTokens(userFound);
     }
 
-    public AuthenticationResult authenticate(AuthProvider authProvider, String authString) throws Exception {
-        ExternalUserProfile userProfile = oAuth2AuthenticationProviderFactory.getProvider(authProvider).authenticate(authString);
-        User user = usersRepository.findByExternalAuthProvider(authProvider, userProfile.userId()).orElseGet(
-                () -> usersService.createNewUser(authProvider, userProfile));
+    public AuthenticationResult authenticate(AuthenticateWithExternalProviderCommand command) throws Exception {
+        ExternalUserProfile userProfile = oAuth2AuthenticationProviderFactory.getProvider(command.getProvider()).authenticate(command.getToken());
+        ExternalUserLoginData loginData = ExternalUserLoginData.of(command.getProvider(), userProfile);
+        User user = usersRepository.findByExternalUserLoginData(loginData).orElseGet(
+                () -> usersService.createNewUser(command.getProvider(), userProfile));
         return generateAndRegisterTokens(user);
     }
 

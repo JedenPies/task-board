@@ -87,6 +87,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.todoTasks.set([]);
     this.inProgressTasks.set([]);
     this.doneTasks.set([]);
+    this.executePermanentDelete();
     this.loadBoardData();
   }
 
@@ -219,10 +220,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   private executePermanentDelete(): void {
     const task = this.recentlyDeletedTask();
     if (task?.id) {
+      this.recentlyDeletedTask.set(null);
       clearTimeout(this.undoTimeoutId);
       this.undoTimeoutId = null;
-      this.recentlyDeletedTask.set(null);
-
       this.taskBoardService.deleteTask(this.id(), task.id).subscribe({
         error: (err) => console.error(err),
       });

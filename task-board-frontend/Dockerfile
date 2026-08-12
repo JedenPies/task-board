@@ -6,9 +6,13 @@ COPY . .
 
 ARG OAUTH2_GOOGLE_CLIENT_ID
 ARG OAUTH2_GITHUB_CLIENT_ID
+ARG OAUTH2_FACEBOOK_CLIENT_ID
+ARG OAUTH2_LINKEDIN_CLIENT_ID
 
 RUN sed -i "s/GOOGLE_CLIENT_ID_PLACEHOLDER/${OAUTH2_GOOGLE_CLIENT_ID}/g" src/environments/environment.ts
 RUN sed -i "s/GITHUB_CLIENT_ID_PLACEHOLDER/${OAUTH2_GITHUB_CLIENT_ID}/g" src/environments/environment.ts
+RUN sed -i "s/FACEBOOK_CLIENT_ID_PLACEHOLDER/${OAUTH2_FACEBOOK_CLIENT_ID}/g" src/environments/environment.ts
+RUN sed -i "s/LINKEDIN_CLIENT_ID_PLACEHOLDER/${OAUTH2_LINKEDIN_CLIENT_ID}/g" src/environments/environment.ts
 
 RUN npm run build --configuration=production
 

@@ -40,6 +40,10 @@ $border-light: lighten($c3, 38%);
   }
 
   .user-info {
+    display: inline-flex; /* 1. Zamienia span w elastyczny kontener inline */
+    align-items: center; /* 2. Idealnie centruje ikonę i tekst w pionie */
+    gap: 8px; /* 3. Odstęp między ikoną a nazwą użytkownika */
+
     font-size: 1.1em;
     font-weight: 600;
     color: darken($c3, 10%);

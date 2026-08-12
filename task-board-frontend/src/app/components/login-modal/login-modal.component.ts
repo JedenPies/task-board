@@ -20,6 +20,8 @@ export class LoginModalComponent {
 
   private githubClientId = environment.githubClientId;
   private googleClientId = environment.googleClientId;
+  private facebookClientId = environment.facebookClientId;
+  private linkedinClientId = environment.linkedinClientId;
 
   errorMessage = signal<string | null>(null);
 
@@ -37,6 +39,23 @@ export class LoginModalComponent {
   loginWithGithub() {
     sessionStorage.setItem('postLoginRedirect', this.router.url);
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${this.githubClientId}`;
+  }
+
+  loginWithFacebook() {
+    sessionStorage.setItem('postLoginRedirect', this.router.url);
+    const redirectUri = `${window.location.origin}/callback/auth/facebook`;
+    const scope = 'email,public_profile';
+    const facebookAuthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${this.facebookClientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`;
+    window.location.href = facebookAuthUrl;
+  }
+
+  loginWithLinkedin() {
+    sessionStorage.setItem('postLoginRedirect', this.router.url);
+    const redirectUri = `${window.location.origin}/callback/auth/linkedin`;
+    const scope = encodeURIComponent('openid profile email');
+    const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${this.linkedinClientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+
+    window.location.href = linkedInAuthUrl;
   }
 
   open() {

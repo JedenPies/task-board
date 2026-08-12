@@ -19,9 +19,16 @@ jwt:
   expiration-ms: 900000
 
 oauth2:
+  redirect-uri-base: ${OAUTH2_REDIRECT_URI_BASE}
   github:
     client-id: ${OAUTH2_GITHUB_CLIENT_ID}
     client-secret: ${OAUTH2_GITHUB_CLIENT_SECRET}
   google:
     client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
     client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
+  facebook:
+    client-id: ${OAUTH2_FACEBOOK_CLIENT_ID}
+    client-secret: ${OAUTH2_FACEBOOK_CLIENT_SECRET}
+  linkedin:
+    client-id: ${OAUTH2_LINKEDIN_CLIENT_ID}
+    client-secret: ${OAUTH2_LINKEDIN_CLIENT_SECRET}

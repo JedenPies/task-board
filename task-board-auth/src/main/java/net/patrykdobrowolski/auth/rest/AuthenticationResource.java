@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import net.patrykdobrowolski.auth.domain.AuthenticateWithExternalProviderCommand;
 import net.patrykdobrowolski.auth.domain.AuthenticateWithPasswordCommand;
 import net.patrykdobrowolski.auth.domain.InvalidRefreshTokenException;
 import net.patrykdobrowolski.auth.domain.AuthenticationResult;
@@ -47,7 +48,9 @@ public class AuthenticationResource {
             @PathVariable AuthProvider provider,
             @RequestBody OAuth2LoginRequestDto request,
             HttpServletResponse rawResponse) throws Exception {
-        AuthenticationResult result = authenticationService.authenticate(provider, request.getToken());
+        AuthenticateWithExternalProviderCommand command =
+                AuthenticateWithExternalProviderCommand.builder().provider(provider).token(request.getToken()).build();
+        AuthenticationResult result = authenticationService.authenticate(command);
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result).toString());
         return map(result);
     }
@@ -77,6 +80,10 @@ public class AuthenticationResource {
     }
 
     private AuthenticationResultDto map(AuthenticationResult result) {
-        return AuthenticationResultDto.builder().accessToken(result.accessToken()).userDisplayName(result.user().getDisplayName()).build();
+        return AuthenticationResultDto.builder()
+                .accessToken(result.accessToken())
+                .userDisplayName(result.user().getDisplayName())
+                .authProvider(result.user().getAuthProvider())
+                .build();
     }
 }
