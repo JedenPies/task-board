@@ -13,11 +13,38 @@
     max-width: 760px;
     text-align: center;
 
+    .social-login-container {
+
+      .social-btn {
+        width: 160px;
+        height: 160px;
+
+        .provider-icon {
+          width: 50px;
+          min-height: 50px;
+          color: #555;
+        }
+
+        p {
+          font-size: 20px;
+          color: #555;
+        }
+      }
+    }
+
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
       color: $text-dark;
       margin: 0 0 0.5rem 0;
+      letter-spacing: -0.5px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 500;
+      color: $text-dark;
+      margin: 0 0 1.5rem 0;
       letter-spacing: -0.5px;
     }
 

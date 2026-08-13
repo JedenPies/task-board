@@ -407,3 +407,67 @@ main.content-wrapper {
     }
   }
 }
+
+
+.social-login-container {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+
+  .social-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    background-color: #ffffff;
+    border: none;
+    cursor: pointer;
+    margin: 1px;
+    width: 120px;
+    min-height: 60px;
+    height: 120px;
+
+    svg {
+      width: 26px;
+      height: 26px;
+      fill: $text-dark;
+      margin-bottom: 6px;
+    }
+
+    &:hover {
+      margin: 0;
+      border-radius: 8px;
+      background-color: lighten($c2, 8%);
+      border: 1px solid lighten($c3, 20%);
+      box-shadow: 0 4px 10px rgba($c3, 0.08);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($c5, 0.2);
+    }
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 35px 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid $border-light;
+  }
+
+  span {
+    padding: 0 20px;
+    font-size: 1.4em;
+    font-weight: 500;
+    color: lighten($c3, 15%);
+  }
+}

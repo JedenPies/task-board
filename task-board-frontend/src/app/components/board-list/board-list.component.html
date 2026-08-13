@@ -1,8 +1,12 @@
 @if (!authService.isLoggedIn() || this.boardListEmpty()) {
   <div class="hero-container">
     <div class="hero-content">
-      <h1>Create your first task board</h1>
-      <p class="hero-subtitle">Enter a name below and start working with Kanban instantly.</p>
+      @if (authService.isLoggedIn()) {
+        <h1>Create your first task board</h1>
+        } @else {
+        <h1>Create anonymous public task board</h1>
+      }
+      <p class="hero-subtitle">Enter a name below and start working with Kanban instantly</p>
 
       <form (submit)="createBoard(); $event.preventDefault()" class="hero-form">
         <input
@@ -14,6 +18,37 @@
         />
         <button type="submit" class="btn-hero">Create board &rarr;</button>
       </form>
+      @if (!authService.isLoggedIn()) {
+        <div class="divider"><span>OR</span></div>
+        <div>
+          <h2>Sign in using one of the following methods to start creating private boards</h2>
+        </div>
+        <div class="social-login-container">
+          <button type="button" class="social-btn" (click)="loginService.loginWithGithub()">
+            <p></p>
+            <i class="provider-icon github"></i>
+            <p>GitHub</p>
+          </button>
+
+          <button type="button" class="social-btn" (click)="loginService.loginWithGoogle()">
+            <p></p>
+            <i class="provider-icon google"></i>
+            <p>Google</p>
+          </button>
+
+          <button type="button" class="social-btn" (click)="loginService.loginWithFacebook()">
+            <p></p>
+            <i class="provider-icon facebook"></i>
+            <p>Facebook</p>
+          </button>
+
+          <button type="button" class="social-btn" (click)="loginService.loginWithLinkedin()">
+            <p></p>
+            <i class="provider-icon linkedin"></i>
+            <p>LinkedIn</p>
+          </button>
+        </div>
+      }
     </div>
   </div>
 } @else {

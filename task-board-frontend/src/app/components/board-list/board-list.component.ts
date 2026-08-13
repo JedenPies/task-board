@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-board-list',
@@ -17,6 +18,7 @@ export class BoardListComponent {
   authService = inject(AuthService);
   taskBoardService = inject(TaskBoardService);
   router = inject(Router);
+  loginService = inject(LoginService);
 
   boards = signal<TaskBoardOverviewDto[]>([]);
 
