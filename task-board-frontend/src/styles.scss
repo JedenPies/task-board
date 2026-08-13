@@ -77,6 +77,9 @@ dialog.modal-dialog {
       &:hover {
         color: $c1;
       }
+      &:focus {
+        outline: none;
+      }
     }
   }
 

@@ -65,7 +65,7 @@ public class TaskBoardsResource {
     }
 
     @GetMapping(value = "/{boardId}/sse-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamBoardEvents(@PathVariable UUID boardId) {
+    public SseEmitter streamBoardEvents(@PathVariable UUID boardId) throws AccessDeniedException, ObjectNotFoundException {
         return sseTaskBoardService.createConnection(boardId);
     }
 

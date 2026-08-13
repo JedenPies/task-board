@@ -1,13 +1,19 @@
-import { Component, effect, ElementRef, inject, input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  Component, effect, ElementRef, inject, input, OnDestroy,
+  OnInit, signal, untracked, ViewChild
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem
+} from '@angular/cdk/drag-drop';
 import { TaskBoardService } from '../../services/task-board.service';
 import { TaskBoardDto, TaskDto, TaskStatus } from '../../models/board.model';
 import { AuthService } from '../../services/auth.service';
 import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.component';
 import { TaskDetailsModalComponent } from '../task-details-modal/task-details-modal.component';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 @Component({
   selector: 'app-board',
@@ -39,40 +45,57 @@ export class BoardComponent implements OnInit, OnDestroy {
   isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
 
-  authService = inject(AuthService);
+  private authService = inject(AuthService);
+  private abortController = new AbortController();
+
   private taskBoardService = inject(TaskBoardService);
-  private fb = inject(FormBuilder);
 
   private undoTimeoutId: any = null;
-  private eventSource: EventSource | null = null;
-
-  taskForm = this.fb.group({
-    title: ['', [Validators.required, Validators.minLength(3)]],
-    description: [''],
-  });
 
   constructor() {
     effect(() => {
       const loggedIn = this.authService.isLoggedIn();
-      if (loggedIn) {
-        this.onUserLogin();
-      } else {
-        this.onUserLogout();
-      }
+      untracked(() => {
+        if (loggedIn) {
+          this.onUserLogin();
+        } else {
+          this.onUserLogout();
+        }
+      });
     });
   }
 
   ngOnInit(): void {
-    this.eventSource = new EventSource(`/api/task-boards/${this.id()}/sse-stream`);
-    this.eventSource.addEventListener('REFRESH', () => this.loadBoardData());
-    this.eventSource.onerror = (error) => console.error('Błąd połączenia SSE:', error);
+    this.startSseStream(this.id());
   }
 
   ngOnDestroy(): void {
-    if (this.eventSource) {
-      this.eventSource.close();
-    }
+    this.abortController.abort();
     this.executePermanentDelete();
+  }
+
+  startSseStream(boardId: string) {
+    const token = this.authService.getToken();
+    const headers: Record<string, string> = {
+      Accept: 'text/event-stream',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    fetchEventSource(`/api/task-boards/${boardId}/sse-stream`, {
+      headers: headers,
+      signal: this.abortController.signal,
+      onmessage: (event) => {
+        if (event.event === 'REFRESH') {
+          this.loadBoardData();
+        }
+      },
+      onerror: (err) => {
+        console.error('Błąd strumienia SSE:', err);
+        // Opcjonalnie: można tu wywołać this.abortController.abort() żeby nie ponawiał prób
+      },
+    });
   }
 
   private onUserLogin() {
@@ -118,9 +141,15 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.board.set(boardData);
         const tasks = boardData.tasks ?? [];
         const deletedTaskId = this.recentlyDeletedTask()?.id;
-        this.todoTasks.set(this.sorted(tasks.filter((t) => t.status === 'TODO' && t.id != deletedTaskId)));
-        this.inProgressTasks.set(this.sorted(tasks.filter((t) => t.status === 'IN_PROGRESS' && t.id != deletedTaskId)));
-        this.doneTasks.set(this.sorted(tasks.filter((t) => t.status === 'DONE' && t.id != deletedTaskId)));
+        this.todoTasks.set(
+          this.sorted(tasks.filter((t) => t.status === 'TODO' && t.id != deletedTaskId)),
+        );
+        this.inProgressTasks.set(
+          this.sorted(tasks.filter((t) => t.status === 'IN_PROGRESS' && t.id != deletedTaskId)),
+        );
+        this.doneTasks.set(
+          this.sorted(tasks.filter((t) => t.status === 'DONE' && t.id != deletedTaskId)),
+        );
       },
       error: (err) => {
         console.error(err);
@@ -197,7 +226,6 @@ export class BoardComponent implements OnInit, OnDestroy {
     if (this.undoTimeoutId) this.executePermanentDelete();
 
     this.recentlyDeletedTask.set(task);
-
     const targetSignal = this.getSignalByStatus(task.status);
     targetSignal.update((tasks) => tasks.filter((t) => t.id !== task.id));
 

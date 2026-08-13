@@ -21,6 +21,7 @@ public class TaskBoardsService {
     private final TaskBoardsRepositoryService repositoryService;
     private final UserContext userContext;
 
+    @Transactional
     public List<TaskBoard> findAllBoards() {
         return userContext.isNotLoggedIn()
                 ? Collections.emptyList()

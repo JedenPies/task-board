@@ -12,7 +12,6 @@ export class AuthService {
   private authUrl = '/api/authentication';
 
   private storeAuthorizationData(data: AuthenticationResultDto) {
-    console.log("auth data ", data);
     this.authorizationData.set(data);
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('userDisplayName', data.userDisplayName);

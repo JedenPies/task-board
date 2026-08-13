@@ -1,11 +1,15 @@
 package net.patrykdobrowolski.task_board.rest;
 
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
 import net.patrykdobrowolski.task_board.rest.dto.ErrorDto;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,8 +59,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(JwtException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorDto onException(JwtException exception) {
-        return ErrorDto.builder().message(exception.getMessage()).build();
+    public ResponseEntity<?> onException(JwtException exception, HttpServletRequest request) {
+        String acceptHeader = request.getHeader(HttpHeaders.ACCEPT);
+        if (acceptHeader != null && acceptHeader.contains(MediaType.TEXT_EVENT_STREAM_VALUE)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        ErrorDto errorBody = ErrorDto.builder().message(exception.getMessage()).build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody);
     }
 }
