@@ -20,6 +20,14 @@ export class BoardListComponent {
 
   boards = signal<TaskBoardOverviewDto[]>([]);
 
+  searchPhrase = signal<string>('');
+
+  boardsFiltered = computed<TaskBoardOverviewDto[]>(() => {
+    const boards = this.boards();
+    const searchPhrase = this.searchPhrase();
+    return boards.filter(b => b.name.toLowerCase().includes(searchPhrase.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   newBoardTitle = '';
 
   taskBoardBeingDeleted = signal<TaskBoardOverviewDto | null>(null);
@@ -86,8 +94,9 @@ export class BoardListComponent {
     if (this.undoTimeoutId) this.executeDelete();
     this.taskBoardBeingDeleted.set(taskBoard);
     this.undoTimeoutId = setTimeout(() => this.executeDelete(), 5000);
-    this.executeWithTransition(
-        () => this.boards.update((boards) => boards.filter((tb) => tb.id !== taskBoard.id)));
+    this.executeWithTransition(() =>
+      this.boards.update((boards) => boards.filter((tb) => tb.id !== taskBoard.id)),
+    );
   }
 
   private executeDelete() {
@@ -97,7 +106,7 @@ export class BoardListComponent {
       this.undoTimeoutId = null;
       this.taskBoardBeingDeleted.set(null);
       this.taskBoardService.deleteBoard(taskBoard.id).subscribe({
-        error: (err) => console.error('Error deleting taskboard')
+        error: (err) => console.error('Error deleting taskboard'),
       });
     }
   }

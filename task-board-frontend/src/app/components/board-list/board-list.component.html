@@ -19,7 +19,10 @@
 } @else {
   <main class="main-content">
     <div class="component-header">
-      <h2>Your boards</h2>
+      <div class="header-left">
+        <input type="text" class="search" placeholder="Filter boards..." [(ngModel)]="searchPhrase"/>
+        <h2></h2>
+      </div>
       <form (submit)="createBoard(); $event.preventDefault()" class="inline-board-form">
         <input
           type="text"
@@ -34,7 +37,7 @@
 
     <section class="boards-list-section">
       <ul class="boards-list">
-        @for (board of boards(); track board.id) {
+        @for (board of boardsFiltered(); track board.id) {
           <li class="taskboard-card-container card">
             <a class="taskboard-card-link" [routerLink]="['/board', board.id]">
               <h3>{{ board.name }}</h3>
