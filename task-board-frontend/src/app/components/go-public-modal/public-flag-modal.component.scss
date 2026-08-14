@@ -2,9 +2,12 @@
 @use "sass:color";
 
 .modern-form {
-  width: 420px;
   max-width: 90vw;
   box-sizing: border-box;
+}
+
+.modal-dialog {
+  width: 420px;
 }
 
 .modal-body {
