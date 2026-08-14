@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-add-some-indexes
+      author: patryk
+      changes:
+        - createIndex:
+            tableName: user_tokens
+            indexName: idx_user_tokens_is_revoked
+            columns:
+              - column:
+                  name: is_revoked
+        - createIndex:
+            tableName: user_tokens
+            indexName: idx_user_tokens_valid_until
+            columns:
+              - column:
+                  name: valid_until

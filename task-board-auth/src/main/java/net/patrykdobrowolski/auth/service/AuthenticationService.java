@@ -43,9 +43,8 @@ public class AuthenticationService {
 
     public AuthenticationResult authenticate(AuthenticateWithExternalProviderCommand command) throws Exception {
         ExternalUserProfile userProfile = oAuth2AuthenticationProviderFactory.getProvider(command.getProvider()).authenticate(command.getToken());
-        ExternalUserLoginData loginData = ExternalUserLoginData.of(command.getProvider(), userProfile);
-        User user = usersRepository.findByExternalUserLoginData(loginData).orElseGet(
-                () -> usersService.createNewUser(command.getProvider(), userProfile));
+        User user = usersRepository.findByExternalAuthProvider(command.getProvider(), userProfile.userId())
+                .orElseGet(() -> usersService.createNewUser(command.getProvider(), userProfile));
         return generateAndRegisterTokens(user);
     }
 
