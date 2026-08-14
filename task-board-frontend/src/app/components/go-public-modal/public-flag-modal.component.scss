@@ -1,4 +1,5 @@
 @use '../../../variables' as *;
+@use "sass:color";
 
 .modern-form {
   width: 420px;
@@ -13,7 +14,7 @@
 .modal-text {
   font-size: 15px;
   line-height: 1.6;
-  color: darken($c3, 20%);
+  color: color.adjust($c3, $lightness: -20%);
   margin: 0;
 
   strong {
@@ -23,12 +24,12 @@
 
     &.highlight-public {
       background-color: rgba($c4, 0.15);
-      color: darken($c4, 10%);
+      color: color.adjust($c4, $lightness: -10%);
     }
 
     &.highlight-private {
       background-color: rgba($c1, 0.15);
-      color: darken($c1, 15%);
+      color: color.adjust($c1, $lightness: -15%);
     }
   }
 }
@@ -39,8 +40,8 @@
     border-color: $c1;
 
     &:hover {
-      background-color: darken($c1, 8%);
-      border-color: darken($c1, 8%);
+      background-color: color.adjust($c1, $lightness: -8%);
+      border-color: color.adjust($c1, $lightness: -8%);
       box-shadow: 0 4px 12px rgba($c1, 0.2);
     }
 

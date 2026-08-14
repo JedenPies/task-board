@@ -27,7 +27,7 @@ export class BoardListComponent {
   boardsFiltered = computed<TaskBoardOverviewDto[]>(() => {
     const boards = this.boards();
     const searchPhrase = this.searchPhrase();
-    return boards.filter(b => b.name.toLowerCase().includes(searchPhrase.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
+    return boards.filter(b => b.name.toLowerCase().includes(searchPhrase.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name, [ 'pl', 'en' ], { sensitivity: 'base' }));
   });
 
   newBoardTitle = '';

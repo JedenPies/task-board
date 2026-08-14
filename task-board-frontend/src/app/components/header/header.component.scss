@@ -1,10 +1,11 @@
 @use '../../../variables' as *;
+@use "sass:color";
 
-$text-dark: darken($c3, 25%);
-$border-light: lighten($c3, 38%);
+$text-dark: color.adjust($c3, $lightness: -25%);
+$border-light: color.adjust($c3, $lightness: 38%);
 
 .navbar {
-  background-color: lighten($border-light, 20%);
+  background-color: color.adjust($border-light, $lightness: 20%);
   border-bottom: 1px solid $border-light;
   box-shadow: 0 2px 8px rgba($c3, 0.06);
   position: sticky;
@@ -46,7 +47,7 @@ $border-light: lighten($c3, 38%);
 
     font-size: 1.1em;
     font-weight: 600;
-    color: darken($c3, 10%);
+    color: color.adjust($c3, $lightness: -10%);
     padding: 6px 16px;
     margin: 0 12px;
   }
@@ -70,8 +71,8 @@ $border-light: lighten($c3, 38%);
     outline: none;
 
     &:hover {
-      background-color: darken($c4, 8%);
-      border-color: darken($c4, 8%);
+      background-color: color.adjust($c4, $lightness: -8%);
+      border-color: color.adjust($c4, $lightness: -8%);
       box-shadow: 0 4px 12px rgba($c4, 0.2);
     }
 
@@ -94,7 +95,7 @@ $border-light: lighten($c3, 38%);
 
     &:hover {
       background-color: rgba($c1, 0.08);
-      color: darken($c1, 10%);
+      color: color.adjust($c1, $lightness: -10%);
       border-color: rgba($c1, 0.3);
     }
 

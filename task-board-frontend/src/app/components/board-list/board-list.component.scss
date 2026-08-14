@@ -1,3 +1,4 @@
+@use "sass:color";
 @use '../../../variables' as *;
 
 .hero-container {
@@ -50,7 +51,7 @@
 
     .hero-subtitle {
       font-size: 1.125rem;
-      color: lighten($c3, 10%);
+      color: color.scale($c3, $lightness: 10%);
       margin: 0 0 2.5rem 0;
     }
   }
@@ -75,7 +76,7 @@
       transition: all 0.2s ease-in-out;
 
       &::placeholder {
-        color: lighten($c3, 25%);
+        color: $text-light;
       }
 
       &:focus {
@@ -98,8 +99,8 @@
       outline: none;
 
       &:hover {
-        background-color: darken($c4, 8%);
-        border-color: darken($c4, 8%);
+        background-color: color.adjust($c4, $lightness: -8%);
+        border-color: color.adjust($c4, $lightness: -8%);
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba($c4, 0.25);
       }
@@ -139,7 +140,7 @@ input {
   }
 
   &::placeholder {
-    color: lighten($c3, 25%);
+    color: $text-light
   }
 
   &:focus {
@@ -168,8 +169,8 @@ input {
     outline: none;
 
     &:hover {
-      background-color: darken($c4, 8%);
-      border-color: darken($c4, 8%);
+      background-color: color.adjust($c4, $lightness: -8%);
+      border-color: color.adjust($c4, $lightness: -8%);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba($c4, 0.2);
     }

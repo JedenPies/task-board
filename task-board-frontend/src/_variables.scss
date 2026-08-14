@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
 $c1: #f79256;
@@ -6,9 +8,13 @@ $c3: #507255;
 $c4: #488b49;
 $c5: #2274a5;
 
-$text-color: darken($c3, 20%);
-$border-color: lighten($c3, 40%);
+$text-color: color.adjust($c3, $lightness: -20%);
+$border-color: color.adjust($c3, $lightness: 40%);
 $bg-color: #ffffff;
 
-$text-dark: darken($c3, 25%);
-$border-light: lighten($c3, 35%);
+$text-lighten: color.adjust($c3, $lightness: 10%);
+$text-light: color.adjust($c3, $lightness: 25%);
+
+$text-dark: color.adjust($c3, $lightness: -25%);
+
+$border-light: color.adjust($c3, $lightness: 35%);

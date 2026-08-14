@@ -1,7 +1,8 @@
 @use '../../../variables' as *;
+@use "sass:color";
 
-$text-dark: darken($c3, 25%);
-$border-light: lighten($c3, 38%);
+$text-dark: color.adjust($c3, $lightness: -25%);
+$border-light: color.adjust($c3, $lightness: 38%);
 
 dialog.modal-dialog {
   form.modern-form {
@@ -21,7 +22,7 @@ dialog.modal-dialog {
     border: none;
     font-size: 24px;
     line-height: 1;
-    color: lighten($c3, 20%);
+    color: color.adjust($c3, $lightness: 20%);
     cursor: pointer;
     padding: 0;
     transition: color 0.2s ease;
@@ -42,7 +43,7 @@ dialog.modal-dialog {
 
 .error-msg {
   background-color: rgba($c1, 0.12);
-  color: darken($c1, 15%);
+  color: color.adjust($c1, $lightness: -15%);
   border: 1px solid rgba($c1, 0.3);
   padding: 10px 14px;
   border-radius: 6px;
