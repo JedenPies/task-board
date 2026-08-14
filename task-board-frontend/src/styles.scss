@@ -1,5 +1,8 @@
 @use 'variables' as *;
 @use "sass:color";
+@use 'hero';
+@use 'buttons';
+@use 'form';
 
 body {
   font-family: $font-stack;
@@ -43,145 +46,7 @@ dialog.modal-dialog {
   }
 }
 
-.modern-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  background: $bg-color;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba($c3, 0.08);
 
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-
-    h3 {
-      margin: 0;
-      color: $text-color;
-      font-size: 1.3rem;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: color.adjust($c3, $lightness: 20%);
-
-      cursor: pointer;
-      transition: color 0.2s;
-      padding: 0;
-      line-height: 1;
-
-      &:hover {
-        color: $c1;
-      }
-      &:focus {
-        outline: none;
-      }
-    }
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: $c3;
-      margin: 0.1rem 0.5rem;
-    }
-
-    input, textarea {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 14px 16px;
-      font-size: 15px;
-      color: $text-color;
-      background-color: #fcfcfc;
-      border: 1px solid $border-color;
-      border-radius: 8px;
-      transition: all 0.2s ease-in-out;
-      outline: none;
-      font-family: inherit;
-
-      &::placeholder {
-        color: color.adjust($c3, $lightness: 25%);
-      }
-
-      &:focus {
-        border-color: $c5;
-        background-color: $bg-color;
-        box-shadow: 0 0 0 4px rgba($c5, 0.15);
-      }
-    }
-
-    textarea {
-      resize: none;
-      min-height: 100px;
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
-
-    button {
-      padding: 12px 24px;
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      outline: none;
-    }
-
-    .btn-cancel {
-      background: transparent;
-      color: $c3;
-      border: 1px solid transparent;
-
-      &:hover {
-        background-color: rgba($c1, 0.08);
-        color: color.adjust($c1, $lightness: -10%);
-      }
-
-      &:focus {
-        box-shadow: 0 0 0 4px rgba($c1, 0.15);
-      }
-    }
-
-    .btn-submit {
-      background-color: $c4;
-      color: #ffffff;
-      border: 1px solid $c4;
-
-      &:hover {
-        background-color: color.adjust($c4, $lightness: -8%);
-        border-color: color.adjust($c4, $lightness: -8%);
-        box-shadow: 0 4px 12px rgba($c4, 0.2);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-
-      &:focus {
-        box-shadow: 0 0 0 4px rgba($c4, 0.25);
-      }
-    }
-  }
-}
 
 .snackbar-undo {
   position: fixed;
@@ -287,27 +152,10 @@ dialog.modal-dialog {
     flex: 1;
     margin: 0;
     font-size: 1.5rem;
-    color: $text-dark;
+    color: $text-color;
   }
 }
 
-.btn-delete {
-  width: 12px;
-  height: 20px;
-  background: none;
-  border: none;
-  color: #ccc;
-  font-size: 1.2rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 4px;
-  border-radius: 4px;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #de350b;
-  }
-}
 
 .provider-icon {
   display: inline-block;
@@ -318,6 +166,7 @@ dialog.modal-dialog {
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
+  color: $text-light;
 
   &.small {
     width: 16px;
@@ -435,7 +284,7 @@ main.content-wrapper {
     svg {
       width: 26px;
       height: 26px;
-      fill: $text-dark;
+      fill: $text-color;
       margin-bottom: 6px;
     }
 
@@ -474,3 +323,6 @@ main.content-wrapper {
     color: color.adjust($c3, $lightness: 15%);
   }
 }
+
+
+

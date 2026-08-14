@@ -16,30 +16,7 @@ dialog.modal-dialog {
   h3 {
     font-weight: 700;
   }
-
-  .close-btn {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    color: color.adjust($c3, $lightness: 20%);
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: $c1; /* Pomarańczowy akcent */
-    }
-
-    &:focus {
-      outline: none;
-    }
-  }
 }
-
-
-
-
 
 .error-msg {
   background-color: rgba($c1, 0.12);

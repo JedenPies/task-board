@@ -1,0 +1,63 @@
+@use 'variables' as *;
+@use 'sass:color';
+
+.btn-primary {
+  background-color: $c4;
+  height: 42px;
+  color: #ffffff;
+  border: 1px solid $c4;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+
+  &:hover {
+    background-color: color.adjust($c4, $lightness: -8%);
+    border-color: color.adjust($c4, $lightness: -8%);
+    box-shadow: 0 4px 12px rgba($c4, 0.2);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 4px rgba($c4, 0.25);
+  }
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: color.adjust($c3, $lightness: 20%);
+
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+  line-height: 1;
+
+  &:hover {
+    color: $c1;
+  }
+  &:focus {
+    outline: none;
+  }
+}
+
+.btn-delete {
+  width: 12px;
+  height: 20px;
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #de350b;
+  }
+}

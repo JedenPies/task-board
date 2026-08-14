@@ -3,7 +3,7 @@
     @if (board(); as b) {
       <div class="modal-header">
         <h3>Change board visibility</h3>
-        <button class="close-btn" (click)="close()" type="button" title="Zamknij">&times;</button>
+        <button class="btn-close" (click)="close()" type="button" title="Zamknij">&times;</button>
       </div>
 
       <div class="modal-body">
@@ -20,7 +20,7 @@
         <button type="button" class="btn-cancel" (click)="close()">Cancel</button>
         <button
           type="button"
-          class="btn-submit"
+          class="btn-primary"
           [class.btn-warning]="b.isPublic"
           [disabled]="isLoading()"
           (click)="toggleVisibility()"

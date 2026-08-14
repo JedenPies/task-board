@@ -1,9 +1,39 @@
 <main class="main-content">
 @if (accessDenied()) {
-  <div class="board-detail-container">
-  <div class="access-denied-message">
-    <p>You don't have permission to view this board.</p>
-  </div>
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1>You don't have permission to view this board.</h1>
+      @if (!authService.isLoggedIn()) {
+        <div>
+          <h2>Try to sign in using one of the following methods</h2>
+        </div>
+        <div class="social-login-container">
+          <button type="button" class="social-btn" (click)="loginService.loginWithGithub()">
+            <p></p>
+            <i class="provider-icon github"></i>
+            <p>GitHub</p>
+          </button>
+
+          <button type="button" class="social-btn" (click)="loginService.loginWithGoogle()">
+            <p></p>
+            <i class="provider-icon google"></i>
+            <p>Google</p>
+          </button>
+
+          <button type="button" class="social-btn" (click)="loginService.loginWithFacebook()">
+            <p></p>
+            <i class="provider-icon facebook"></i>
+            <p>Facebook</p>
+          </button>
+
+          <button type="button" class="social-btn" (click)="loginService.loginWithLinkedin()">
+            <p></p>
+            <i class="provider-icon linkedin"></i>
+            <p>LinkedIn</p>
+          </button>
+        </div>
+      }
+    </div>
   </div>
 } @else if (board(); as b) {
   <div class="board-detail-container">

@@ -8,13 +8,16 @@ $c3: #507255;
 $c4: #488b49;
 $c5: #2274a5;
 
+$text-main: #333;
+$text-muted: #666;
+$text-light: #555;
+
+$border-subtle: #ccc;
+
 $text-color: color.adjust($c3, $lightness: -20%);
-$border-color: color.adjust($c3, $lightness: 40%);
+
 $bg-color: #ffffff;
 
-$text-lighten: color.adjust($c3, $lightness: 10%);
-$text-light: color.adjust($c3, $lightness: 25%);
-
-$text-dark: color.adjust($c3, $lightness: -25%);
+$text-placeholder: color.adjust($c3, $lightness: 25%);
 
 $border-light: color.adjust($c3, $lightness: 35%);

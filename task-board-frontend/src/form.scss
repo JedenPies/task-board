@@ -1,0 +1,107 @@
+@use 'sass:color';
+@use 'variables' as *;
+
+input, textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: $text-color;
+  background-color: #fcfcfc;
+  border: 1px solid $border-light;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  font-family: inherit;
+
+  &::placeholder {
+    color: $text-placeholder;
+  }
+
+  &:focus {
+    border-color: $c5;
+    background-color: $bg-color;
+    box-shadow: 0 0 0 4px rgba($c5, 0.15);
+  }
+}
+
+textarea {
+  resize: none;
+  min-height: 100px;
+}
+
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  background: $bg-color;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba($c3, 0.08);
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    h3 {
+      margin: 0;
+      color: $text-color;
+      font-size: 1.3rem;
+    }
+
+
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $c3;
+      margin: 0.1rem 0.5rem;
+    }
+
+
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+
+    button {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      color: $c3;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: rgba($c1, 0.08);
+        color: color.adjust($c1, $lightness: -10%);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 4px rgba($c1, 0.15);
+      }
+    }
+  }
+}

@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { PublicFlagModalComponent } from '../go-public-modal/public-flag-modal.component';
 import { TaskDetailsModalComponent } from '../task-details-modal/task-details-modal.component';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-board',
@@ -45,7 +46,9 @@ export class BoardComponent implements OnInit, OnDestroy {
   isEditingName = signal<boolean>(false);
   accessDenied = signal<boolean>(false);
 
-  private authService = inject(AuthService);
+  authService = inject(AuthService);
+  loginService = inject(LoginService);
+
   private abortController = new AbortController();
 
   private taskBoardService = inject(TaskBoardService);
