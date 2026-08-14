@@ -2,7 +2,7 @@
 @if (accessDenied()) {
   <div class="hero-container">
     <div class="hero-content">
-      <h1>You don't have permission to view this board.</h1>
+      <h1>You cannot access this board</h1>
       @if (!authService.isLoggedIn()) {
         <div>
           <h2>Try to sign in using one of the following methods</h2>
