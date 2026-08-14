@@ -47,12 +47,10 @@ public class FacebookAuthenticationProvider implements OAuth2AuthenticationProvi
     public ExternalUserProfile authenticate(String tokenString) {
         String accessToken = retrieveAccessToken(tokenString);
         FacebookUserResponse userResponse = retrieveUserProfile(accessToken);
-        String email = userResponse.email() != null ? userResponse.email() : "";
         String displayName = userResponse.name() != null ? userResponse.name() : "Użytkownik Facebook";
         return new ExternalUserProfile(
                 userResponse.id(),
                 userResponse.id(),
-                email,
                 displayName
         );
     }

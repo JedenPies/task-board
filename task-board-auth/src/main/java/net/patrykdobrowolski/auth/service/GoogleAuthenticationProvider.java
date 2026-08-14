@@ -42,7 +42,6 @@ public class GoogleAuthenticationProvider implements OAuth2AuthenticationProvide
         GoogleProfileResponse profileData = retrieveUserInfo(accessToken);
         return ExternalUserProfile.builder()
                 .userId(profileData.sub())
-                .email(profileData.email())
                 .username(profileData.email())
                 .name(profileData.name())
                 .build();

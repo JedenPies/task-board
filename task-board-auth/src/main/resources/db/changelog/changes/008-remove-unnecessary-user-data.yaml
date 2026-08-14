@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-remove-unnecessary-user-data
+      author: patryk
+      changes:
+        - dropColumn:
+            tableName: users
+            columnName: email
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: username
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  valueComputed: "NULL"
+            where: auth_provider is not null and provider_id is not null

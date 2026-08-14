@@ -16,9 +16,8 @@ public class UsersService {
     public User createNewUser(AuthProvider authProvider, ExternalUserProfile profile) {
         User newUser = User.builder()
                 .authProvider(authProvider)
-                .username(authProvider.name() + ":" + profile.userId())
+                .username(null) // username is not set for external users
                 .providerId(profile.userId())
-                .email(profile.email())
                 .displayName(profile.name())
                 .build();
         return usersRepositoryService.save(newUser);

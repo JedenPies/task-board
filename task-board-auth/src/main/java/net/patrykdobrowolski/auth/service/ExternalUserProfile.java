@@ -6,6 +6,5 @@ import lombok.Builder;
 public record ExternalUserProfile(
     String userId,
     String username,
-    String email,
     String name)
 {}

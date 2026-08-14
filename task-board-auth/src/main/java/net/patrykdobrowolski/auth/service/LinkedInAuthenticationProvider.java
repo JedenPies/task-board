@@ -49,12 +49,10 @@ public class LinkedInAuthenticationProvider implements OAuth2AuthenticationProvi
         String accessToken = retrieveAccessToken(tokenString);
         LinkedinUserResponse userResponse = retrieveUserProfile(accessToken);
 
-        String email = userResponse.email() != null ? userResponse.email() : "";
         String displayName = userResponse.name() != null ? userResponse.name() : "Użytkownik LinkedIn";
         return new ExternalUserProfile(
                 userResponse.sub(),
                 userResponse.sub(),
-                email,
                 displayName
         );
     }

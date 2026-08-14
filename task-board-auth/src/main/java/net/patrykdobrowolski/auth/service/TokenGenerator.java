@@ -36,7 +36,7 @@ public class TokenGenerator {
         Instant now = Instant.now(clock);
         Instant validity = now.plus(expirationMs, ChronoUnit.MILLIS);
         return Jwts.builder()
-                .subject(user.getUsername())
+                .subject(user.getId().toString())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(validity))
 //                .claim("roles", "USER")

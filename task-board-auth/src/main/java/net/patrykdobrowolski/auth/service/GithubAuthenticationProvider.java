@@ -35,12 +35,6 @@ public class GithubAuthenticationProvider implements OAuth2AuthenticationProvide
             String email
     ) {}
 
-    private record GithubEmailResponse(
-            String email,
-            boolean primary,
-            boolean verified
-    ) {}
-
     private record GithubTokenRequest(
             String client_id,
             String client_secret,
@@ -57,16 +51,10 @@ public class GithubAuthenticationProvider implements OAuth2AuthenticationProvide
 
         String accessToken = retrieveAccessToken(tokenString);
         GithubUserResponse userResponse = retrieveUserData(accessToken);
-
-        String email = userResponse.email();
-        if (email == null || email.isBlank()) {
-            email = fetchPrimaryEmail(accessToken);
-        }
         String displayName = userResponse.name() != null ? userResponse.name() : userResponse.login();
         return ExternalUserProfile.builder()
                 .userId(String.valueOf(userResponse.id()))
                 .username(userResponse.login())
-                .email(email)
                 .name(displayName)
                 .build();
     }
@@ -98,26 +86,5 @@ public class GithubAuthenticationProvider implements OAuth2AuthenticationProvide
             throw new RuntimeException("Nie udało się pobrać access_token z GitHuba");
         }
         return tokenResponse.access_token();
-    }
-
-    private String fetchPrimaryEmail(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-
-        HttpEntity<Void> request = new HttpEntity<>(headers);
-
-        ResponseEntity<GithubEmailResponse[]> responseEntity = restTemplate.exchange(EMAILS_ENDPOINT, HttpMethod.GET, request, GithubEmailResponse[].class);
-
-        GithubEmailResponse[] emails = responseEntity.getBody();
-
-        if (emails != null) {
-            for (GithubEmailResponse emailDto : emails) {
-                if (emailDto.primary() && emailDto.verified()) {
-                    return emailDto.email();
-                }
-            }
-        }
-        throw new RuntimeException("Użytkownik GitHuba nie posiada zweryfikowanego adresu e-mail.");
     }
 }

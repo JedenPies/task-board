@@ -21,7 +21,6 @@ public class UserEntity {
 
     private String username;
 
-    private String email;
     private String displayName;
 
     @Getter
