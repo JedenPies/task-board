@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 012-add-some-indexes
+      author: patryk
+      changes:
+        - createIndex:
+            tableName: task_boards
+            indexName: idx_task_board_owner
+            columns:
+              - column:
+                  name: owner
+        - createIndex:
+            tableName: tasks
+            indexName: idx_tasks_task_board_id
+            columns:
+              - column:
+                  name: task_board_id
