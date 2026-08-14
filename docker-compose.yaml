@@ -33,6 +33,7 @@ services:
     image: task-board-auth
     container_name: task-board-auth
     environment:
+      - JAVA_TOOL_OPTIONS=-Xmx128m -Xms128m
       - POSTGRES_TASK_BOARD_AUTH_HOST=task-board-auth-pg
       - POSTGRES_TASK_BOARD_AUTH_PORT=5432
       - POSTGRES_TASK_BOARD_AUTH_DATABASE=${POSTGRES_TASK_BOARD_AUTH_DATABASE}
@@ -80,6 +81,7 @@ services:
     image: task-board-backend
     container_name: task-board-backend
     environment:
+      - JAVA_TOOL_OPTIONS=-Xmx128m -Xms128m
       - POSTGRES_TASK_BOARD_HOST=task-board-backend-pg
       - POSTGRES_TASK_BOARD_PORT=5432
       - POSTGRES_TASK_BOARD_DATABASE=${POSTGRES_TASK_BOARD_DATABASE}

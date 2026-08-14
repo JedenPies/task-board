@@ -8,7 +8,7 @@ COPY src /app/src
 RUN gradle build --no-daemon
 
 
-FROM eclipse-temurin:26-jdk-alpine
+FROM eclipse-temurin:26-jre-alpine
 WORKDIR /app
 
 COPY --from=build /app/build/libs/task-board-auth-0.0.1-SNAPSHOT.jar app.jar
