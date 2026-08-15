@@ -1,6 +1,8 @@
-package net.patrykdobrowolski.auth.service;
+package net.patrykdobrowolski.auth.service.auth_provider;
 
 import lombok.RequiredArgsConstructor;
+import net.patrykdobrowolski.auth.domain.AuthProvider;
+import net.patrykdobrowolski.auth.domain.ExternalUserProfile;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -13,7 +15,6 @@ public class GithubAuthenticationProvider implements OAuth2AuthenticationProvide
 
     public static final String USER_ENDPOINT = "https://api.github.com/user";
     public static final String ACCESS_TOKEN_ENDPOINT = "https://github.com/login/oauth/access_token";
-    public static final String EMAILS_ENDPOINT = "https://api.github.com/user/emails";
 
     @Value("${oauth2.github.client-id}")
     private String clientId;

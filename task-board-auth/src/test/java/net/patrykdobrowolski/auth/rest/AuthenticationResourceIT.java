@@ -2,7 +2,7 @@ package net.patrykdobrowolski.auth.rest;
 
 import jakarta.servlet.http.Cookie;
 import net.patrykdobrowolski.auth.SpringBootTestBase;
-import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
+import net.patrykdobrowolski.auth.domain.port.out.UsersRepository;
 import net.patrykdobrowolski.auth.domain.User;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticateCommandDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ class AuthenticationResourceIT extends SpringBootTestBase {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private UsersRepositoryService usersRepositoryService;
+    private UsersRepository usersRepositoryService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

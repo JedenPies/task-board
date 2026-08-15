@@ -3,9 +3,14 @@ package net.patrykdobrowolski.auth.service;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import net.patrykdobrowolski.auth.db.repository.UserTokensRepositoryService;
-import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
+import net.patrykdobrowolski.auth.domain.exception.InvalidCredentialsException;
+import net.patrykdobrowolski.auth.domain.port.in.AuthenticationUseCase;
+import net.patrykdobrowolski.auth.domain.port.out.UserTokensRepository;
+import net.patrykdobrowolski.auth.domain.port.in.UsersUseCase;
+import net.patrykdobrowolski.auth.domain.port.out.UsersRepository;
 import net.patrykdobrowolski.auth.domain.*;
+import net.patrykdobrowolski.auth.domain.exception.InvalidRefreshTokenException;
+import net.patrykdobrowolski.auth.service.auth_provider.OAuth2AuthenticationProviderFactory;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,15 +23,15 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationService implements AuthenticationUseCase {
 
-    private final UsersRepositoryService usersRepository;
-    private final UserTokensRepositoryService userTokensRepository;
+    private final UsersRepository usersRepository;
+    private final UserTokensRepository userTokensRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenGenerator tokenGenerator;
     private final Clock clock;
     private final OAuth2AuthenticationProviderFactory oAuth2AuthenticationProviderFactory;
-    private final UsersService usersService;
+    private final UsersUseCase usersUseCase;
 
     private String dummyHash;
 
@@ -35,19 +40,22 @@ public class AuthenticationService {
         dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
     }
 
+    @Override
     public AuthenticationResult authenticate(AuthenticateWithPasswordCommand request) throws InvalidCredentialsException {
         User userFound = usersRepository.findByUsername(request.username()).orElseThrow(this::invalidCredentialsExceptionAfterEmptyHashing);
         checkPassword(userFound, request.password());
         return generateAndRegisterTokens(userFound);
     }
 
+    @Override
     public AuthenticationResult authenticate(AuthenticateWithExternalProviderCommand command) throws Exception {
         ExternalUserProfile userProfile = oAuth2AuthenticationProviderFactory.getProvider(command.getProvider()).authenticate(command.getToken());
         User user = usersRepository.findByExternalAuthProvider(command.getProvider(), userProfile.userId())
-                .orElseGet(() -> usersService.createNewUser(command.getProvider(), userProfile));
+                .orElseGet(() -> usersUseCase.createNewUser(command.getProvider(), userProfile));
         return generateAndRegisterTokens(user);
     }
 
+    @Override
     @Transactional
     public AuthenticationResult refresh(String oldToken) throws InvalidRefreshTokenException {
         UserToken current = userTokensRepository.findByRefreshToken(oldToken).orElseThrow(InvalidRefreshTokenException::new);
@@ -59,6 +67,7 @@ public class AuthenticationService {
         return newAuthenticationResult;
     }
 
+    @Override
     @Transactional
     public void logout(String oldToken) throws InvalidRefreshTokenException {
         UserToken current = userTokensRepository.findByRefreshToken(oldToken).orElseThrow(InvalidRefreshTokenException::new);

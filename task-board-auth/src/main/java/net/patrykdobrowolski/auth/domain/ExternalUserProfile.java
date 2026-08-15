@@ -1,4 +1,4 @@
-package net.patrykdobrowolski.auth.service;
+package net.patrykdobrowolski.auth.domain;
 
 import lombok.Builder;
 

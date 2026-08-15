@@ -1,4 +1,4 @@
-package net.patrykdobrowolski.auth.domain;
+package net.patrykdobrowolski.auth.domain.exception;
 
 public class InvalidRefreshTokenException extends Exception {
 }

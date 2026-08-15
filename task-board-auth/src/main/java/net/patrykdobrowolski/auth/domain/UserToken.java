@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.patrykdobrowolski.auth.domain.exception.InvalidRefreshTokenException;
 
 import java.time.Clock;
 import java.time.Instant;

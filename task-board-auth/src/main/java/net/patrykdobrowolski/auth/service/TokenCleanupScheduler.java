@@ -3,7 +3,7 @@ package net.patrykdobrowolski.auth.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.patrykdobrowolski.auth.db.repository.UserTokensRepository;
+import net.patrykdobrowolski.auth.db.repository.SpringDataUserTokensRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.time.Clock;
 @Slf4j
 public class TokenCleanupScheduler {
 
-    private final UserTokensRepository userTokensRepository;
+    private final SpringDataUserTokensRepository userTokensRepository;
     private final Clock clock;
 
     @Scheduled(cron = "${spring.token-cleanup-cron}")

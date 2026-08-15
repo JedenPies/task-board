@@ -2,7 +2,6 @@ package net.patrykdobrowolski.auth.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import net.patrykdobrowolski.auth.service.AuthProvider;
 
 @Builder
 @Getter

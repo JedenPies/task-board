@@ -1,6 +1,7 @@
-package net.patrykdobrowolski.auth.service;
+package net.patrykdobrowolski.auth.service.auth_provider;
 
 import lombok.RequiredArgsConstructor;
+import net.patrykdobrowolski.auth.domain.AuthProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

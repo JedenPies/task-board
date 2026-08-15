@@ -3,7 +3,6 @@ package net.patrykdobrowolski.auth.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import net.patrykdobrowolski.auth.service.AuthProvider;
 
 import java.util.UUID;
 
@@ -17,4 +16,16 @@ public class User {
     private String passwordEncoded;
     private AuthProvider authProvider;
     private String providerId;
+    private boolean deleted;
+
+    public void update(UpdateUserCommand command) {
+        this.displayName = command.getDisplayName();
+    }
+
+    public void delete() {
+        this.deleted = true;
+        this.username = UUID.randomUUID().toString();
+        this.displayName = UUID.randomUUID().toString();
+        this.providerId = UUID.randomUUID().toString();
+    }
 }

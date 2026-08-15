@@ -1,11 +1,13 @@
 package net.patrykdobrowolski.auth.service;
 
-import net.patrykdobrowolski.auth.db.repository.UserTokensRepositoryService;
-import net.patrykdobrowolski.auth.db.repository.UsersRepositoryService;
 import net.patrykdobrowolski.auth.domain.AuthenticateWithPasswordCommand;
 import net.patrykdobrowolski.auth.domain.AuthenticationResult;
 import net.patrykdobrowolski.auth.domain.User;
 import net.patrykdobrowolski.auth.domain.UserToken;
+import net.patrykdobrowolski.auth.domain.exception.InvalidCredentialsException;
+import net.patrykdobrowolski.auth.domain.exception.InvalidRefreshTokenException;
+import net.patrykdobrowolski.auth.domain.port.out.UserTokensRepository;
+import net.patrykdobrowolski.auth.domain.port.out.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import net.patrykdobrowolski.auth.domain.InvalidRefreshTokenException;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -30,9 +30,9 @@ import static org.mockito.Mockito.*;
 class AuthenticationServiceTest {
 
     @Mock
-    private UsersRepositoryService usersRepository;
+    private UsersRepository usersRepository;
     @Mock
-    private UserTokensRepositoryService userTokensRepository;
+    private UserTokensRepository userTokensRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock

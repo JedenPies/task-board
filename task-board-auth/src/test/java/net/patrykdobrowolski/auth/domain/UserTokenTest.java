@@ -1,5 +1,6 @@
 package net.patrykdobrowolski.auth.domain;
 
+import net.patrykdobrowolski.auth.domain.exception.InvalidRefreshTokenException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;

@@ -6,15 +6,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.patrykdobrowolski.auth.domain.AuthenticateWithExternalProviderCommand;
 import net.patrykdobrowolski.auth.domain.AuthenticateWithPasswordCommand;
-import net.patrykdobrowolski.auth.domain.InvalidRefreshTokenException;
+import net.patrykdobrowolski.auth.domain.exception.InvalidRefreshTokenException;
 import net.patrykdobrowolski.auth.domain.AuthenticationResult;
+import net.patrykdobrowolski.auth.domain.port.in.AuthenticationUseCase;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticateCommandDto;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticationResultDto;
 import net.patrykdobrowolski.auth.rest.dto.OAuth2LoginRequestDto;
 import net.patrykdobrowolski.auth.rest.mapper.DtoMapper;
-import net.patrykdobrowolski.auth.service.AuthProvider;
-import net.patrykdobrowolski.auth.service.AuthenticationService;
-import net.patrykdobrowolski.auth.service.InvalidCredentialsException;
+import net.patrykdobrowolski.auth.domain.AuthProvider;
+import net.patrykdobrowolski.auth.domain.exception.InvalidCredentialsException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -29,7 +29,7 @@ public class AuthenticationResource {
 
     private static final int SEVEN_DAYS = 7 * 24 * 60 * 60;
 
-    private final AuthenticationService authenticationService;
+    private final AuthenticationUseCase authenticationUseCase;
     private final DtoMapper dtoMapper;
 
     @PostMapping
@@ -38,7 +38,7 @@ public class AuthenticationResource {
             HttpServletResponse rawResponse) throws InvalidCredentialsException {
 
         AuthenticateWithPasswordCommand request = dtoMapper.toRequest(authenticateCommandDto);
-        AuthenticationResult result = authenticationService.authenticate(request);
+        AuthenticationResult result = authenticationUseCase.authenticate(request);
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result.refreshToken(), SEVEN_DAYS).toString());
         return map(result);
     }
@@ -50,14 +50,14 @@ public class AuthenticationResource {
             HttpServletResponse rawResponse) throws Exception {
         AuthenticateWithExternalProviderCommand command =
                 AuthenticateWithExternalProviderCommand.builder().provider(provider).token(request.getToken()).build();
-        AuthenticationResult result = authenticationService.authenticate(command);
+        AuthenticationResult result = authenticationUseCase.authenticate(command);
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result.refreshToken(), SEVEN_DAYS).toString());
         return map(result);
     }
 
     @PostMapping("/refresh")
     public AuthenticationResultDto refresh(HttpServletRequest rawRequest, HttpServletResponse rawResponse) throws InvalidRefreshTokenException {
-        AuthenticationResult result = authenticationService.refresh(extractRefreshTokenCookie(rawRequest));
+        AuthenticationResult result = authenticationUseCase.refresh(extractRefreshTokenCookie(rawRequest));
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(result.refreshToken(), SEVEN_DAYS).toString());
         return map(result);
     }
@@ -65,7 +65,7 @@ public class AuthenticationResource {
     @PostMapping("/logout")
     public void logout(HttpServletRequest rawRequest, HttpServletResponse rawResponse) throws InvalidRefreshTokenException {
         String oldToken = extractRefreshTokenCookie(rawRequest);
-        authenticationService.logout(oldToken);
+        authenticationUseCase.logout(oldToken);
         rawResponse.addHeader(HttpHeaders.SET_COOKIE, generateCookie(oldToken, 0).toString());
     }
 

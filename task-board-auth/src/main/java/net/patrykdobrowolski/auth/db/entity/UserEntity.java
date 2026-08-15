@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.patrykdobrowolski.auth.service.AuthProvider;
+import net.patrykdobrowolski.auth.domain.AuthProvider;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Table(name = "users")
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Builder
+@SQLRestriction("deleted = false")
 public class UserEntity {
 
     @Id
@@ -30,4 +32,6 @@ public class UserEntity {
     private AuthProvider authProvider;
 
     private String providerId;
+
+    private boolean deleted;
 }

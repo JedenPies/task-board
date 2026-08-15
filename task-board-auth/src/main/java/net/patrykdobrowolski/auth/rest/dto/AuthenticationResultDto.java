@@ -2,7 +2,7 @@ package net.patrykdobrowolski.auth.rest.dto;
 
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;
-import net.patrykdobrowolski.auth.service.AuthProvider;
+import net.patrykdobrowolski.auth.domain.AuthProvider;
 
 @Jacksonized
 @Builder

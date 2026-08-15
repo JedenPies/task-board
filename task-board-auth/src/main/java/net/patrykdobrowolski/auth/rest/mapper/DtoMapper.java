@@ -1,7 +1,11 @@
 package net.patrykdobrowolski.auth.rest.mapper;
 
 import net.patrykdobrowolski.auth.domain.AuthenticateWithPasswordCommand;
+import net.patrykdobrowolski.auth.domain.UpdateUserCommand;
+import net.patrykdobrowolski.auth.domain.User;
 import net.patrykdobrowolski.auth.rest.dto.AuthenticateCommandDto;
+import net.patrykdobrowolski.auth.rest.dto.UpdateUserDetailsDto;
+import net.patrykdobrowolski.auth.rest.dto.UserDetailsDto;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,4 +21,7 @@ public abstract class DtoMapper {
     }
 
     public abstract AuthenticateWithPasswordCommand toRequest(AuthenticateCommandDto authenticateCommandDto);
+    public abstract UpdateUserCommand toUpdateUserCommand(UpdateUserDetailsDto updateUserDetailsDto);
+
+    public abstract UserDetailsDto toUserDetailsDto(User user);
 }

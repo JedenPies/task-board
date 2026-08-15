@@ -1,6 +1,8 @@
-package net.patrykdobrowolski.auth.service;
+package net.patrykdobrowolski.auth.service.auth_provider;
 
 import lombok.RequiredArgsConstructor;
+import net.patrykdobrowolski.auth.domain.AuthProvider;
+import net.patrykdobrowolski.auth.domain.ExternalUserProfile;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

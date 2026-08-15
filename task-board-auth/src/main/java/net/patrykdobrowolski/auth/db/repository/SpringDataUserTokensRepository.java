@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserTokensRepository extends JpaRepository<UserTokenEntity, UUID> {
+public interface SpringDataUserTokensRepository extends JpaRepository<UserTokenEntity, UUID> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")})
