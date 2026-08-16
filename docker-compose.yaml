@@ -7,6 +7,9 @@ services:
       context: api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
+    volumes:
+      - ./.config/nginx:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro # <-- Podmontowanie certyfikatów
     ports:
       - "80:80"
     networks:
