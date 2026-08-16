@@ -29,14 +29,15 @@ $border-light: color.adjust($c3, $lightness: 38%);
     font-size: 22px;
     letter-spacing: -0.3px;
 
-    a {
-      color: $text-dark;
-      text-decoration: none;
-      transition: color 0.2s ease-in-out;
+  }
 
-      &:hover {
-        color: $c4;
-      }
+  a {
+    color: $text-dark;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: $c4;
     }
   }
 

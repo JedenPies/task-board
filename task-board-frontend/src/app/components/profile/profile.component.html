@@ -1,0 +1,83 @@
+<div class="profile-container hero-container">
+  <div class="hero-content">
+    @if (isLoggedIn()()) {
+
+      <h2>User Profile</h2>
+      <p>Below you will find all the data we currently store about you. You can modify some of these details. You also have the option to permanently delete your account in the 'Danger Zone' section below."</p>
+      @if (user(); as u) {
+        <div class="profile-card modern-form">
+          <div class="info-group">
+            <label for="displayName">Display name:</label>
+            <div class="input-wrapper">
+              @if (!isEditing()) {
+                <input id="displayName" type="text" readonly class="form-control readonly" [value]="u.displayName">
+                <button type="button" class="btn btn-primary" (click)="isEditing.set(true)">Edit</button>
+              } @else {
+                <input id="displayName" type="text" [(ngModel)]="editName" class="form-control">
+                <div class="form-actions">
+                  <button type="button" class="btn btn-primary" (click)="saveProfile()">Save</button>
+                  <button type="button" class="btn btn-cancel" (click)="isEditing.set(false)">Cancel</button>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="info-group">
+            <label for="username">Username:</label>
+            <div class="input-wrapper">
+              <input id="username" type="text" readonly class="form-control readonly" [value]="u.username || '—'">
+            </div>
+          </div>
+
+          <div class="info-group">
+            <label for="authProvider">Registered via:</label>
+            <div class="input-wrapper">
+              <input id="authProvider" type="text" readonly class="form-control readonly" [value]="u.authProvider">
+            </div>
+          </div>
+
+          <div class="info-group">
+            <label for="providerId">External service ID:</label>
+            <div class="input-wrapper">
+              <input id="providerId" type="text" readonly class="form-control readonly" [value]="u.providerId">
+            </div>
+          </div>
+
+          <div class="danger-zone">
+            <div class="divider">
+              <h3>Danger Zone</h3>
+            </div>
+            <p>Deleting your account is irreversible. You will lose access to your private boards and control over your public ones. We will completely
+              anonymize your username, display name, and the provider ID linked to your account (GitHub, Google, Facebook, or LinkedIn). Once deleted, this account cannot be restored.</p>
+
+            @if (!showDeleteConfirm()) {
+              <div style="height: 82px; padding: 16px 0; margin: 1px 0;">
+
+              <button type="button" class="btn btn-danger btn-primary" (click)="showDeleteConfirm.set(true)">Delete my account</button>
+              </div>
+            } @else {
+              <div class="delete-confirmation">
+                <label for="deleteInput">Write <strong>DELETE</strong> to confirm:</label>
+                <div class="delete-actions">
+                  <input id="deleteInput" type="text" [(ngModel)]="deleteConfirmText" placeholder="DELETE" class="form-control" style="width: 200px">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="deleteConfirmText().toLowerCase() !== 'delete'"
+                    (click)="deleteAccount()">
+                    Delete account permanently
+                  </button>
+                  <button type="button" class="btn btn-cancel" (click)="deleteConfirmText.set(''); showDeleteConfirm.set(false)">Cancel</button>
+                </div>
+              </div>
+            }
+          </div>
+
+        </div>
+      } @else {
+        <p>Loading profile...</p>
+      }
+    }
+  </div>
+</div>
+

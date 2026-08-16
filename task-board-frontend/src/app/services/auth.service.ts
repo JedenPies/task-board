@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthenticationResultDto } from '../models/board.model';
+import { AuthenticationResultDto } from '../models/authentication.model';
 import { finalize } from 'rxjs/operators';
 
 @Injectable({
@@ -14,27 +14,31 @@ export class AuthService {
   private storeAuthorizationData(data: AuthenticationResultDto) {
     this.authorizationData.set(data);
     localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('userId', data.userId)
     localStorage.setItem('userDisplayName', data.userDisplayName);
     localStorage.setItem('authProvider', data.authProvider);
   }
 
-  private clearAuthorizationData() {
+
+  authorizationData = signal<AuthenticationResultDto | null>(this.initialAuthData());
+  isLoggedIn = computed(() => !!this.authorizationData()?.accessToken);
+
+  public clearAuthorizationData() {
     this.authorizationData.set(null);
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('userId');
     localStorage.removeItem('userDisplayName');
     localStorage.removeItem('authProvider');
 
   }
 
-  authorizationData = signal<AuthenticationResultDto | null>(this.initialAuthData());
-  isLoggedIn = computed(() => !!this.authorizationData()?.accessToken);
-
   private initialAuthData(): AuthenticationResultDto | null {
     const token = localStorage.getItem('accessToken');
     const displayName = localStorage.getItem('userDisplayName');
     const authProvider = localStorage.getItem('authProvider');
-    if (token) {
-      return { accessToken: token, userDisplayName: displayName || '', authProvider: authProvider || '' };
+    const userId = localStorage.getItem('userId');
+    if (token && userId) {
+      return { accessToken: token, userId: userId, userDisplayName: displayName || '', authProvider: authProvider || '' };
     }
     return null;
   }

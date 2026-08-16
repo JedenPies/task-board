@@ -1,0 +1,140 @@
+@use 'sass:color';
+@use '../../../variables' as *;
+@use '../../../form';
+
+.btn-primary, .btn-cancel {
+  height: 48px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.modern-form {
+  box-shadow: none;
+
+  .form-actions {
+    margin-top: 0;
+  }
+}
+
+.hero-content {
+  max-width: 860px;
+
+  p {
+    font-size: 1.1rem;
+    color: $text-color;
+    margin: 0 0 16px 0;
+    text-align: justify;
+  }
+}
+
+.profile-card {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: left;
+  padding-left: 0;
+  padding-right: 0;
+
+  .info-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    label {
+      flex: 0 0 220px; // Stała szerokość etykiety po lewej stronie
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: $text-color;
+      text-align: right;
+      margin: 0;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      input {
+        flex: 1;
+      }
+    }
+  }
+}
+
+// Stylizacja pól nieedytowalnych (read-only)
+input.readonly, input[readonly] {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: $border-light;
+  cursor: default;
+  user-select: all;
+
+  &:focus {
+    border-color: $border-light;
+    box-shadow: none;
+    background-color: #f3f4f6;
+  }
+}
+
+.danger-zone {
+
+  text-align: center;
+
+  .btn-primary {
+    background-color: #dd3333;
+    border-color: #dd3333;
+
+    &:disabled {
+      background-color: #aaa;
+      border-color: #aaa;
+    }
+  }
+
+  h3 {
+    color: #dd3333;
+    font-size: 1.4rem;
+    margin: 0 16px 8px 16px;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: $text-color;
+    margin: 0 0 16px 0;
+    text-align: justify;
+  }
+
+  .delete-confirmation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background-color: #fff5f5;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #feb2b2;
+
+    label {
+      font-size: 0.9rem;
+      color: #9b2c2c;
+    }
+
+    .delete-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      input {
+        max-width: 180px;
+      }
+    }
+  }
+}
+
+.divider {
+
+  &::before,
+  &::after {
+    border-bottom: 1px solid #e53e3e;
+  }
+}
+

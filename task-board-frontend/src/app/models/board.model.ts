@@ -34,10 +34,4 @@ export interface UpdateTaskCommandDto {
   newDescription: string;
 }
 
-export interface AuthenticationResultDto {
-  accessToken: string;
-  userDisplayName: string;
-  authProvider: string;
-}
-
 export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';

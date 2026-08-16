@@ -1,0 +1,74 @@
+@use '../../../variables' as *;
+
+.legal-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: $bg-color; // Twoje tło (np. #fafafa)
+}
+
+.legal-content {
+  max-width: 960px; // Wąska kolumna poprawia czytelność długich tekstów
+  width: 100%;
+  background: #ffffff;
+  padding: 50px;
+
+  a {
+    text-decoration: none;
+    color: $c3;
+
+    &:hover {
+      background-color: $c2;
+    }
+  }
+  .document-header {
+    margin-bottom: 40px;
+    border-bottom: 2px solid $border-light;
+    padding-bottom: 20px;
+
+    h1 {
+      font-size: 2.5rem;
+      color: $text-color;
+      margin: 0 0 8px 0;
+    }
+
+    .last-updated {
+      color: $text-placeholder;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  }
+
+  section {
+    margin-bottom: 32px;
+
+    h2 {
+      font-size: 1.4rem;
+      color: $text-color;
+      margin-bottom: 16px;
+    }
+
+    p, li {
+      font-size: 1.05rem;
+      line-height: 1.7; // Duży odstęp dla wygody czytania
+      color: #4a5568;
+    }
+
+    ul {
+      padding-left: 24px;
+      margin-bottom: 16px;
+
+      li {
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 24px;
+
+    .document-header h1 {
+      font-size: 2rem;
+    }
+  }
+}

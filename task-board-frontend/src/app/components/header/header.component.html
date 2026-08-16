@@ -7,7 +7,9 @@
     @if (authService.authorizationData()?.userDisplayName) {
       <span class="user-info">
         <i class="provider-icon small {{ authService.authorizationData()?.authProvider }}"></i>
-        <span>{{ authService.authorizationData()?.userDisplayName }}</span>
+        <a routerLink="/profile">
+          <span>{{ authService.authorizationData()?.userDisplayName }}</span>
+        </a>
       </span>
     }
 

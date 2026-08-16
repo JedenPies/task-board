@@ -1,5 +1,5 @@
-@use '../../../variables' as *;
 @use "sass:color";
+@use '../../../variables' as *;
 
 $text-dark: color.adjust($c3, $lightness: -25%);
 $border-light: color.adjust($c3, $lightness: 38%);

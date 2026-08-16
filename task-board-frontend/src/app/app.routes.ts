@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { AuthCallbackComponent } from './components/auth-callback/auth-callback.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+
 
 export const routes: Routes = [
 
@@ -13,6 +16,12 @@ export const routes: Routes = [
   },
   {
     path: 'callback/auth/:provider', component: AuthCallbackComponent
+  },
+  {
+    path: 'profile', component: ProfileComponent
+  },
+  {
+    path: 'privacy', component: PrivacyPolicyComponent
   }
 
 ];
