@@ -6,7 +6,7 @@ import lombok.extern.jackson.Jacksonized;
 
 @Jacksonized
 @Builder @Getter
-public class UpdateUserDetailsDto {
+public class UpdateUserDetailsCommandDto {
 
     private String displayName;
 }

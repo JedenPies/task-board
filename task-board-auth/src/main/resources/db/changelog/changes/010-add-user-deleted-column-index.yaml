@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-add-user-delete-column
+      author: patryk
+      changes:
+        - createIndex:
+            tableName: users
+            indexName: idx_user_deleted
+            columns:
+              - column:
+                  name: deleted

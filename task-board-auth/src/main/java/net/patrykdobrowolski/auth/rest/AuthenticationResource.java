@@ -88,6 +88,7 @@ public class AuthenticationResource {
 
     private AuthenticationResultDto map(AuthenticationResult result) {
         return AuthenticationResultDto.builder()
+                .userId(result.user().getId())
                 .accessToken(result.accessToken())
                 .userDisplayName(result.user().getDisplayName())
                 .authProvider(result.user().getAuthProvider())
