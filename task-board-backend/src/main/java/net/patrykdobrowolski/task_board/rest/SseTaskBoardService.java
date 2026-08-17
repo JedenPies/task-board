@@ -3,9 +3,9 @@ package net.patrykdobrowolski.task_board.rest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.patrykdobrowolski.task_board.domain.TaskBoard;
-import net.patrykdobrowolski.task_board.domain.UserContext;
 import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
+import net.patrykdobrowolski.task_board.service.TaskBoardAccessEvaluator;
 import net.patrykdobrowolski.task_board.service.TaskBoardsService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,14 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SseTaskBoardService {
 
     private final TaskBoardsService taskBoardsService;
-    private final UserContext userContext;
+    private final TaskBoardAccessEvaluator taskBoardAccess;
 
     private final Map<UUID, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createConnection(UUID boardId) throws AccessDeniedException, ObjectNotFoundException {
         log.debug("Creating SSE connection for board: {}", boardId);
         TaskBoard board = taskBoardsService.findBoard(boardId);
-        board.checkViewPermissions(userContext);
+        taskBoardAccess.checkViewPermissions(board);
 
         SseEmitter emitter = new SseEmitter(300_000L);
 

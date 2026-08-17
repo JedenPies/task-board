@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.With;
-import net.patrykdobrowolski.task_board.domain.exception.AccessDeniedException;
 import net.patrykdobrowolski.task_board.domain.exception.CannotMoveTaskException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectAlreadyExistsException;
 import net.patrykdobrowolski.task_board.domain.exception.ObjectNotFoundException;
@@ -25,17 +24,26 @@ public class TaskBoard {
     private List<Task> tasks;
 
     @With
-    private String owner;
+    private UUID owner;
     @Builder.Default
     @Setter
     private Boolean isPublic = false;
 
     private boolean deleted;
 
+
+    public void changeName(String newName) {
+        this.name = newName;
+    }
+
+    public void delete() {
+        this.deleted = true;
+    }
+
     public Task addNewTask(Task task) throws ObjectAlreadyExistsException {
         if (taskById(task.getId()).isPresent()) throw ObjectAlreadyExistsException.of("Task", task.getId());
         task.setStatus(Optional.ofNullable(task.getStatus()).orElse(TaskStatus.TODO));
-        Optional<Task> firstTask = tasks.stream()
+        Optional<Task> firstTask = Optional.ofNullable(tasks).orElseGet(Collections::emptyList).stream()
                 .filter(t -> t.getStatus() == task.getStatus())
                 .min(Comparator.comparing(Task::getPosition));
         insertBefore(task, firstTask.orElse(null));
@@ -45,25 +53,29 @@ public class TaskBoard {
     public void moveTask(UUID taskId, TaskStatus newStatus, @Nullable UUID followingTaskId) throws ObjectNotFoundException, CannotMoveTaskException {
 
         Task taskToMove = taskById(taskId).orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
-        this.tasks.remove(taskToMove);
+        Optional.ofNullable(this.tasks).ifPresent(t -> t.remove(taskToMove));
         if (taskId.equals(followingTaskId)) throw new CannotMoveTaskException();
         taskToMove.setStatus(newStatus);
-        Task followingTask = taskByIdAndStatus(followingTaskId, newStatus).orElse(null);
+        Task followingTask = followingTaskId == null
+                ? null
+                : taskByIdAndStatus(followingTaskId, newStatus).orElseThrow(() -> ObjectNotFoundException.of("Task", followingTaskId));
         insertBefore(taskToMove, followingTask);
     }
 
     private void insertBefore(Task newTask, @Nullable Task followingTask) {
-        List<Task> tasks = this.tasks.stream().filter(t -> t.getStatus() == newTask.getStatus())
+        List<Task> tasks = Optional.ofNullable(this.tasks).orElseGet(Collections::emptyList).stream().filter(t -> t.getStatus() == newTask.getStatus())
                 .sorted(Comparator.comparing(Task::getPosition))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Optional<Task> followingTaskOpt = Optional.ofNullable(followingTask);
         Optional<Task> precedingTaskOpt;
+        int followingIndex;
         if (followingTaskOpt.isEmpty()) {
+            followingIndex = tasks.size();
             precedingTaskOpt = tasks.isEmpty() ? Optional.empty() : Optional.of(tasks.getLast());
         } else {
-            int foll = tasks.indexOf(followingTaskOpt.get());
-            precedingTaskOpt = foll > 0 ? Optional.of(tasks.get(foll - 1)) : Optional.empty();
+            followingIndex = tasks.indexOf(followingTaskOpt.get());
+            precedingTaskOpt = followingIndex > 0 ? Optional.of(tasks.get(followingIndex - 1)) : Optional.empty();
         }
 
         Long precedingTaskPosition = precedingTaskOpt.map(Task::getPosition).orElse(0L);
@@ -71,9 +83,10 @@ public class TaskBoard {
         Long newTaskPosition = (precedingTaskPosition + followingTaskPosition) / 2;
         newTask.setPosition(newTaskPosition);
         if (followingTaskPosition - precedingTaskPosition <= 1) {
-            tasks.add(newTask);
+            tasks.add(followingIndex, newTask);
             rebalance(tasks);
         }
+        this.tasks = Optional.ofNullable(this.tasks).orElseGet(ArrayList::new);
         this.tasks.add(newTask);
     }
 
@@ -95,7 +108,7 @@ public class TaskBoard {
     }
 
     public Optional<Task> taskById(UUID taskId) {
-        return tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst();
+        return Optional.ofNullable(tasks).orElseGet(Collections::emptyList).stream().filter(task -> task.getId().equals(taskId)).findFirst();
     }
 
     public Optional<Task> taskByIdAndStatus(UUID taskId, TaskStatus status) {
@@ -103,67 +116,12 @@ public class TaskBoard {
     }
 
     public Task deleteTaskById(UUID taskId) throws ObjectNotFoundException {
-        Task found = tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst().orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
+        Task found = Optional.ofNullable(tasks)
+                .orElseGet(Collections::emptyList)
+                .stream()
+                .filter(task -> task.getId().equals(taskId)).findFirst()
+                .orElseThrow(() -> ObjectNotFoundException.of("Task", taskId));
         found.delete();
         return found;
-    }
-
-    public void changeName(String newName) {
-        this.name = newName;
-    }
-
-    public void delete() {
-        this.deleted = true;
-    }
-
-    public boolean isAllowedToEdit(UserContext userContext) {
-        return owner == null
-                || owner.equals(userContext.getUserName());
-    }
-
-    public boolean isAllowedToChangeVisibility(UserContext userContext) {
-        return owner != null && owner.equals(userContext.getUserName());
-    }
-
-    public boolean isAllowedToView(UserContext userContext) {
-        return isPublic || isAllowedToEdit(userContext);
-    }
-
-    public boolean isAllowedToMoveTask(UserContext userContext) {
-        return isPublic || isAllowedToEdit(userContext);
-    }
-
-    public boolean isAllowedToDelete(UserContext userContext) {
-        return owner.equals(userContext.getUserName());
-    }
-
-    public void checkPublicFlagPermission(UserContext userContext) throws AccessDeniedException {
-        if (!isAllowedToChangeVisibility(userContext)) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    public void checkEditPermissions(UserContext userContext) throws AccessDeniedException {
-        if (!isAllowedToEdit(userContext)) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    public void checkViewPermissions(UserContext userContext) throws AccessDeniedException {
-        if (!isAllowedToView(userContext)) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    public void checkManipulateTasksPermissions(UserContext userContext) throws AccessDeniedException {
-        if (!isAllowedToMoveTask(userContext)) {
-            throw new AccessDeniedException();
-        }
-    }
-
-    public void checkDeletePermissions(UserContext userContext) throws AccessDeniedException {
-        if (!isAllowedToDelete(userContext)) {
-            throw new AccessDeniedException();
-        }
     }
 }

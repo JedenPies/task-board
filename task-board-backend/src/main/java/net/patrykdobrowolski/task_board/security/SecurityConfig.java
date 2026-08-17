@@ -1,4 +1,4 @@
-package net.patrykdobrowolski.task_board.config;
+package net.patrykdobrowolski.task_board.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

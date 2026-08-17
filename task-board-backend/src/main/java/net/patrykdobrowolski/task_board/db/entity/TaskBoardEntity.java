@@ -26,7 +26,7 @@ public class TaskBoardEntity {
     @SQLRestriction("deleted = false")
     private List<TaskEntity> tasks;
 
-    private String owner;
+    private UUID owner;
     private Boolean isPublic;
 
     private boolean deleted;

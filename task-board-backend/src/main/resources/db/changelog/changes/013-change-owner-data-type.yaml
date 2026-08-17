@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013-change-owner-data-type
+      author: patryk
+      changes:
+        - dropDefaultValue:
+            tableName: task_boards
+            columnName: owner
+        - sql:
+            sql: >
+              UPDATE task_boards SET owner = NULL 
+              WHERE owner !~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$';
+        - sql:
+            sql: >
+              ALTER TABLE task_boards 
+              ALTER COLUMN owner TYPE UUID 
+              USING NULLIF(owner, '')::UUID;

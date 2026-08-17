@@ -1,11 +1,12 @@
 package net.patrykdobrowolski.task_board.domain;
 
+import java.util.UUID;
+
 public interface UserContext {
 
-    String getUserName();
-    void setUserName(String userName);
+    UUID getUserId();
 
-    default boolean isNotLoggedIn() {
-        return getUserName() == null;
+    default boolean isLoggedIn() {
+        return getUserId() != null;
     }
 }

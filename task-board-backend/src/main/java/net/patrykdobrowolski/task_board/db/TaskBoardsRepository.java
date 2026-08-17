@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface TaskBoardsRepository extends JpaRepository<TaskBoardEntity, UUID> {
 
-    List<TaskBoardEntity> findAllByOwner(String owner);
+    List<TaskBoardEntity> findAllByOwner(UUID owner);
 }

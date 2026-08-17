@@ -1,5 +1,6 @@
 package net.patrykdobrowolski.task_board.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,16 +16,16 @@ public class Task {
     private String title;
     private String description;
 
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private TaskStatus status;
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private Long position;
 
     private boolean deleted;
 
     public void update(UpdateTaskCommand command) {
-        this.title = command.getNewTitle();
-        this.description = command.getNewDescription();
+        this.title = command.newTitle();
+        this.description = command.newDescription();
     }
 
     public void delete() {

@@ -1,11 +1,11 @@
 package net.patrykdobrowolski.task_board.rest.mapper;
 
 import net.patrykdobrowolski.task_board.domain.TaskBoard;
-import net.patrykdobrowolski.task_board.domain.UserContext;
 import net.patrykdobrowolski.task_board.rest.dto.CreateTaskBoardCommandDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskBoardOverviewDto;
 import net.patrykdobrowolski.task_board.rest.dto.TaskDto;
+import net.patrykdobrowolski.task_board.service.TaskBoardAccessEvaluator;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,14 +18,14 @@ import java.util.Comparator;
 public abstract class TaskBoardMapper {
 
     @Autowired
-    protected UserContext userContext;
+    protected TaskBoardAccessEvaluator taskBoardAccess;
 
-    @Mapping(target = "canEdit", expression = "java(taskBoard.isAllowedToEdit(userContext))")
-    @Mapping(target = "canChangeVisibility", expression = "java(taskBoard.isAllowedToChangeVisibility(userContext))")
+    @Mapping(target = "canEdit", expression = "java(taskBoardAccess.isAllowedToEdit(taskBoard))")
+    @Mapping(target = "canChangeVisibility", expression = "java(taskBoardAccess.isAllowedToChangeVisibility(taskBoard))")
     public abstract TaskBoardDto toDto(TaskBoard taskBoard);
 
-    @Mapping(target = "canEdit", expression = "java(taskBoard.isAllowedToEdit(userContext))")
-    @Mapping(target = "canChangeVisibility", expression = "java(taskBoard.isAllowedToChangeVisibility(userContext))")
+    @Mapping(target = "canEdit", expression = "java(taskBoardAccess.isAllowedToEdit(taskBoard))")
+    @Mapping(target = "canChangeVisibility", expression = "java(taskBoardAccess.isAllowedToChangeVisibility(taskBoard))")
     public abstract TaskBoardOverviewDto toOverviewDto(TaskBoard taskBoard);
 
     @Mapping(target = "id", ignore = true)
